@@ -10,5 +10,6 @@ namespace backend.Repositories.IRepositories
         Task AddAsync(Category category);
         Task UpdateAsync(Category category);
         Task DeleteAsync(long id);
+        Task<List<Category>> GetChildCategoriesAsync(long parentId);
     }
 }

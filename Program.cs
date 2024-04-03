@@ -1,16 +1,15 @@
 using System.Text;
 using backend.Context;
+using backend.DTOs;
 using backend.Helper;
 using backend.Models;
 using backend.Repositories;
 using backend.Repositories.IRepositories;
 using backend.Services;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -72,10 +71,12 @@ builder.Services.AddAuthentication(options=>{
         IssuerSigningKey= new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]??"baba"))
     };
 });
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectString") + "Encrypt=True;");
-});
+var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
+builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(connectionString));
+// builder.Services.AddDbContext<AppDbContext>(options =>
+// {
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectString") + "Encrypt=True;");
+// });
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<CategoryService>();
@@ -83,12 +84,15 @@ builder.Services.AddScoped<CategoryService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<EmailService>();
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+builder.Services.AddScoped<Generate>();
 
 
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<AccountService>();
 
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ProductService>();
 
 var app = builder.Build();
 
@@ -115,10 +119,10 @@ if (app.Environment.IsDevelopment())
 
  app.MapControllers();
     app.AddGlobalErrorHandler();
-      app.UseWhen(context => !context.Request.Path.StartsWithSegments("/api/account"), builder =>
-    {
-        builder.UseMiddleware<CustomAuthorizationMiddleware>();
-    });
+    //   app.UseWhen(context => !context.Request.Path.StartsWithSegments("/api/account"), builder =>
+    // {
+    //     builder.UseMiddleware<CustomAuthorizationMiddleware>();
+    // });
 
     // app.AddCustomAuthorizationHandler();
        

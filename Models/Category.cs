@@ -12,7 +12,6 @@ namespace backend.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id {get;set;}
 
-
         public long? ParentId {get;set;}
 
         [Required]
@@ -23,18 +22,18 @@ namespace backend.Models
 
         public string? Description {get;set;}
 
-        public string? Image {get;set;}
+        public string? CreatedById {get;set;}
+        [ForeignKey("CreatedById")]
+        public virtual AppUser? CreatedBy {get;set;}
 
-        public string? Icon {get;set;}
-
-        public long CreatedBy {get;set;}
-
-        public long UpdatedBy {get;set;}
-
+        public string? UpdatedById {get;set;}
+        [ForeignKey("UpdatedById")]
+        public virtual AppUser? UpdatedBy {get;set;}
+        
         [ForeignKey("ParentId")]
         public virtual Category? Parent {get;set;}
 
-        public virtual ICollection<ProductCategory> ProductCategories {get;set;}=new List<ProductCategory>();
+        public virtual ICollection<Product> Products {get;set;}=new List<Product>();
 
     }
 }

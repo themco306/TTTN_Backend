@@ -38,7 +38,7 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles =AppRole.Admin)]
+        // [Authorize(Roles =AppRole.Admin)]
         public async Task<IActionResult> PostCategory(CategoryInputDTO categoryInputDTO)
         {
                 var category = await _categoryService.CreateCategoryAsync(categoryInputDTO);
@@ -46,7 +46,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-         [Authorize(Roles =AppRole.Admin)]
+        [Authorize(Roles =AppRole.Admin)]
 
         public async Task<IActionResult> PutCategory(long id, CategoryInputDTO categoryInputDTO)
         {
@@ -61,5 +61,12 @@ namespace backend.Controllers
                 await _categoryService.DeleteCategoryAsync(id);
                 return NoContent();
         }
+        [HttpGet("child/{id}")]
+        public async Task<IActionResult> GetChildByParentId(long id)
+        {
+                var categories = await _categoryService.GetChildByParentIdAsync(id);
+                return Ok(categories);
+        }
+        
     }
 }

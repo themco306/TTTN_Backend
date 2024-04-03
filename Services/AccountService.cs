@@ -10,11 +10,9 @@ using backend.Exceptions;
 using backend.Helper;
 using backend.Models;
 using backend.Repositories.IRepositories;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace backend.Services
 {
@@ -46,11 +44,12 @@ namespace backend.Services
             {
                 throw new Exception("Mật khẩu không chính sát");
             }
-            var result = await _accountRepository.PasswordSignInAsync(signIn.Email, signIn.Password);
-            if (!result.Succeeded)
-            {
-                throw new Exception("Đăng nhập thất bại");
-            }
+            // var result = await _accountRepository.PasswordSignInAsync(signIn.Email, signIn.Password);
+            // if (!result.Succeeded)
+            // {
+            //     // throw new Exception("Đăng nhập thất bại");
+            //     throw new Exception(result.Succeeded.ToString());
+            // }
             return await _accountRepository.GenerateJwtToken(user);
         }
 
@@ -140,7 +139,18 @@ namespace backend.Services
             }
             return usersDTO;
         }
+        public async Task CUExistingUser(string idCreate,string idUpdate )
+        {
+            var checkCreatingUser = await _accountRepository.GetUserByIdAsync(idCreate);
+            if(checkCreatingUser==null){
+                throw new NotFoundException("Người tạo không tồn tại.");
+            }
 
+            var checkUpdatingUser = await _accountRepository.GetUserByIdAsync(idUpdate);
+            if(checkUpdatingUser==null){
+                throw new NotFoundException("Người cập nhật không tồn tại.");
+            }
+        }
         public async Task<UserGetDTO> GetUserByIdAsync(string id)
         {
             var user =await   _accountRepository.GetUserByIdAsync(id);

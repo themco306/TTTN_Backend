@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Models
 {
-    [Keyless]
     public class AppUser :IdentityUser
     {
         public string FirstName {get;set;}=null!;

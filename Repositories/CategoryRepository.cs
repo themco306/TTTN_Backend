@@ -46,5 +46,10 @@ namespace backend.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+         public async Task<List<Category>> GetChildCategoriesAsync(long parentId)
+        {
+            return await _context.Categories.Where(c => c.ParentId == parentId).ToListAsync();
+        }
     }
 }

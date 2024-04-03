@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace backend.Models
+namespace backend.DTOs
 {
     public class SignUp
     {
