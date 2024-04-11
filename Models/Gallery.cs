@@ -11,7 +11,9 @@ namespace backend.Models
         public long Id { get; set; }
         public long ProductId { get; set; }
         [Required]
-        public string Image { get; set; }
+        public string ImageName { get; set; } 
+
+        public string ImagePath { get; set; }
         [Required]
         public string Placeholder { get; set; }
         public int Order { get; set; } 

@@ -191,17 +191,20 @@ namespace backend.Migrations
                         name: "FK_Categories_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Categories_AspNetUsers_UpdatedById",
                         column: x => x.UpdatedById,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Categories_Categories_ParentId",
                         column: x => x.ParentId,
                         principalTable: "Categories",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -257,7 +260,8 @@ namespace backend.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     ProductId = table.Column<long>(type: "bigint", nullable: false),
-                    Image = table.Column<string>(type: "longtext", nullable: false),
+                    ImageName = table.Column<string>(type: "longtext", nullable: false),
+                    ImagePath = table.Column<string>(type: "longtext", nullable: false),
                     Placeholder = table.Column<string>(type: "longtext", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),

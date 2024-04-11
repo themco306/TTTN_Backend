@@ -172,3 +172,5 @@ D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\runtimes\win-x64\native\krbcc64.dll
 D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
 D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
 D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\backend.staticwebassets.runtime.json
+D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\SixLabors.ImageSharp.dll

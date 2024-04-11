@@ -47,23 +47,23 @@ namespace backend.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // modelBuilder.Entity<Category>(e =>
-            // {
-            //     e.HasOne(c => c.Parent)
-            //     .WithMany()
-            //     .HasForeignKey(c => c.ParentId)
-            //     .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Category>(e =>
+            {
+                e.HasOne(c => c.Parent)
+                .WithMany()
+                .HasForeignKey(c => c.ParentId)
+                .OnDelete(DeleteBehavior.SetNull);
 
-            //     e.HasOne(fk => fk.CreatedBy)
-            //     .WithMany()
-            //     .HasForeignKey(fk => fk.CreatedById)
-            //     .OnDelete(DeleteBehavior.Restrict);
+                e.HasOne(fk => fk.CreatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.CreatedById)
+                .OnDelete(DeleteBehavior.SetNull);
 
-            //     e.HasOne(fk => fk.UpdatedBy)
-            //     .WithMany()
-            //     .HasForeignKey(fk => fk.UpdatedById)
-            //     .OnDelete(DeleteBehavior.Restrict);
-            // });
+                e.HasOne(fk => fk.UpdatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.UpdatedById)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
 
 
 

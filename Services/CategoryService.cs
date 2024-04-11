@@ -67,7 +67,7 @@ namespace backend.Services
             await _categoryRepository.AddAsync(category);
             return category;
         }
-        public async Task UpdateCategoryAsync(long id, CategoryInputDTO categoryInputDTO)
+        public async Task<Category> UpdateCategoryAsync(long id, CategoryInputDTO categoryInputDTO)
         {
             var existingCategory = await _categoryRepository.GetByIdAsync(id);
 
@@ -99,6 +99,7 @@ namespace backend.Services
 
             // Cập nhật category trong cơ sở dữ liệu
             await _categoryRepository.UpdateAsync(existingCategory);
+            return existingCategory;
         }
         public async Task DeleteCategoryAsync(long id)
         {
@@ -110,7 +111,18 @@ namespace backend.Services
 
             await _categoryRepository.DeleteAsync(id);
         }
-    
+        public async Task DeleteCategoriesAsync(List<long> ids)
+{
+    foreach (var id in ids)
+    {
+        var existingCategory = await _categoryRepository.GetByIdAsync(id);
+        if (existingCategory != null)
+        {
+            await _categoryRepository.DeleteAsync(id);
+        }
+    }
+}
+
     
     }
 }

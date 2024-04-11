@@ -23,14 +23,14 @@ namespace backend.Models
         public string? Description {get;set;}
 
         public string? CreatedById {get;set;}
-        [ForeignKey("CreatedById")]
+        // [ForeignKey("CreatedById")]
         public virtual AppUser? CreatedBy {get;set;}
 
         public string? UpdatedById {get;set;}
-        [ForeignKey("UpdatedById")]
+        // [ForeignKey("UpdatedById")]
         public virtual AppUser? UpdatedBy {get;set;}
         
-        [ForeignKey("ParentId")]
+        // [ForeignKey("ParentId")]
         public virtual Category? Parent {get;set;}
 
         public virtual ICollection<Product> Products {get;set;}=new List<Product>();

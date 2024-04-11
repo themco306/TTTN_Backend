@@ -33,17 +33,17 @@ namespace backend.Controllers
             return Ok("Đăng ký thành công");
         }
 
-        [HttpPost("signin")]
-        public async Task<IActionResult> SignIn(SignIn signIn)
-        {
-            var token = await _accountService.SignInAsync(signIn);
-            if (string.IsNullOrEmpty(token))
-            {
-               throw new BadRequestException("Có lỗi xảy ra, bạn nên thử lại.");
-            }
-            //  await _emailService.SendEmailAsync("nctk606306@gmail.com", "Test Subject", "Test Message");
-             return Ok(new { Token = token });
-        }
+[HttpPost("signin")]
+public async Task<IActionResult> SignIn(SignIn signIn)
+{
+    var signInResult = await _accountService.SignInAsync(signIn);
+    if (signInResult == null)
+    {
+        throw new BadRequestException("Có lỗi xảy ra, bạn nên thử lại.");
+    }
+    
+    return Ok(new { User = signInResult.User, Token = signInResult.Token });
+}
 
         [HttpGet("confirmEmail")]
         public async Task<IActionResult> ConfirmEmail(string userId, string confirmEmailToken)

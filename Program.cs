@@ -12,12 +12,19 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
+string Example07JSDomain="AllowLocalhost3000";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name:Example07JSDomain,
+        builder => builder.WithOrigins("http://localhost:3000")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod());
+});
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Khanh API", Version = "v1" });
@@ -94,8 +101,12 @@ builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ProductService>();
 
-var app = builder.Build();
+builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
+builder.Services.AddScoped<GalleryService>();
 
+
+var app = builder.Build();
+app.UseCors(Example07JSDomain);
 // Khởi tạo dữ liệu mẫu
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
@@ -109,7 +120,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseStaticFiles();
  app.UseHttpsRedirection();
 
 

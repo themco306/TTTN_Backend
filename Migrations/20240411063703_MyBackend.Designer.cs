@@ -11,7 +11,7 @@ using backend.Context;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240403152236_MyBackend")]
+    [Migration("20240411063703_MyBackend")]
     partial class MyBackend
     {
         /// <inheritdoc />
@@ -274,7 +274,11 @@ namespace backend.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Image")
+                    b.Property<string>("ImageName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -424,15 +428,18 @@ namespace backend.Migrations
                 {
                     b.HasOne("backend.Models.AppUser", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("backend.Models.Category", "Parent")
                         .WithMany()
-                        .HasForeignKey("ParentId");
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("backend.Models.AppUser", "UpdatedBy")
                         .WithMany()
-                        .HasForeignKey("UpdatedById");
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("CreatedBy");
 

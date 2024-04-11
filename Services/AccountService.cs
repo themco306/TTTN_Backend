@@ -24,15 +24,15 @@ namespace backend.Services
         private readonly IActionContextAccessor _actionContextAccessor;
         private readonly IMapper _mapper;
 
-        public AccountService(IAccountRepository accountRepository, EmailService emailService, IUrlHelperFactory urlHelperFactory, IActionContextAccessor actionContextAccessor,IMapper mapper)
+        public AccountService(IAccountRepository accountRepository, EmailService emailService, IUrlHelperFactory urlHelperFactory, IActionContextAccessor actionContextAccessor, IMapper mapper)
         {
             _accountRepository = accountRepository;
             _emailService = emailService;
             _urlHelperFactory = urlHelperFactory;
             _actionContextAccessor = actionContextAccessor;
-            _mapper=mapper;
+            _mapper = mapper;
         }
-        public async Task<string> SignInAsync(SignIn signIn)
+        public async Task<SignInResultDTO> SignInAsync(SignIn signIn)
         {
             var user = await _accountRepository.GetUserByEmailAsync(signIn.Email);
             if (user == null)
@@ -50,13 +50,23 @@ namespace backend.Services
             //     // throw new Exception("Đăng nhập thất bại");
             //     throw new Exception(result.Succeeded.ToString());
             // }
-            return await _accountRepository.GenerateJwtToken(user);
+            var token = await _accountRepository.GenerateJwtToken(user);
+             var roles = await _accountRepository.GetUserRolesAsync(user.Id);
+            // Tạo đối tượng SignInResult và gán thông tin người dùng và token
+            var signInResult = new SignInResultDTO
+            {
+                User = _mapper.Map<UserGetDTO>(user),
+                Token = token
+            };
+                signInResult.User.Roles = roles;
+            return signInResult;
         }
 
         public async Task<IdentityResult> SignUpAsync(SignUp signUp)
         {
-            var existingUser =await _accountRepository.GetUserByEmailAsync(signUp.Email);
-            if(existingUser!=null){
+            var existingUser = await _accountRepository.GetUserByEmailAsync(signUp.Email);
+            if (existingUser != null)
+            {
                 throw new Exception("Email này đã được đăng ký");
             }
             var userCreated = await _accountRepository.CreateUserAsync(signUp);
@@ -83,9 +93,10 @@ namespace backend.Services
             return IdentityResult.Success;
         }
 
-         public async Task<bool> ConfirmEmailAsync(string userId, string confirmEmailToken){
+        public async Task<bool> ConfirmEmailAsync(string userId, string confirmEmailToken)
+        {
 
-                        // Kiểm tra thông tin xác thực
+            // Kiểm tra thông tin xác thực
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(confirmEmailToken))
             {
                 throw new BadRequestException("Đường đẫn có vấn đề.");
@@ -94,14 +105,15 @@ namespace backend.Services
             var user = await _accountRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
-               throw new NotFoundException("Người dùng không tồn tại , vui lòng đăng ký lại.");
+                throw new NotFoundException("Người dùng không tồn tại , vui lòng đăng ký lại.");
             }
-            var confirmed = await _accountRepository.ConfirmEmailAsync(user,confirmEmailToken);
-            if(!confirmed){
+            var confirmed = await _accountRepository.ConfirmEmailAsync(user, confirmEmailToken);
+            if (!confirmed)
+            {
                 throw new BadRequestException("Thất bại vui lòng thử lại");
             }
             return confirmed;
-         }
+        }
 
         private string GenerateConfirmationLink(AppUser user, string confirmEmailToken)
         {
@@ -117,13 +129,14 @@ namespace backend.Services
             return confirmationLink;
         }
 
-        public async Task<IEnumerable<UserGetDTO>> GetUsersAsync(int pageIndex,int pageSize){
-            var users =await _accountRepository.GetUsersAsync(pageIndex,pageSize);
-             var usersDTO = new List<UserGetDTO>();
+        public async Task<IEnumerable<UserGetDTO>> GetUsersAsync(int pageIndex, int pageSize)
+        {
+            var users = await _accountRepository.GetUsersAsync(pageIndex, pageSize);
+            var usersDTO = new List<UserGetDTO>();
 
             foreach (var user in users)
             {
-                var roles =  await _accountRepository.GetUserRolesAsync(user.Id);
+                var roles = await _accountRepository.GetUserRolesAsync(user.Id);
 
                 usersDTO.Add(new UserGetDTO
                 {
@@ -134,38 +147,42 @@ namespace backend.Services
                     Email = user.Email,
                     PhoneNumber = user.PhoneNumber,
                     EmailConfirmed = user.EmailConfirmed,
-                    Roles = roles 
+                    Roles = roles
                 });
             }
             return usersDTO;
         }
-        public async Task CUExistingUser(string idCreate,string idUpdate )
+        public async Task CUExistingUser(string idCreate, string idUpdate)
         {
             var checkCreatingUser = await _accountRepository.GetUserByIdAsync(idCreate);
-            if(checkCreatingUser==null){
+            if (checkCreatingUser == null)
+            {
                 throw new NotFoundException("Người tạo không tồn tại.");
             }
 
             var checkUpdatingUser = await _accountRepository.GetUserByIdAsync(idUpdate);
-            if(checkUpdatingUser==null){
+            if (checkUpdatingUser == null)
+            {
                 throw new NotFoundException("Người cập nhật không tồn tại.");
             }
         }
         public async Task<UserGetDTO> GetUserByIdAsync(string id)
         {
-            var user =await   _accountRepository.GetUserByIdAsync(id);
-            if(user==null){
+            var user = await _accountRepository.GetUserByIdAsync(id);
+            if (user == null)
+            {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
-            var userDTO =_mapper.Map<UserGetDTO>(user);
-                userDTO.Roles = await _accountRepository.GetUserRolesAsync(userDTO.Id);
+            var userDTO = _mapper.Map<UserGetDTO>(user);
+            userDTO.Roles = await _accountRepository.GetUserRolesAsync(userDTO.Id);
             return userDTO;
         }
 
         public async Task<bool> UpdateUserAsync(string userId, UserCustomerUpdateDTO userUpdateDto)
-    {
-            var user =await   _accountRepository.GetUserByIdAsync(userId);
-            if(user==null){
+        {
+            var user = await _accountRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
 
@@ -175,21 +192,24 @@ namespace backend.Services
             user.Email = userUpdateDto.Email;
             user.PhoneNumber = userUpdateDto.PhoneNumber;
 
-        var isConfirmed= await _accountRepository.CheckEmailConfirmedAsync(user);
-        if(!isConfirmed){
-            throw new BadRequestException("Bạn cần xác thực Email để thực hiện.");
-        }
+            var isConfirmed = await _accountRepository.CheckEmailConfirmedAsync(user);
+            if (!isConfirmed)
+            {
+                throw new BadRequestException("Bạn cần xác thực Email để thực hiện.");
+            }
 
-        var updated=await _accountRepository.UpdateUserAsync(userId, user);
-        if(!updated){
-            throw new BadRequestException("Có lỗi xảy ra");
+            var updated = await _accountRepository.UpdateUserAsync(userId, user);
+            if (!updated)
+            {
+                throw new BadRequestException("Có lỗi xảy ra");
+            }
+            return true;
         }
-        return true;
-    }
-        public async  Task DeleteUserById(string id)
+        public async Task DeleteUserById(string id)
         {
-            var deleted= await _accountRepository.DeleteUserByIdAsync(id);
-            if(!deleted){
+            var deleted = await _accountRepository.DeleteUserByIdAsync(id);
+            if (!deleted)
+            {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
         }
