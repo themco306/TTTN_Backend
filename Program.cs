@@ -78,6 +78,7 @@ builder.Services.AddAuthentication(options=>{
         IssuerSigningKey= new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]??"baba"))
     };
 });
+builder.Services.AddAuthorization(APolicyBuilder.Build);
 var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(connectionString));
 // builder.Services.AddDbContext<AppDbContext>(options =>

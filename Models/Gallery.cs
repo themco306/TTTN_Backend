@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace backend.Models
 {
@@ -19,6 +20,7 @@ namespace backend.Models
         public int Order { get; set; } 
 
         [ForeignKey("ProductId")]
-        public virtual Product Product { get; set; }
+        [JsonIgnore]
+        public  Product Product { get; set; }
     }
 }

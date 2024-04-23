@@ -28,12 +28,48 @@ namespace backend.Services
             var categories = await _categoryRepository.GetAllAsync();
             return _mapper.Map<List<CategoryGetDTO>>(categories);
         }
-        public async Task<List<CategoryGetDTO>> GetChildByParentIdAsync(long id){
-            var existingParent= await _categoryRepository.GetByIdAsync(id);
-            if(existingParent==null){
+        public async Task<List<CategoryGetDTO>> GetParentCategoriesAsync(long id)
+        {
+            var currentCategory = await _categoryRepository.GetByIdAsync(id);
+            if (currentCategory == null)
+            {
+                throw new NotFoundException("Danh mục không tồn tại.");
+            }
+
+            List<Category> parentCategories;
+            // Nếu danh mục hiện tại là một danh mục gốc
+            parentCategories = await _categoryRepository.GetAllAsync(); // Lấy tất cả danh mục
+
+
+
+            // Loại bỏ danh mục hiện tại và tất cả các danh mục con của nó khỏi danh sách danh mục cha
+            parentCategories = parentCategories.Where(c => c.Id != id && !IsDescendant(currentCategory, c)).ToList();
+
+            return _mapper.Map<List<CategoryGetDTO>>(parentCategories);
+        }
+
+        private bool IsDescendant(Category parent, Category child)
+        {
+            // Kiểm tra xem child có phải là một con của parent không
+            if (child.ParentId == null)
+            {
+                return false;
+            }
+            if (child.ParentId == parent.Id)
+            {
+                return true;
+            }
+            return IsDescendant(parent, child.Parent); // Đệ quy kiểm tra các danh mục cha của child
+        }
+
+        public async Task<List<CategoryGetDTO>> GetChildByParentIdAsync(long id)
+        {
+            var existingParent = await _categoryRepository.GetByIdAsync(id);
+            if (existingParent == null)
+            {
                 throw new NotFoundException("Danh mục Cha không tồn tại.");
             }
-            var categories=await _categoryRepository.GetChildCategoriesAsync(id);
+            var categories = await _categoryRepository.GetChildCategoriesAsync(id);
             return _mapper.Map<List<CategoryGetDTO>>(categories);
         }
         public async Task<Category> GetCategoryByIdAsync(long id)
@@ -109,20 +145,37 @@ namespace backend.Services
                 throw new NotFoundException("Danh mục không tồn tại.");
             }
 
+
             await _categoryRepository.DeleteAsync(id);
         }
         public async Task DeleteCategoriesAsync(List<long> ids)
-{
-    foreach (var id in ids)
-    {
-        var existingCategory = await _categoryRepository.GetByIdAsync(id);
-        if (existingCategory != null)
         {
-            await _categoryRepository.DeleteAsync(id);
+            foreach (var id in ids)
+            {
+                var existingCategory = await _categoryRepository.GetByIdAsync(id);
+                if (existingCategory != null)
+                {
+                    await _categoryRepository.DeleteAsync(id);
+                }
+            }
         }
+public async Task<Category> UpdateCategoryStatusAsync(long id)
+{
+    var existingCategory = await _categoryRepository.GetByIdAsync(id);
+
+    if (existingCategory == null)
+    {
+        throw new NotFoundException("Danh mục không tồn tại");
     }
+
+    // Cập nhật trạng thái mới (nếu hiện tại là 0 thì cập nhật thành 1, và ngược lại)
+    existingCategory.Status = existingCategory.Status == 0 ? 1 : 0;
+
+    await _categoryRepository.UpdateAsync(existingCategory);
+
+    return existingCategory;
 }
 
-    
+
     }
 }

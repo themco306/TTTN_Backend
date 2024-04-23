@@ -49,6 +49,8 @@ namespace backend.DTOs
         public Category Category {get;set;}
         public string Name { get; set; }
         public string Slug { get; set; }
+
+        public List<Gallery> Galleries { get; set; } = new List<Gallery>();
         public string Description { get; set; }
         public string Detail { get; set; }
         public decimal SalePrice { get; set; }
@@ -58,8 +60,8 @@ namespace backend.DTOs
         public string ProductType { get; set; }
         public string Note { get; set; }
         public int Status { get; set; }
-        public string CreatedById { get; set; }
-        public string UpdatedById { get; set; }
+        public AppUser CreatedBy { get; set; }
+        public AppUser UpdatedBy { get; set; }
         public DateTimeOffset? CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }
     }

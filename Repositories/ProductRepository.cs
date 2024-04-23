@@ -19,13 +19,22 @@ namespace backend.Repositories
 
         public async Task<Product> GetByIdAsync(long id)
         {
-            return await _context.Products.FindAsync(id);
+            return await _context.Products
+                .Include(c=>c.CreatedBy)
+        .Include(c=>c.UpdatedBy)
+        .Include(p => p.Category)
+        .Include(p => p.Galleries)
+        .FirstAsync(p => p.Id == id);
         }
 
-        public async Task<List<Product>> GetAllAsync()
-        {
-            return await _context.Products.ToListAsync();
-        }
+public async Task<List<Product>> GetAllAsync()
+{
+    return await _context.Products
+        .Include(c => c.Galleries.OrderBy(g => g.Order))
+        .OrderByDescending(p => p.UpdatedAt)
+        .ToListAsync();
+}
+
 
         public async Task AddAsync(Product product)
         {

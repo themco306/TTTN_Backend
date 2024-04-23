@@ -3,6 +3,7 @@ using backend.Exceptions;
 using backend.Models;
 using backend.Repositories.IRepositories;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Mysqlx.Crud;
 using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
@@ -44,36 +45,35 @@ namespace backend.Services
 
             return galleryDTOs;
         }
-        public async Task<List<Gallery>> CreateGalleryAsync(GalleryInputDTO galleryInputDTO)
+        public async Task<List<Gallery>> CreateGalleryAsync(long productId, List<IFormFile> newImages,int order=1)
         {
-            var product = await _productRepository.GetByIdAsync(galleryInputDTO.ProductId);
+            var product = await _productRepository.GetByIdAsync(productId);
             if (product == null)
             {
                 throw new NotFoundException("Sản phẩm không tồn tại.");
             }
 
-            var uploadedImages = galleryInputDTO.Images; // Sửa lại tên property Images thay vì Image
+            // var uploadedImages = newImages; // Sửa lại tên property Images thay vì Image
 
-            if (uploadedImages == null || uploadedImages.Count == 0)
+            if (newImages == null || newImages.Count == 0)
             {
                 throw new Exception("Vui lòng chọn ít nhất một file ảnh.");
             }
 
             var galleries = new List<Gallery>();
 
-            int order = 1;
-            foreach (var image in uploadedImages)
+            foreach (var image in newImages)
             {
                 var uploadedImageNames = await UploadImages(product.Slug, image);
                 foreach (var imageName in uploadedImageNames)
                 {
                     var gallery = new Gallery
                     {
-                        ProductId = galleryInputDTO.ProductId,
+                        ProductId = productId,
                         ImageName = imageName,
                         ImagePath = $"/images/products/{imageName}",
-                        Placeholder = "productdefaultimage.jpg",
-                        Order = order // Gán order cho mỗi ảnh
+                        Placeholder = "/images/defaultimage/productdefaultimage.jpg",
+                        Order = order 
                     };
 
                     await _galleryRepository.AddAsync(gallery);
@@ -105,65 +105,45 @@ namespace backend.Services
             return uploadedFileNames;
         }
 
-        public async Task UpdateGalleryImagesAsync(long productId, List<IFormFile> newImages)
+public async Task UpdateGalleryImagesAsync(long productId, List<long> ids, List<IFormFile> newImages)
+{
+    var existingProduct = await _productRepository.GetByIdAsync(productId);
+    if (existingProduct == null)
+    {
+        throw new NotFoundException("Sản phẩm không tồn tại");
+    }
+
+    var currentImages = await _galleryRepository.GetGalleriesByProductIdAsync(productId);
+    var maxOrder = currentImages.Max(img => img.Order); // Find the highest order number
+
+    var imagesToRemove = currentImages.Where(img => !ids.Contains(img.Id)).ToList();
+    if (imagesToRemove.Count > 0)
+    {
+        foreach (var image in imagesToRemove)
         {
-            var existingProduct=await _productRepository.GetByIdAsync(productId);
-            if(existingProduct==null){
-                throw new NotFoundException("Sản phẩm không tồn tại");
-            }
-            var currentImages = await _galleryRepository.GetGalleriesByProductIdAsync(productId);
+            await DeleteGalleryAsync(image.Id);
+        }
+    }
 
-            // Thêm ảnh mới
-            foreach (var image in newImages)
-            {
-                var uploadedImageNames = await UploadImages(existingProduct.Slug, image);
-                foreach (var imageName in uploadedImageNames)
-                {
-                    var gallery = new Gallery
-                    {
-                        ProductId = productId,
-                        ImageName = imageName,
-                        ImagePath = $"/images/products/{imageName}",
-                        Placeholder = "productdefaultimage.jpg",
-                        Order = currentImages.Count + 1 // Thêm ảnh mới vào cuối danh sách
-                    };
+    if (newImages.Count > 0)
+    {
+        // Set the order for the new images
+        var newOrder = maxOrder + 1;
 
-                    await _galleryRepository.AddAsync(gallery);
-                }
-            }
+        // Create the new galleries with the updated order
+        var galleries = await CreateGalleryAsync(productId, newImages, newOrder);
+    }
+}
 
-            // Xóa các ảnh không còn được sử dụng
-            foreach (var currentImage in currentImages)
-            {
-                // Kiểm tra xem ảnh hiện tại có trong danh sách ảnh mới không
-                var isUsed = newImages.Any(newImage => newImage.FileName == currentImage.ImageName);
-
-                // Nếu không tìm thấy trong danh sách ảnh mới, xóa ảnh hiện tại
-                if (!isUsed)
-                {
-                    await _galleryRepository.DeleteAsync(currentImage.Id);
-                    // Xóa file ảnh từ thư mục nếu cần
-                    await DeleteImageAsync(currentImage.ImageName);
+         public async Task DeleteGalleryByProductIdAsync(long id)
+        {
+            var products = await GetGalleriesByProductIdAsync(id);
+            if(products!=null){
+                foreach(var product  in products){
+                    await DeleteGalleryAsync( product.Id);
                 }
             }
         }
-
-
-
-        // public async Task UpdateGalleryAsync(long id, GalleryInputDTO galleryInputDTO)
-        // {
-        //     var existingGallery = await _galleryRepository.GetByIdAsync(id);
-        //     if (existingGallery == null)
-        //     {
-        //         throw new NotFoundException("Bộ sưu tập hình ảnh không tồn tại.");
-        //     }
-
-        //     existingGallery.ProductId = galleryInputDTO.ProductId;
-        //     existingGallery.Placeholder = "productdefaultimage.jpg";
-        //     existingGallery.Order = galleryInputDTO.Order;
-
-        //     await _galleryRepository.UpdateAsync(existingGallery);
-        // }
 
         public async Task DeleteGalleryAsync(long id)
         {
@@ -172,7 +152,7 @@ namespace backend.Services
             {
                 throw new NotFoundException("Bộ sưu tập hình ảnh không tồn tại.");
             }
-
+            await DeleteImageAsync(existingGallery.ImageName);
             await _galleryRepository.DeleteAsync(id);
         }
 
@@ -187,7 +167,7 @@ namespace backend.Services
             // Đường dẫn đến thư mục chứa hình ảnh
             var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products", imageName);
 
-            // Kiểm tra nếu tệp tin hình ảnh tồn tại
+            // Kiểm tra nếu tệp tin hình ảnh tồn tạidot
             if (File.Exists(imagePath))
             {
                 // Xóa hình ảnh khỏi thư mục

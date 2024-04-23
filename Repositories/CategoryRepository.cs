@@ -17,7 +17,10 @@ namespace backend.Repositories
 
         public async Task<Category> GetByIdAsync(long id)
         {
-            return await _context.Categories.FindAsync(id);
+            return await _context.Categories
+                .Include(c => c.CreatedBy)
+                .Include(c => c.UpdatedBy)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<List<Category>> GetAllAsync()

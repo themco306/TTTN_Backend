@@ -10,9 +10,12 @@ namespace backend.Repositories.IRepositories
 {
   public interface IAccountRepository
   {
-    Task<AppUser> CreateUserAsync(SignUp signUp);
+    Task<bool> AddRolesToUserAsync(AppUser user, List<string> roles);
+    Task<AppUser> SignUpUserAsync(SignUp signUp);
+    Task<AppUser> CreateUserAsync(UserCreateDTO userCreateDTO);
     Task<bool> AddRoleToUserAsync(AppUser user, string role);
     Task<AppUser> GetUserByEmailAsync(string email);
+    Task<AppUser> GetUserByUserNameAsync(string userName);
     Task<bool> CheckPasswordAsync(AppUser user, string password);
     Task<SignInResult> PasswordSignInAsync(string email, string password);
     Task<string> GenerateJwtToken(AppUser user);
@@ -23,6 +26,7 @@ namespace backend.Repositories.IRepositories
     Task<AppUser> GetUserByIdAsync(string id);
 
     Task<IEnumerable<string>> GetUserRolesAsync(string userId);
+    Task<List<ClaimDTO>> GetUserClaimsAsync(string id);
 
     Task<bool> DeleteUserByIdAsync(string userId);
 
@@ -31,6 +35,7 @@ namespace backend.Repositories.IRepositories
     Task<bool> ConfirmEmailAsync(AppUser userId, string confirmEmailToken);
 
     Task<bool> CheckEmailConfirmedAsync(AppUser user);
+    Task<bool> AddClaimToUserAsync(AppUser user, string claimType, List<string> claimValues);
 
   }
 }

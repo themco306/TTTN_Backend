@@ -11,6 +11,7 @@ namespace backend.Helper
     {
         private static IEnumerable<string> GetRoles()
         {
+            yield return AppRole.SuperAdmin;
             yield return AppRole.Admin;
             yield return AppRole.Customer;
             yield return AppRole.Manager;
@@ -50,7 +51,7 @@ namespace backend.Helper
                     var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(adminUser);
                     await userManager.ConfirmEmailAsync(adminUser, confirmationToken);
                     // Gán role quản trị cho người dùng quản trị
-                    await userManager.AddToRoleAsync(adminUser, AppRole.Admin);
+                    await userManager.AddToRoleAsync(adminUser, AppRole.SuperAdmin);
                 }
             }
         }

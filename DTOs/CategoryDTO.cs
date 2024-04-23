@@ -1,6 +1,7 @@
 
 
 using System.ComponentModel.DataAnnotations;
+using backend.Models;
 
 namespace backend.DTOs
 {
@@ -14,6 +15,9 @@ namespace backend.DTOs
 
         [StringLength(255, ErrorMessage = "Mô tả không được vượt quá 255 ký tự.")]
         public string? Description { get; set; }
+
+        public int? Status { get; set; }
+
         [Required(ErrorMessage = "Thiếu CreatedById")]
         public string CreatedById { get; set; }
         [Required(ErrorMessage = "Thiếu UpdatedById")]
@@ -30,10 +34,9 @@ namespace backend.DTOs
         public string Slug { get; set; }
 
         public string Description { get; set; }
-
-        public string CreatedById { get; set; }
-
-        public string UpdatedById { get; set; }
+        public int Status { get; set; }
+        public  AppUser CreatedBy {get;set;}
+        public  AppUser UpdatedBy {get;set;}
 
         public DateTimeOffset? CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }

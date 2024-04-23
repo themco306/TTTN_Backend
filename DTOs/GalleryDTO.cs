@@ -5,7 +5,7 @@ namespace backend.DTOs
     public class GalleryInputDTO
     {
         [Required(ErrorMessage = "Vui lòng nhập ID sản phẩm.")]
-        public long ProductId { get; set; }
+        public long? ProductId { get; set; }
         public List<IFormFile> Images {get;set;}
     }
 
@@ -13,7 +13,7 @@ namespace backend.DTOs
     {
         public long Id { get; set; }
 
-        public long ProductId { get; set; }
+        public long? ProductId { get; set; }
 
         public string ImagePath { get; set; }
         public string ImageName { get; set; }

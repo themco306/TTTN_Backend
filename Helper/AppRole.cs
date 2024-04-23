@@ -7,6 +7,7 @@ namespace backend.Helper
 {
     public static class AppRole
     {
+        public const string SuperAdmin = "SuperAdministrator";
         public const string Admin = "Administrator";
         public const string Customer = "Customer";
         public const string Manager = "Manager";

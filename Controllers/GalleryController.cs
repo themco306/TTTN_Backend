@@ -23,19 +23,12 @@ namespace backend.Controllers
             var galleries = await _galleryService.GetGalleriesByProductIdAsync(productId);
             return Ok(galleries);
         }
-
-        // [HttpPost]
-        // public async Task<IActionResult> PostGallery([FromForm] GalleryInputDTO galleryInputDTO)
-        // {
-        //     var galleries = await _galleryService.CreateGalleryAsync(galleryInputDTO);
-        //     return Ok(galleries);
-        // }
-        [HttpPost]
+        [HttpPost("{productId}")]
         public async Task<IActionResult> AddImagesToProduct(long productId, [FromForm] List<IFormFile> images)
         {
             try
             {
-                await _galleryService.UpdateGalleryImagesAsync(productId, images);
+                await _galleryService.CreateGalleryAsync(productId, images);
                 return Ok("Images added successfully.");
             }
             catch (NotFoundException ex)
@@ -48,12 +41,13 @@ namespace backend.Controllers
             }
         }
 
-        // [HttpPut("{id}")]
-        // public async Task<IActionResult> PutGallery(long id, GalleryInputDTO galleryInputDTO)
-        // {
-        //     await _galleryService.UpdateGalleryAsync(id, galleryInputDTO);
-        //     return NoContent();
-        // }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutGallery(long id,[FromForm] IDsModel model,[FromForm] List<IFormFile> images)
+        {
+            List<long> ids = model.ids ?? new List<long>();
+    await _galleryService.UpdateGalleryImagesAsync(id, ids, images);
+    return NoContent();
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGallery(long id)

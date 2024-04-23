@@ -11,8 +11,8 @@ namespace backend.Helper
             CreateMap<CategoryInputDTO, Category>()
                        .ForMember(dest => dest.Id, opt => opt.Ignore()) // Bỏ qua mapping cho trường Id vì nó sẽ được sinh tự động
                        .ForMember(dest => dest.Parent, opt => opt.Ignore()) // Bỏ qua mapping cho trường Parent vì đây là navigation property
-                       .ForMember(dest => dest.CreatedBy, opt => opt.Ignore()) // Bỏ qua mapping cho trường CreatedBy
-                       .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore()) // Bỏ qua mapping cho trường UpdatedBy
+                    //    .ForMember(dest => dest.CreatedBy, opt => opt.Ignore()) // Bỏ qua mapping cho trường CreatedBy
+                    //    .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore()) // Bỏ qua mapping cho trường UpdatedBy
                        .ForMember(dest => dest.CreatedAt, opt => opt.Ignore()) // Bỏ qua mapping cho trường CreatedAt
                        .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore()); // Bỏ qua mapping cho trường UpdatedAt
 

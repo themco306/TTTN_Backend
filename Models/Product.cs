@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace backend.Models
 {
@@ -11,7 +12,6 @@ namespace backend.Models
         public long Id { get; set; }
 
         public long CategoryId {get;set;}
-        [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
 
         [Required]
@@ -39,12 +39,13 @@ namespace backend.Models
         public string? Note { get; set; }
         public int Status { get; set; }
         public string? CreatedById { get; set; }
-        [ForeignKey("CreatedById")]
         public virtual AppUser? CreatedBy { get; set; }
 
         public string? UpdatedById { get; set; }
-        [ForeignKey("UpdatedById")]
         public virtual AppUser? UpdatedBy { get; set; }
+
+        [JsonIgnore]
+        public virtual List<Gallery> Galleries { get; set; } = new List<Gallery>();
 
         // Navigation property for the Category
         

@@ -20,14 +20,17 @@ namespace backend.Controllers
                         _categoryService = categoryService;
                 }
                 [HttpGet]
-                // [Authorize(Roles =AppRole.Admin)]
-
                 public async Task<IActionResult> GetCategories()
                 {
                         var categories = await _categoryService.GetAllCategoriesAsync();
                         return Ok(categories);
                 }
-
+                [HttpGet("parent/{id}")]
+                public async Task<IActionResult> GetParentCategories(long id)
+                {
+                        var categories = await _categoryService.GetParentCategoriesAsync(id);
+                        return Ok(categories);
+                }
                 [HttpGet("{id}")]
 
 
@@ -38,7 +41,8 @@ namespace backend.Controllers
                 }
 
                 [HttpPost]
-                // [Authorize(Roles =AppRole.Admin)]
+
+                 [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CategoryClaim}{ClaimValue.Add}")] 
                 public async Task<IActionResult> PostCategory(CategoryInputDTO categoryInputDTO)
                 {
                         var category = await _categoryService.CreateCategoryAsync(categoryInputDTO);
@@ -46,7 +50,7 @@ namespace backend.Controllers
                 }
 
                 [HttpPut("{id}")]
-                // [Authorize(Roles = AppRole.Admin)]
+                [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CategoryClaim}{ClaimValue.Edit}")] 
 
                 public async Task<IActionResult> PutCategory(long id, CategoryInputDTO categoryInputDTO)
                 {
@@ -55,7 +59,7 @@ namespace backend.Controllers
                 }
 
                 [HttpDelete("{id}")]
-                [Authorize(Roles = AppRole.Admin)]
+               [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CategoryClaim}{ClaimValue.Delete}")] 
                 public async Task<IActionResult> DeleteCategory(long id)
                 {
                         await _categoryService.DeleteCategoryAsync(id);
@@ -67,19 +71,38 @@ namespace backend.Controllers
                         var categories = await _categoryService.GetChildByParentIdAsync(id);
                         return Ok(categories);
                 }
-            [HttpDelete("delete-multiple")]
-public async Task<IActionResult> DeleteMultipleCategories(IDsModel model)
-{
-        if (model.ids == null || model.ids.Count == 0)
-        {
-            return BadRequest("Danh sách các ID không được trống.");
-        }
+                [HttpDelete("delete-multiple")]
+                [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CategoryClaim}{ClaimValue.Delete}")] 
+                public async Task<IActionResult> DeleteMultipleCategories(IDsModel model)
+                {
+                        if (model.ids == null || model.ids.Count == 0)
+                        {
+                                return BadRequest("Danh sách các ID không được trống.");
+                        }
 
-        await _categoryService.DeleteCategoriesAsync(model.ids);
-        return Ok("Xóa danh mục thành công.");
- 
-    
-}
+                        await _categoryService.DeleteCategoriesAsync(model.ids);
+                        return Ok("Xóa danh mục thành công.");
+
+
+                }
+                  [HttpPut("{id}/status")]
+                  [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CategoryClaim}{ClaimValue.Edit}")] 
+        public async Task<IActionResult> UpdateCategoryStatus(long id)
+        {
+            try
+            {
+                var category =await _categoryService.UpdateCategoryStatusAsync(id);
+                return Ok(category);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
 
 

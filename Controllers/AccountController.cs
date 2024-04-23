@@ -19,7 +19,7 @@ namespace backend.Controllers
         public AccountController(AccountService accountService)
         {
             _accountService = accountService;
-   
+
         }
 
         [HttpPost("signup")]
@@ -33,48 +33,59 @@ namespace backend.Controllers
             return Ok("Đăng ký thành công");
         }
 
-[HttpPost("signin")]
-public async Task<IActionResult> SignIn(SignIn signIn)
-{
-    var signInResult = await _accountService.SignInAsync(signIn);
-    if (signInResult == null)
-    {
-        throw new BadRequestException("Có lỗi xảy ra, bạn nên thử lại.");
-    }
-    
-    return Ok(new { User = signInResult.User, Token = signInResult.Token });
-}
+        [HttpPost("signin")]
+        public async Task<IActionResult> SignIn(SignIn signIn)
+        {
+            var signInResult = await _accountService.SignInAsync(signIn);
+            if (signInResult == null)
+            {
+                throw new BadRequestException("Có lỗi xảy ra, bạn nên thử lại.");
+            }
+
+            return Ok(new { User = signInResult.User, Token = signInResult.Token });
+        }
 
         [HttpGet("confirmEmail")]
         public async Task<IActionResult> ConfirmEmail(string userId, string confirmEmailToken)
-        {   
-            await _accountService.ConfirmEmailAsync(userId,confirmEmailToken);
+        {
+            await _accountService.ConfirmEmailAsync(userId, confirmEmailToken);
             return NoContent();
         }
         [HttpGet]
-        public async Task<IActionResult> GetUsers(int pageIndex=1,int pageSize=5){
-                var users= await _accountService.GetUsersAsync(pageIndex, pageSize);
-                return Ok(users);
+        public async Task<IActionResult> GetUsers(int pageIndex = 1, int pageSize = 5)
+        {
+            var users = await _accountService.GetUsersAsync(pageIndex, pageSize);
+            return Ok(users);
         }
 
-         [HttpGet("{id}")]
-         public async Task<IActionResult> GetUserById(string id){
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
             var user = await _accountService.GetUserByIdAsync(id);
             return Ok(user);
-         }
+        }
+        [HttpPost]
+        public async Task<IActionResult> PostUser(UserCreateDTO userCreateDTO ){
+            var result = await _accountService.CreateUserAsync(userCreateDTO);
+            if (result==null)
+            {
+                throw new BadRequestException("Có lỗi xảy ra, bạn nên thử lại.");
+            }
+            return Ok(new { message = "Tạo Người dùng thành công", data = result });
+        }
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(string id,UserCustomerUpdateDTO userCustomerUpdateDTO)
+        public async Task<IActionResult> UpdateUser(string id, UserCustomerUpdateDTO userCustomerUpdateDTO)
         {
-                
-                await _accountService.UpdateUserAsync(id,userCustomerUpdateDTO);
-                return Ok("Cập nhật thành công");
+
+            await _accountService.UpdateUserAsync(id, userCustomerUpdateDTO);
+            return Ok("Cập nhật thành công");
         }
         [HttpDelete("{id}")]
-        [Authorize(Roles =AppRole.Admin)]
+        [Authorize(Roles = AppRole.Admin)]
         public async Task<IActionResult> DeleteUserById(string id)
         {
-                await _accountService.DeleteUserById(id);
-                return Ok("Xóa thành công");
+            await _accountService.DeleteUserById(id);
+            return Ok("Xóa thành công");
         }
     }
 }

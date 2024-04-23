@@ -33,6 +33,10 @@ namespace backend.Repositories
         {
             return await _userManager.FindByEmailAsync(email);
         }
+        public async Task<AppUser> GetUserByUserNameAsync(string userName)
+        {
+            return await _userManager.FindByNameAsync(userName);
+        }
 
         public async Task<bool> CheckPasswordAsync(AppUser user, string password)
         {
@@ -58,6 +62,11 @@ namespace backend.Repositories
             {
                 authClaim.Add(new Claim(ClaimTypes.Role, role.ToString()));
             }
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            foreach (var claim in userClaims)
+            {
+                authClaim.Add(new Claim(claim.Type, claim.Value));
+            }
             var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:ValidIssuer"],
@@ -69,7 +78,7 @@ namespace backend.Repositories
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<AppUser> CreateUserAsync(SignUp signUp)
+        public async Task<AppUser> SignUpUserAsync(SignUp signUp)
         {
             var user = new AppUser
             {
@@ -85,7 +94,25 @@ namespace backend.Repositories
             }
             return user;
         }
-
+        public async Task<AppUser> CreateUserAsync(UserCreateDTO userCreateDTO)
+        {
+            var user = new AppUser
+            {
+                FirstName = userCreateDTO.FirstName,
+                LastName = userCreateDTO.LastName,
+                Email = userCreateDTO.Email,
+                PhoneNumber = userCreateDTO.PhoneNumber,
+                Gender = userCreateDTO.Gender,
+                Avatar = "avatar-nam.jpg",
+                UserName = userCreateDTO.Email.Split('@')[0]
+            };
+            var result = await _userManager.CreateAsync(user, userCreateDTO.Password);
+            if (!result.Succeeded)
+            {
+                return null;
+            }
+            return user;
+        }
         public async Task<bool> AddRoleToUserAsync(AppUser user, string role)
         {
             if (!await _roleManager.RoleExistsAsync(role))
@@ -94,7 +121,48 @@ namespace backend.Repositories
             }
             var result = await _userManager.AddToRoleAsync(user, role);
             return result.Succeeded;
+
+
         }
+        public async Task<bool> AddRolesToUserAsync(AppUser user, List<string> roles)
+        {
+            bool success = true;
+
+            foreach (var role in roles)
+            {
+                if (await _roleManager.RoleExistsAsync(role))
+                {
+                    var result = await _userManager.AddToRoleAsync(user, role);
+                    if (!result.Succeeded)
+                    {
+                        success = false;
+                    }
+                }
+            }
+
+            return success;
+        }
+
+
+
+        public async Task<bool> AddClaimToUserAsync(AppUser user, string claimType, List<string> claimValues)
+        {
+            // Kiểm tra xem claim đã tồn tại chưa, nếu không thì tạo mới
+            foreach (var claimValue in claimValues)
+            {
+                var existingClaims = await _userManager.GetClaimsAsync(user);
+                if (!existingClaims.Any(c => c.Type == claimType && c.Value == claimValue))
+                {
+                    var newClaim = new Claim(claimType, claimValue);
+                    await _userManager.AddClaimAsync(user, newClaim);
+                }
+            }
+
+
+            return true;
+        }
+
+
         public async Task<string> GenerateEmailConfirmationTokenAsync(AppUser user)
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -111,6 +179,37 @@ namespace backend.Repositories
 
             return await _userManager.GetRolesAsync(user);
         }
+public async Task<List<ClaimDTO>> GetUserClaimsAsync(string id)
+{
+    var user = await _userManager.FindByIdAsync(id);
+    if (user == null)
+    {
+        return null;
+    }
+
+    var userClaims = await _userManager.GetClaimsAsync(user);
+
+    // Dictionary để theo dõi các giá trị claim theo loại claim
+    var claimDictionary = new Dictionary<string, List<string>>();
+
+    foreach (var claim in userClaims)
+    {
+        if (!claimDictionary.ContainsKey(claim.Type))
+        {
+            claimDictionary.Add(claim.Type, new List<string>());
+        }
+        claimDictionary[claim.Type].Add(claim.Value);
+    }
+
+    // Chuyển đổi từ Dictionary sang danh sách ClaimDTO
+    var claimDTOs = claimDictionary.Select(pair => new ClaimDTO
+    {
+        ClaimType = pair.Key,
+        ClaimValues = pair.Value
+    }).ToList();
+
+    return claimDTOs;
+}
         public async Task<IEnumerable<AppUser>> GetUsersAsync(int pageIndex, int pageSize)
         {
             return await _userManager.Users

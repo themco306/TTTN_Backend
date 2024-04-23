@@ -15,8 +15,9 @@ namespace backend.Context
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<Gallery> Galleries {get;set;}
-        // public DbSet<ProductCategory> ProductsCategoies {get;set;}
+        public DbSet<Gallery> Galleries { get; set; }
+        // public DbSet<Cart> Carts { get; set; }
+        // public DbSet<CartItem> CartItems{ get; set; }
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
             OnBeforeSaving();
@@ -30,13 +31,10 @@ namespace backend.Context
             foreach (var entry in entries)
             {
                 var entity = (DateTimeInfo)entry.Entity;
-                var now = DateTime.UtcNow; // Lấy giờ UTC
-
+                var now = DateTime.UtcNow;
+                now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
                 if (entry.State == EntityState.Added)
                 {
-                    // Đổi giờ từ UTC sang giờ của khu vực của bạn
-                    now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
-
                     entity.CreatedAt = now;
                 }
 
@@ -49,10 +47,11 @@ namespace backend.Context
         {
             modelBuilder.Entity<Category>(e =>
             {
+
                 e.HasOne(c => c.Parent)
                 .WithMany()
                 .HasForeignKey(c => c.ParentId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
 
                 e.HasOne(fk => fk.CreatedBy)
                 .WithMany()
@@ -65,18 +64,42 @@ namespace backend.Context
                 .OnDelete(DeleteBehavior.SetNull);
             });
 
+            modelBuilder.Entity<Product>(e =>
+            {
+            //     e.HasOne(c => c.Category)
+            //    .WithMany()
+            //    .HasForeignKey(c => c.CategoryId)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
 
-            // modelBuilder.Entity<ProductCategory>(e=>{
-            //     e.HasKey(pk=>new{pk.ProductId,pk.CategoryId});
+                e.HasOne(fk => fk.CreatedBy)
+                  .WithMany()
+                  .HasForeignKey(fk => fk.CreatedById)
+                  .OnDelete(DeleteBehavior.SetNull);
 
-            //     e.HasOne(fk=>fk.Product)
-            //     .WithMany(fk=>fk.ProductCategories)
-            //     .HasForeignKey(fk=>fk.ProductId);
+                e.HasOne(fk => fk.UpdatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.UpdatedById)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
+            // modelBuilder.Entity<Cart>(e =>
+            // {
+            //     e.HasOne(c => c.User)
+            //    .WithMany()
+            //    .HasForeignKey(c => c.UserId)
+            //    .OnDelete(DeleteBehavior.Cascade);
+            // });
+            // modelBuilder.Entity<CartItem>(e =>
+            // {
+            //     e.HasOne(c => c.Cart)
+            //    .WithMany()
+            //    .HasForeignKey(c => c.CartId)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
-            //     e.HasOne(fk=>fk.Category)
-            //     .WithMany(fk=>fk.ProductCategories)
-            //     .HasForeignKey(fk=>fk.CategoryId);
+            //    e.HasOne(c => c.Product)
+            //    .WithMany()
+            //    .HasForeignKey(c => c.ProductId)
+            //    .OnDelete(DeleteBehavior.Cascade);
             // });
 
             base.OnModelCreating(modelBuilder);
