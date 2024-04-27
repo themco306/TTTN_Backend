@@ -46,7 +46,7 @@ namespace backend.Controllers
                 public async Task<IActionResult> PostCategory(CategoryInputDTO categoryInputDTO)
                 {
                         var category = await _categoryService.CreateCategoryAsync(categoryInputDTO);
-                        return CreatedAtAction("GetCategory", new { id = category.Id }, category);
+                        return CreatedAtAction("GetCategory", new { id = category.Id },new{message="Thêm thành công danh mục: "+category.Name,data=category} );
                 }
 
                 [HttpPut("{id}")]
@@ -55,7 +55,7 @@ namespace backend.Controllers
                 public async Task<IActionResult> PutCategory(long id, CategoryInputDTO categoryInputDTO)
                 {
                         var category = await _categoryService.UpdateCategoryAsync(id, categoryInputDTO);
-                        return CreatedAtAction("GetCategory", new { id }, category);
+                        return CreatedAtAction("GetCategory", new { id },new{message="Sửa thành công danh mục: "+category.Name,data=category});
                 }
 
                 [HttpDelete("{id}")]
@@ -63,7 +63,7 @@ namespace backend.Controllers
                 public async Task<IActionResult> DeleteCategory(long id)
                 {
                         await _categoryService.DeleteCategoryAsync(id);
-                        return NoContent();
+                        return Ok(new{message="Xóa thành công danh mục có ID: " + id});
                 }
                 [HttpGet("child/{id}")]
                 public async Task<IActionResult> GetChildByParentId(long id)
@@ -73,15 +73,16 @@ namespace backend.Controllers
                 }
                 [HttpDelete("delete-multiple")]
                 [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CategoryClaim}{ClaimValue.Delete}")] 
-                public async Task<IActionResult> DeleteMultipleCategories(IDsModel model)
+                public async Task<IActionResult> DeleteMultipleCategories(LongIDsModel model)
                 {
                         if (model.ids == null || model.ids.Count == 0)
                         {
-                                return BadRequest("Danh sách các ID không được trống.");
+                                return BadRequest(new{error="Danh sách các ID không được trống."});
                         }
 
                         await _categoryService.DeleteCategoriesAsync(model.ids);
-                        return Ok("Xóa danh mục thành công.");
+                        string concatenatedIds = string.Join(", ", model.ids);
+                        return Ok(new{message="Xóa thành công danh mục có ID: "+concatenatedIds});
 
 
                 }
@@ -89,19 +90,9 @@ namespace backend.Controllers
                   [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CategoryClaim}{ClaimValue.Edit}")] 
         public async Task<IActionResult> UpdateCategoryStatus(long id)
         {
-            try
-            {
+           
                 var category =await _categoryService.UpdateCategoryStatusAsync(id);
                 return Ok(category);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
         }
 
 

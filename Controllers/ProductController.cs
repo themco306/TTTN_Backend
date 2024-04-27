@@ -61,7 +61,7 @@ namespace backend.Controllers
             return NoContent();
         }
          [HttpDelete("delete-multiple")]
-                public async Task<IActionResult> DeleteMultipleCategories(IDsModel model)
+                public async Task<IActionResult> DeleteMultipleCategories(LongIDsModel model)
                 {
                         if (model.ids == null || model.ids.Count == 0)
                         {

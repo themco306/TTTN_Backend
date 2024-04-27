@@ -42,7 +42,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGallery(long id,[FromForm] IDsModel model,[FromForm] List<IFormFile> images)
+        public async Task<IActionResult> PutGallery(long id,[FromForm] LongIDsModel model,[FromForm] List<IFormFile> images)
         {
             List<long> ids = model.ids ?? new List<long>();
     await _galleryService.UpdateGalleryImagesAsync(id, ids, images);

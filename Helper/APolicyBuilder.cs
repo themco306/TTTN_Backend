@@ -28,12 +28,33 @@ namespace backend.Helper
                          context.User.HasClaim(ClaimType.CategoryClaim, claimValue);
                     });
                 });
+                options.AddPolicy(AppRole.SuperAdmin +ClaimType.ProductClaim + claimValue, policy =>
+               {
+                   policy.RequireAssertion(context =>
+                    {
+                        if (context.User.IsInRole(AppRole.SuperAdmin))
+                        {
+                            return true;
+                        }
+                        return context.User.IsInRole(AppRole.Admin) &&
+                         context.User.HasClaim(ClaimType.ProductClaim, claimValue);
+                    });
+               });
+                               options.AddPolicy(AppRole.SuperAdmin +ClaimType.UserClaim + claimValue, policy =>
+               {
+                   policy.RequireAssertion(context =>
+                    {
+                        if (context.User.IsInRole(AppRole.SuperAdmin))
+                        {
+                            return true;
+                        }
+                        return context.User.IsInRole(AppRole.Admin) &&
+                         context.User.HasClaim(ClaimType.ProductClaim, claimValue);
+                    });
+               });
             }
 
-            //     options.AddPolicy(ClaimType.ProductClaim + claimValue, policy =>
-            //    {
-            //        policy.RequireClaim(ClaimType.ProductClaim, claimValue);
-            //    });
+
 
 
         }

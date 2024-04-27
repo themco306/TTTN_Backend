@@ -262,5 +262,11 @@ public async Task<List<ClaimDTO>> GetUserClaimsAsync(string id)
                 return false; // Xác nhận không thành công
             }
         }
+        public async Task<List<string?>> GetAllRolesAsync()
+{
+    return await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+}
+
+        
     }
 }

@@ -49,6 +49,9 @@ namespace backend.Helper
             {
                 status = HttpStatusCode.Unauthorized;
             }
+            else if(ex is ForbiddenAccessException){
+                status = HttpStatusCode.Forbidden;
+            }
             else
             {
                 status = HttpStatusCode.InternalServerError;

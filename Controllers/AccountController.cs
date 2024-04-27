@@ -14,11 +14,13 @@ namespace backend.Controllers
     public class AccountController : ControllerBase
     {
         private readonly AccountService _accountService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public AccountController(AccountService accountService)
+        public AccountController(AccountService accountService, IHttpContextAccessor httpContextAccessor)
         {
             _accountService = accountService;
+            _httpContextAccessor = httpContextAccessor;
 
         }
 
@@ -57,17 +59,25 @@ namespace backend.Controllers
             var users = await _accountService.GetUsersAsync(pageIndex, pageSize);
             return Ok(users);
         }
+                [HttpGet("roles")]
+        public async Task<IActionResult> GetRoles()
+        {
+            var roles = await _accountService.GetRolesWithTempIdsAsync();
+            return Ok(roles);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(string id)
         {
             var user = await _accountService.GetUserByIdAsync(id);
             return Ok(user);
+
         }
         [HttpPost]
-        public async Task<IActionResult> PostUser(UserCreateDTO userCreateDTO ){
+        public async Task<IActionResult> PostUser(UserCreateDTO userCreateDTO)
+        {
             var result = await _accountService.CreateUserAsync(userCreateDTO);
-            if (result==null)
+            if (result == null)
             {
                 throw new BadRequestException("Có lỗi xảy ra, bạn nên thử lại.");
             }
@@ -81,10 +91,42 @@ namespace backend.Controllers
             return Ok("Cập nhật thành công");
         }
         [HttpDelete("{id}")]
-        [Authorize(Roles = AppRole.Admin)]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Edit}")]
         public async Task<IActionResult> DeleteUserById(string id)
         {
+            string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
+            if (userEmail == null)
+            {
+                return Unauthorized("Có lỗi xãy ra vui lòng đăng nhập lại");
+            }
+            var checkMatches = await _accountService.CheckUserIdMatchesEmail(id, userEmail);
+            if (checkMatches)
+            {
+                return BadRequest("Bạn không thể xóa chính mình");
+            }
             await _accountService.DeleteUserById(id);
+            return Ok("Xóa thành công");
+        }
+        [HttpDelete("delete-multiple")]
+        [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Delete}")] 
+        public async Task<IActionResult> DeleteMultipleUsers(StringIDsModel iDsModel)
+        {
+            string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
+            if (userEmail == null)
+            {
+                return Unauthorized("Có lỗi xãy ra vui lòng đăng nhập lại");
+            }
+            foreach (var id in iDsModel.ids)
+            {
+            var checkMatches = await _accountService.CheckUserIdMatchesEmail(id, userEmail);
+            if (checkMatches)
+            {
+                return BadRequest("Bạn không thể xóa chính mình");
+            }
+            }
+            await _accountService.DeleteUsersById(iDsModel.ids);
             return Ok("Xóa thành công");
         }
     }

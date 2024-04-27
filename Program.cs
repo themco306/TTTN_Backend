@@ -53,6 +53,7 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddIdentity<AppUser,IdentityRole>(options=>{
     options.Password.RequiredLength = 7;
     options.Password.RequireDigit = true;

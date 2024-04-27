@@ -11,6 +11,7 @@ namespace backend.Repositories.IRepositories
   public interface IAccountRepository
   {
     Task<bool> AddRolesToUserAsync(AppUser user, List<string> roles);
+    Task<List<string?>> GetAllRolesAsync();
     Task<AppUser> SignUpUserAsync(SignUp signUp);
     Task<AppUser> CreateUserAsync(UserCreateDTO userCreateDTO);
     Task<bool> AddRoleToUserAsync(AppUser user, string role);
