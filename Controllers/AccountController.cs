@@ -32,7 +32,7 @@ namespace backend.Controllers
             {
                 throw new BadRequestException("Có lỗi xảy ra, bạn nên thử lại.");
             }
-            return Ok("Đăng ký thành công");
+            return Ok(new { message ="Đăng ký thành công"});
         }
 
         [HttpPost("signin")]
@@ -74,6 +74,7 @@ namespace backend.Controllers
 
         }
         [HttpPost]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Add}")]
         public async Task<IActionResult> PostUser(UserCreateDTO userCreateDTO)
         {
             var result = await _accountService.CreateUserAsync(userCreateDTO);
@@ -84,29 +85,59 @@ namespace backend.Controllers
             return Ok(new { message = "Tạo Người dùng thành công", data = result });
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(string id, UserCustomerUpdateDTO userCustomerUpdateDTO)
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Edit}")]
+        public async Task<IActionResult> UpdateUser(string id,[FromForm] UserUpdateByAdminDTO updateByAdminDTO,IFormFile? avatar)
         {
 
-            await _accountService.UpdateUserAsync(id, userCustomerUpdateDTO);
+            await _accountService.UpdateUserByAdminAsync(id, updateByAdminDTO,avatar);
+            return Ok(new { message ="Cập nhật thành công"});
+        }
+        [HttpPut("my/{id}")]
+        [Authorize(Roles = AppRole.SuperAdmin)]
+        [Authorize(Roles = AppRole.Admin)]
+        public async Task<IActionResult> UpdateMyUser(string id,[FromForm] MyUserUpdateDTO userUpdateDTO,IFormFile? avatar)
+        {
+                        string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
+            if (userEmail == null)
+            {
+                return Unauthorized(new { error ="Có lỗi xãy ra vui lòng đăng nhập lại"});
+            }
+            var checkMatches = await _accountService.CheckUserIdMatchesEmail(id, userEmail);
+            if (!checkMatches)
+            {
+                return BadRequest(new { error ="Bạn không thể sửa người khác"});
+            }
+
+            await _accountService.UpdateMyUserAsync(id, userUpdateDTO,avatar);
+            return Ok(new { message ="Cập nhật thành công"});
+
+        }
+        [HttpPut("statusEmail/{id}")]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Edit}")]
+        public async Task<IActionResult> ChangeStatusEmailUser(string id)
+        {
+
+            await _accountService.ChangeStatusUserAsync(id);
             return Ok("Cập nhật thành công");
         }
         [HttpDelete("{id}")]
-        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Edit}")]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Delete}")]
         public async Task<IActionResult> DeleteUserById(string id)
         {
             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
             if (userEmail == null)
             {
-                return Unauthorized("Có lỗi xãy ra vui lòng đăng nhập lại");
+                return Unauthorized(new { error ="Có lỗi xãy ra vui lòng đăng nhập lại"});
             }
             var checkMatches = await _accountService.CheckUserIdMatchesEmail(id, userEmail);
             if (checkMatches)
             {
-                return BadRequest("Bạn không thể xóa chính mình");
+                return BadRequest(new { error ="Bạn không thể xóa chính mình"});
             }
             await _accountService.DeleteUserById(id);
-            return Ok("Xóa thành công");
+            return Ok(new { message ="Xóa thành công"});
         }
         [HttpDelete("delete-multiple")]
         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Delete}")] 
@@ -116,18 +147,18 @@ namespace backend.Controllers
             var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
             if (userEmail == null)
             {
-                return Unauthorized("Có lỗi xãy ra vui lòng đăng nhập lại");
+                return Unauthorized(new { error ="Có lỗi xãy ra vui lòng đăng nhập lại"});
             }
             foreach (var id in iDsModel.ids)
             {
             var checkMatches = await _accountService.CheckUserIdMatchesEmail(id, userEmail);
             if (checkMatches)
             {
-                return BadRequest("Bạn không thể xóa chính mình");
+                return BadRequest(new { error ="Bạn không thể xóa chính mình"});
             }
             }
             await _accountService.DeleteUsersById(iDsModel.ids);
-            return Ok("Xóa thành công");
+            return Ok(new { message ="Xóa thành công"});
         }
     }
 }

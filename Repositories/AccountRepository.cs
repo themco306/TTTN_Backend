@@ -103,7 +103,7 @@ namespace backend.Repositories
                 Email = userCreateDTO.Email,
                 PhoneNumber = userCreateDTO.PhoneNumber,
                 Gender = userCreateDTO.Gender,
-                Avatar = "avatar-nam.jpg",
+                Avatar = userCreateDTO.Gender == true ? "avatar-nam.jpg" : "avatar-nu.jpg",
                 UserName = userCreateDTO.Email.Split('@')[0]
             };
             var result = await _userManager.CreateAsync(user, userCreateDTO.Password);
@@ -143,10 +143,46 @@ namespace backend.Repositories
             return success;
         }
 
-
-
-        public async Task<bool> AddClaimToUserAsync(AppUser user, string claimType, List<string> claimValues)
+        public async Task<bool> UpdateUserRolesAsync(string userId, List<string> roles)
         {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return false;
+            }
+
+            // Xóa các vai trò hiện tại của người dùng
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+
+            // Thêm các vai trò mới cho người dùng
+            var result = await _userManager.AddToRolesAsync(user, roles);
+
+            return result.Succeeded;
+        }
+        public async Task<bool> DeleteClaimsAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return false;
+            }
+
+            // Xóa các claim hiện tại của người dùng
+            var currentClaims = await _userManager.GetClaimsAsync(user);
+            foreach (var claim in currentClaims)
+            {
+                await _userManager.RemoveClaimAsync(user, claim);
+            }
+            return true;
+        }
+        public async Task<bool> AddClaimToUserAsync(string userId, string claimType, List<string> claimValues)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return false;
+            }
             // Kiểm tra xem claim đã tồn tại chưa, nếu không thì tạo mới
             foreach (var claimValue in claimValues)
             {
@@ -179,37 +215,37 @@ namespace backend.Repositories
 
             return await _userManager.GetRolesAsync(user);
         }
-public async Task<List<ClaimDTO>> GetUserClaimsAsync(string id)
-{
-    var user = await _userManager.FindByIdAsync(id);
-    if (user == null)
-    {
-        return null;
-    }
-
-    var userClaims = await _userManager.GetClaimsAsync(user);
-
-    // Dictionary để theo dõi các giá trị claim theo loại claim
-    var claimDictionary = new Dictionary<string, List<string>>();
-
-    foreach (var claim in userClaims)
-    {
-        if (!claimDictionary.ContainsKey(claim.Type))
+        public async Task<List<ClaimDTO>> GetUserClaimsAsync(string id)
         {
-            claimDictionary.Add(claim.Type, new List<string>());
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            var userClaims = await _userManager.GetClaimsAsync(user);
+
+            // Dictionary để theo dõi các giá trị claim theo loại claim
+            var claimDictionary = new Dictionary<string, List<string>>();
+
+            foreach (var claim in userClaims)
+            {
+                if (!claimDictionary.ContainsKey(claim.Type))
+                {
+                    claimDictionary.Add(claim.Type, new List<string>());
+                }
+                claimDictionary[claim.Type].Add(claim.Value);
+            }
+
+            // Chuyển đổi từ Dictionary sang danh sách ClaimDTO
+            var claimDTOs = claimDictionary.Select(pair => new ClaimDTO
+            {
+                ClaimType = pair.Key,
+                ClaimValues = pair.Value
+            }).ToList();
+
+            return claimDTOs;
         }
-        claimDictionary[claim.Type].Add(claim.Value);
-    }
-
-    // Chuyển đổi từ Dictionary sang danh sách ClaimDTO
-    var claimDTOs = claimDictionary.Select(pair => new ClaimDTO
-    {
-        ClaimType = pair.Key,
-        ClaimValues = pair.Value
-    }).ToList();
-
-    return claimDTOs;
-}
         public async Task<IEnumerable<AppUser>> GetUsersAsync(int pageIndex, int pageSize)
         {
             return await _userManager.Users
@@ -227,7 +263,15 @@ public async Task<List<ClaimDTO>> GetUserClaimsAsync(string id)
             }
             return user;
         }
-
+        public async Task<string> GeneratePasswordResetTokenAsync(AppUser user)
+        {
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+        public async Task<bool> ResetPasswordAsync(AppUser user, string resetToken, string newPassword)
+        {
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+            return result.Succeeded;
+        }
         public async Task<bool> UpdateUserAsync(string id, AppUser user)
         {
 
@@ -263,10 +307,10 @@ public async Task<List<ClaimDTO>> GetUserClaimsAsync(string id)
             }
         }
         public async Task<List<string?>> GetAllRolesAsync()
-{
-    return await _roleManager.Roles.Select(r => r.Name).ToListAsync();
-}
+        {
+            return await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+        }
 
-        
+
     }
 }

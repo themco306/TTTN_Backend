@@ -25,7 +25,9 @@ namespace backend.Repositories
 
         public async Task<List<Category>> GetAllAsync()
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories
+            .OrderByDescending(c=>c.UpdatedAt)
+            .ToListAsync();
         }
 
         public async Task AddAsync(Category category)

@@ -12,6 +12,7 @@ using backend.Helper;
 using backend.Models;
 using backend.Repositories.IRepositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using UnauthorizedAccessException = backend.Exceptions.UnauthorizedAccessException;
@@ -22,17 +23,19 @@ namespace backend.Services
     {
         private readonly IAccountRepository _accountRepository;
         private readonly EmailService _emailService;
+        private readonly GalleryService _galleryService;
         private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IActionContextAccessor _actionContextAccessor;
         private readonly IMapper _mapper;
 
-        public AccountService(IAccountRepository accountRepository, EmailService emailService, IUrlHelperFactory urlHelperFactory, IActionContextAccessor actionContextAccessor, IMapper mapper)
+        public AccountService(IAccountRepository accountRepository, EmailService emailService, IUrlHelperFactory urlHelperFactory, IActionContextAccessor actionContextAccessor, IMapper mapper, GalleryService galleryService)
         {
             _accountRepository = accountRepository;
             _emailService = emailService;
             _urlHelperFactory = urlHelperFactory;
             _actionContextAccessor = actionContextAccessor;
             _mapper = mapper;
+            _galleryService = galleryService;
         }
         public async Task<SignInResultDTO> SignInAsync(SignIn signIn)
         {
@@ -193,7 +196,7 @@ namespace backend.Services
             }
             var userDTO = _mapper.Map<UserGetDTO>(user);
             userDTO.Roles = await _accountRepository.GetUserRolesAsync(userDTO.Id);
-            userDTO.Claims=await _accountRepository.GetUserClaimsAsync(userDTO.Id);
+            userDTO.Claims = await _accountRepository.GetUserClaimsAsync(userDTO.Id);
             return userDTO;
         }
         public async Task<bool> CheckUserIdMatchesEmail(string id, string email)
@@ -205,24 +208,73 @@ namespace backend.Services
             }
             return false;
         }
-        public async Task<bool> UpdateUserAsync(string userId, UserCustomerUpdateDTO userUpdateDto)
+        public async Task<bool> ChangeStatusUserAsync(string id)
+        {
+            var user = await _accountRepository.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                throw new NotFoundException("Người dùng không tồn tại");
+            }
+            user.EmailConfirmed = user.EmailConfirmed==true?false:true;
+             var updated = await _accountRepository.UpdateUserAsync(id, user);
+            if (!updated)
+            {
+                throw new BadRequestException("Có lỗi xảy ra");
+            }
+            return true;
+        }
+        public async Task<bool> UpdateUserByAdminAsync(string userId, UserUpdateByAdminDTO userUpdateDto, IFormFile avatar)
         {
             var user = await _accountRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
-
-            // Cập nhật thông tin người dùng với dữ liệu từ DTO
+            if (user.UserName != userUpdateDto.UserName)
+            {
+                var existingUsername = await _accountRepository.GetUserByUserNameAsync(userUpdateDto.UserName);
+                if (existingUsername != null)
+                {
+                    throw new NotFoundException("Tên này đã được dùng");
+                }
+            }
+             if(user.Email!=userUpdateDto.Email){
+                var existingUserEmail = await _accountRepository.GetUserByEmailAsync(userUpdateDto.Email);
+            if (existingUserEmail != null)
+            {
+                throw new Exception("Email này đã được đăng ký");
+            }else{
+                user.EmailConfirmed=false;
+            }
+            }
+            if (userUpdateDto.Password != null)
+            {
+                var resetToken = await _accountRepository.GeneratePasswordResetTokenAsync(user);
+                var result = await _accountRepository.ResetPasswordAsync(user, resetToken, userUpdateDto.Password);
+                if (!result)
+                {
+                    throw new Exception("Không thể cập nhật mật khẩu");
+                }
+            }
             user.FirstName = userUpdateDto.FirstName;
             user.LastName = userUpdateDto.LastName;
+            user.UserName = userUpdateDto.UserName;
             user.Email = userUpdateDto.Email;
             user.PhoneNumber = userUpdateDto.PhoneNumber;
-
-            var isConfirmed = await _accountRepository.CheckEmailConfirmedAsync(user);
-            if (!isConfirmed)
+            user.Gender = userUpdateDto.Gender;
+            if (avatar != null)
             {
-                throw new BadRequestException("Bạn cần xác thực Email để thực hiện.");
+                if (user.Avatar != "avatar-nam.jpg" && user.Avatar != "avatar-nu.jpg")
+                {
+                    await _galleryService.DeleteImageAsync(user.Avatar, "users");
+                }
+                var AvatarUpload = await _galleryService.UploadImage(userUpdateDto.LastName, avatar, "users");
+                user.Avatar = AvatarUpload;
+            }
+            else if (user.Avatar == "avatar-nam.jpg" || user.Avatar == "avatar-nu.jpg")
+            {
+                user.Avatar = userUpdateDto.Gender == true ? "avatar-nam.jpg" : "avatar-nu.jpg";
+
             }
 
             var updated = await _accountRepository.UpdateUserAsync(userId, user);
@@ -230,6 +282,93 @@ namespace backend.Services
             {
                 throw new BadRequestException("Có lỗi xảy ra");
             }
+            if (userUpdateDto.Roles.Count > 0)
+            {
+                var result = await _accountRepository.UpdateUserRolesAsync(userId, userUpdateDto.Roles);
+                if (!result)
+                {
+                    throw new Exception("Quyền này không tồn tại");
+                }
+            }
+            else
+            {
+                var result = await _accountRepository.UpdateUserRolesAsync(userId, [AppRole.Customer]);
+                if (!result)
+                {
+                    throw new Exception("Quyền này không tồn tại");
+                }
+            }
+            var deleteClaims = await _accountRepository.DeleteClaimsAsync(userId);
+            if (deleteClaims)
+            {
+                foreach (var claim in userUpdateDto.Claims)
+                {
+                    await _accountRepository.AddClaimToUserAsync(userId, claim.ClaimType, claim.ClaimValues);
+                }
+            }
+
+            return true;
+        }
+         public async Task<bool> UpdateMyUserAsync(string userId, MyUserUpdateDTO userUpdateDto, IFormFile avatar)
+        {
+            var user = await _accountRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new NotFoundException("Người dùng không tồn tại");
+            }
+            if (user.UserName != userUpdateDto.UserName)
+            {
+                var existingUsername = await _accountRepository.GetUserByUserNameAsync(userUpdateDto.UserName);
+                if (existingUsername != null)
+                {
+                    throw new NotFoundException("Tên này đã được dùng");
+                }
+            }
+            if(user.Email!=userUpdateDto.Email){
+                var existingUserEmail = await _accountRepository.GetUserByEmailAsync(userUpdateDto.Email);
+            if (existingUserEmail != null)
+            {
+                throw new Exception("Email này đã được đăng ký");
+            }else{
+                user.EmailConfirmed=false;
+            }
+            }
+            if (userUpdateDto.Password != null)
+            {
+                var resetToken = await _accountRepository.GeneratePasswordResetTokenAsync(user);
+                var result = await _accountRepository.ResetPasswordAsync(user, resetToken, userUpdateDto.Password);
+                if (!result)
+                {
+                    throw new Exception("Không thể cập nhật mật khẩu");
+                }
+            }
+            user.FirstName = userUpdateDto.FirstName;
+            user.LastName = userUpdateDto.LastName;
+            user.UserName = userUpdateDto.UserName;
+            user.Email = userUpdateDto.Email;
+            user.PhoneNumber = userUpdateDto.PhoneNumber;
+            user.Gender = userUpdateDto.Gender;
+            if (avatar != null)
+            {
+                if (user.Avatar != "avatar-nam.jpg" && user.Avatar != "avatar-nu.jpg")
+                {
+                    await _galleryService.DeleteImageAsync(user.Avatar, "users");
+                }
+                var AvatarUpload = await _galleryService.UploadImage(userUpdateDto.LastName, avatar, "users");
+                user.Avatar = AvatarUpload;
+            }
+            else if (user.Avatar == "avatar-nam.jpg" || user.Avatar == "avatar-nu.jpg")
+            {
+                user.Avatar = userUpdateDto.Gender == true ? "avatar-nam.jpg" : "avatar-nu.jpg";
+
+            }
+
+            var updated = await _accountRepository.UpdateUserAsync(userId, user);
+            if (!updated)
+            {
+                throw new BadRequestException("Có lỗi xảy ra");
+            }
+
             return true;
         }
 
@@ -249,23 +388,38 @@ namespace backend.Services
         public async Task DeleteUserById(string id)
         {
 
-
+            var user = await _accountRepository.GetUserByIdAsync(id);
+            if (user != null)
+            {
+                if (user.Avatar != "avatar-nam.jpg" && user.Avatar != "avatar-nu.jpg")
+                {
+                    await _galleryService.DeleteImageAsync(user.Avatar, "users");
+                }
+            }
             var deleted = await _accountRepository.DeleteUserByIdAsync(id);
+
             if (!deleted)
             {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
         }
-                public async Task DeleteUsersById(List<string> ids)
+        public async Task DeleteUsersById(List<string> ids)
         {
 
-            foreach (var id in ids){
-                 var existing = await _accountRepository.GetUserByIdAsync(id);
-                 if(existing != null){
+            foreach (var id in ids)
+            {
+                var existing = await _accountRepository.GetUserByIdAsync(id);
+                if (existing != null)
+                {
+                    if (existing.Avatar != "avatar-nam.jpg" && existing.Avatar != "avatar-nu.jpg")
+                    {
+                        await _galleryService.DeleteImageAsync(existing.Avatar, "users");
+                    }
+
                     await _accountRepository.DeleteUserByIdAsync(id);
-                 }
+                }
             }
-         
+
         }
 
         public async Task<UserGetDTO> CreateUserAsync(UserCreateDTO userCreateDto)
@@ -298,18 +452,18 @@ namespace backend.Services
             }
             foreach (var claim in userCreateDto.Claims)
             {
-                await _accountRepository.AddClaimToUserAsync(userCreated, claim.ClaimType, claim.ClaimValues);
+                await _accountRepository.AddClaimToUserAsync(userCreated.Id, claim.ClaimType, claim.ClaimValues);
             }
 
 
             return _mapper.Map<UserGetDTO>(userCreated);
         }
-public async Task<List<string?>> GetRolesWithTempIdsAsync()
-{
-    var roles = await _accountRepository.GetAllRolesAsync();
-    
-    return roles;
-}
+        public async Task<List<string?>> GetRolesWithTempIdsAsync()
+        {
+            var roles = await _accountRepository.GetAllRolesAsync();
+
+            return roles;
+        }
 
 
     }

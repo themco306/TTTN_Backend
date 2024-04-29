@@ -29,7 +29,7 @@ namespace backend.Controllers
             try
             {
                 await _galleryService.CreateGalleryAsync(productId, images);
-                return Ok("Images added successfully.");
+                return Ok(new { message ="Images added successfully."});
             }
             catch (NotFoundException ex)
             {

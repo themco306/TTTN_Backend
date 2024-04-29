@@ -42,7 +42,7 @@ namespace backend.Controllers
         public async Task<IActionResult> PostProduct(ProductInputDTO productInputDTO)
         {
             var product = await _productService.CreateProductAsync(productInputDTO);
-            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+            return CreatedAtAction("GetProduct", new { id = product.Id },new{message="Thêm sản phẩm thành công.", data= product});
         }
 
         [HttpPut("{id}")]
@@ -50,7 +50,7 @@ namespace backend.Controllers
         public async Task<IActionResult> PutProduct(long id, ProductInputDTO productInputDTO)
         {
             var product = await _productService.UpdateProductAsync(id, productInputDTO);
-             return CreatedAtAction("GetProduct", new { id }, product);
+             return CreatedAtAction("GetProduct", new { id },new{message="Sửa sản phẩm thành công.", data= product});
         }
 
         [HttpDelete("{id}")]
@@ -65,11 +65,11 @@ namespace backend.Controllers
                 {
                         if (model.ids == null || model.ids.Count == 0)
                         {
-                                return BadRequest("Danh sách các ID không được trống.");
+                                return BadRequest(new { error ="Danh sách các ID không được trống."});
                         }
 
                         await _productService.DeleteProductsAsync(model.ids);
-                        return Ok("Xóa danh mục thành công.");
+                        return Ok(new { message ="Xóa danh mục thành công."});
 
 
                 }

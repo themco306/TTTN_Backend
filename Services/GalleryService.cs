@@ -64,32 +64,28 @@ namespace backend.Services
 
             foreach (var image in newImages)
             {
-                var uploadedImageNames = await UploadImages(product.Slug, image);
-                foreach (var imageName in uploadedImageNames)
-                {
+                var uploadedImageName = await UploadImage(product.Slug, image);
                     var gallery = new Gallery
                     {
                         ProductId = productId,
-                        ImageName = imageName,
-                        ImagePath = $"/images/products/{imageName}",
+                        ImageName = uploadedImageName,
+                        ImagePath = $"/images/products/{uploadedImageName}",
                         Placeholder = "/images/defaultimage/productdefaultimage.jpg",
                         Order = order 
                     };
 
                     await _galleryRepository.AddAsync(gallery);
                     galleries.Add(gallery);
-                    order++; // Tăng order sau mỗi lần tạo gallery
-                }
+                    order++;
             }
 
             return galleries;
         }
 
 
-        public async Task<List<string>> UploadImages(string productSlug, IFormFile imageFile)
+        public async Task<string> UploadImage(string productSlug, IFormFile imageFile,string  type="products")
         {
-            var uploadedFileNames = new List<string>();
-            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/images/products");
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/images/"+type);
             if (!Directory.Exists(uploadPath))
             {
                 Directory.CreateDirectory(uploadPath);
@@ -100,9 +96,8 @@ namespace backend.Services
             {
                 await image.SaveAsJpegAsync(filePath);
             }
-            uploadedFileNames.Add(fileName);
 
-            return uploadedFileNames;
+            return fileName;
         }
 
 public async Task UpdateGalleryImagesAsync(long productId, List<long> ids, List<IFormFile> newImages)
@@ -156,7 +151,7 @@ public async Task UpdateGalleryImagesAsync(long productId, List<long> ids, List<
             await _galleryRepository.DeleteAsync(id);
         }
 
-        public async Task DeleteImageAsync(string imageName)
+        public async Task DeleteImageAsync(string imageName,string type="products")
         {
             // Kiểm tra nếu tên hình ảnh không hợp lệ
             if (string.IsNullOrEmpty(imageName))
@@ -165,7 +160,7 @@ public async Task UpdateGalleryImagesAsync(long productId, List<long> ids, List<
             }
 
             // Đường dẫn đến thư mục chứa hình ảnh
-            var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products", imageName);
+            var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/"+type, imageName);
 
             // Kiểm tra nếu tệp tin hình ảnh tồn tạidot
             if (File.Exists(imagePath))

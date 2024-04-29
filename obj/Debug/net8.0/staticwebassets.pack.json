@@ -1,20 +1,16 @@
 {
   "Files": [
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\hhhhhh_638493082652961069.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\hhhhhh_638493082652961069.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffff_638500243738310508.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\fffff_638500243738310508.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\jjjjjjj_638493014277479707.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\jjjjjjj_638493014277479707.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffff_638500243738574996.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\fffff_638500243738574996.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\jjjjjjj_638493014278211640.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\jjjjjjj_638493014278211640.jpg"
-    },
-    {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\jjjjjjj_638493014278699995.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\jjjjjjj_638493014278699995.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638500090823282291.jpg",
+      "PackagePath": "staticwebassets\\images\\users\\User_638500090823282291.jpg"
     },
     {
       "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nam.jpg",
@@ -23,6 +19,10 @@
     {
       "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nu.jpg",
       "PackagePath": "staticwebassets\\images\\users\\avatar-nu.jpg"
+    },
+    {
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\khanh_638499354592724816.jpg",
+      "PackagePath": "staticwebassets\\images\\users\\khanh_638499354592724816.jpg"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.backend.Microsoft.AspNetCore.StaticWebAssets.props",
