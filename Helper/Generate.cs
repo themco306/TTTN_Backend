@@ -25,6 +25,16 @@ namespace backend.Helper
 
             return slug;
         }
+public string GenerateOrderCode()
+        {
+            // Lấy thời gian hiện tại
+            DateTime currentTime = DateTime.Now;
+
+            // Tạo mã đơn hàng từ ngày, tháng, năm, giờ, phút và giây
+            string orderCode = currentTime.ToString("yyyyMMddHHmmss");
+
+            return orderCode;
+        }
 
        private string RemoveAccent(string text)
 {

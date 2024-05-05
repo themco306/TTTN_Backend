@@ -106,6 +106,16 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
 builder.Services.AddScoped<GalleryService>();
 
+builder.Services.AddScoped<ISilderRepository, SilderRepository>();
+builder.Services.AddScoped<SliderService>();
+
+builder.Services.AddScoped<IOrderInfoRepository, OrderInfoRepository>();
+builder.Services.AddScoped<OrderInfoService>();
+
+builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<OrderService>();
 
 var app = builder.Build();
 app.UseCors(Example07JSDomain);

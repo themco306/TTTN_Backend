@@ -24,7 +24,7 @@ namespace backend.Repositories
         .Include(c=>c.UpdatedBy)
         .Include(p => p.Category)
         .Include(p => p.Galleries)
-        .FirstAsync(p => p.Id == id);
+        .FirstOrDefaultAsync(p => p.Id == id);
         }
 
 public async Task<List<Product>> GetAllAsync()

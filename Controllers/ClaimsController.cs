@@ -13,25 +13,19 @@ namespace backend.Controllers
             [HttpGet]
         public ActionResult GetClaims()
         {
-            var claims = new List<ClaimDTO>
+            var claimTypes = new[] { ClaimType.CategoryClaim, ClaimType.ProductClaim, ClaimType.UserClaim, ClaimType.SliderClaim };
+            var claimValues = new[] { ClaimValue.Show, ClaimValue.Add, ClaimValue.Delete, ClaimValue.Edit };
+
+            var claims = new List<ClaimDTO>();
+
+            foreach (var claimType in claimTypes)
             {
-                new ClaimDTO
+                claims.Add(new ClaimDTO
                 {
-                    ClaimType = ClaimType.CategoryClaim,
-                    ClaimValues = new List<string> {ClaimValue.Show, ClaimValue.Add, ClaimValue.Delete,ClaimValue.Edit }
-                },
-                new ClaimDTO
-                {
-                    ClaimType = ClaimType.ProductClaim,
-                    ClaimValues = new List<string> {ClaimValue.Show, ClaimValue.Add, ClaimValue.Delete,ClaimValue.Edit }
-                },
-                                new ClaimDTO
-                {
-                    ClaimType = ClaimType.UserClaim,
-                    ClaimValues = new List<string> {ClaimValue.Show, ClaimValue.Add, ClaimValue.Delete,ClaimValue.Edit }
-                },
-                
-            };
+                    ClaimType = claimType,
+                    ClaimValues = new List<string>(claimValues)
+                });
+            }
 
             return Ok(claims);
         }

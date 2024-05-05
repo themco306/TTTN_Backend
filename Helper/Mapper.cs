@@ -36,6 +36,37 @@ namespace backend.Helper
 
 
             CreateMap<AppUser, UserGetDTO>();
+
+            CreateMap<Slider,SliderGetDTO>();
+
+CreateMap<Order, OrderGetDTO>()
+    .ForMember(dest => dest.User, opt => opt.MapFrom(src => new UserGetShortDTO 
+    {
+        FirstName = src.User.FirstName,
+        LastName = src.User.LastName,
+        Id = src.User.Id
+    }))
+    .ForMember(dest => dest.UpdatedBy, opt => opt.MapFrom(src => new UserGetShortDTO 
+    {
+        FirstName = src.UpdatedBy.FirstName,
+        LastName = src.UpdatedBy.LastName,
+        Id = src.UpdatedBy.Id
+    }))
+        .ForMember(dest => dest.OrderInfo, opt => opt.MapFrom(src => new OrderInfo 
+    {
+        // Điền các thông tin của OrderInfo tùy ý
+        Id=src.OrderInfo.Id,
+        UserId=src.OrderInfo.UserId,
+        DeliveryAddress = src.OrderInfo.DeliveryAddress,
+        DeliveryName = src.OrderInfo.DeliveryName,
+        DeliveryPhone = src.OrderInfo.DeliveryPhone,
+        // Nếu cần thêm các thông tin khác của OrderInfo, bạn có thể thực hiện tương tự
+    }));
+
+
+            ;
+
+
         }
     }
 }

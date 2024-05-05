@@ -47,6 +47,13 @@ namespace backend.DTOs
         public IEnumerable<string> Roles { get; set; }
         public List<ClaimDTO> Claims { get; set; }
     }
+    public class UserGetShortDTO
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Id { get; set; }
+       
+    }
 
 
 

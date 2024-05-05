@@ -14,45 +14,26 @@ namespace backend.Helper
 
             var claimValues = new[] { ClaimValue.Add, ClaimValue.Edit, ClaimValue.Show, ClaimValue.Delete };
 
-            foreach (var claimValue in claimValues)
+            var claimTypes = new[] { ClaimType.ProductClaim, ClaimType.CategoryClaim, ClaimType.UserClaim, ClaimType.SliderClaim };
+            foreach (var claimType in claimTypes)
             {
-                options.AddPolicy(AppRole.SuperAdmin + ClaimType.CategoryClaim + claimValue, policy =>
+                foreach (var claimValue in claimValues)
                 {
-                    policy.RequireAssertion(context =>
+                    options.AddPolicy(AppRole.SuperAdmin + claimType + claimValue, policy =>
                     {
-                        if (context.User.IsInRole(AppRole.SuperAdmin))
+                        policy.RequireAssertion(context =>
                         {
-                            return true;
-                        }
-                        return context.User.IsInRole(AppRole.Admin) &&
-                         context.User.HasClaim(ClaimType.CategoryClaim, claimValue);
+                            if (context.User.IsInRole(AppRole.SuperAdmin))
+                            {
+                                return true;
+                            }
+                            return context.User.IsInRole(AppRole.Admin) &&
+                             context.User.HasClaim(claimType, claimValue);
+                        });
                     });
-                });
-                options.AddPolicy(AppRole.SuperAdmin +ClaimType.ProductClaim + claimValue, policy =>
-               {
-                   policy.RequireAssertion(context =>
-                    {
-                        if (context.User.IsInRole(AppRole.SuperAdmin))
-                        {
-                            return true;
-                        }
-                        return context.User.IsInRole(AppRole.Admin) &&
-                         context.User.HasClaim(ClaimType.ProductClaim, claimValue);
-                    });
-               });
-                               options.AddPolicy(AppRole.SuperAdmin +ClaimType.UserClaim + claimValue, policy =>
-               {
-                   policy.RequireAssertion(context =>
-                    {
-                        if (context.User.IsInRole(AppRole.SuperAdmin))
-                        {
-                            return true;
-                        }
-                        return context.User.IsInRole(AppRole.Admin) &&
-                         context.User.HasClaim(ClaimType.ProductClaim, claimValue);
-                    });
-               });
+                }
             }
+
 
 
 
