@@ -38,48 +38,50 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        // [Authorize(Roles = AppRole.Admin)]
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Add}")] 
         public async Task<IActionResult> PostProduct(ProductInputDTO productInputDTO)
         {
             var product = await _productService.CreateProductAsync(productInputDTO);
-            return CreatedAtAction("GetProduct", new { id = product.Id },new{message="Thêm sản phẩm thành công.", data= product});
+            return CreatedAtAction("GetProduct", new { id = product.Id }, new { message = "Thêm sản phẩm thành công.", data = product });
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = AppRole.Admin)]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Edit}")]
         public async Task<IActionResult> PutProduct(long id, ProductInputDTO productInputDTO)
         {
             var product = await _productService.UpdateProductAsync(id, productInputDTO);
-             return CreatedAtAction("GetProduct", new { id },new{message="Sửa sản phẩm thành công.", data= product});
+            return CreatedAtAction("GetProduct", new { id }, new { message = "Sửa sản phẩm thành công.", data = product });
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = AppRole.Admin)]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Delete}")]
         public async Task<IActionResult> DeleteProduct(long id)
         {
             await _productService.DeleteProductAsync(id);
             return NoContent();
         }
-         [HttpDelete("delete-multiple")]
-                public async Task<IActionResult> DeleteMultipleCategories(LongIDsModel model)
-                {
-                        if (model.ids == null || model.ids.Count == 0)
-                        {
-                                return BadRequest(new { error ="Danh sách các ID không được trống."});
-                        }
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Delete}")]
+        [HttpDelete("delete-multiple")]
+        public async Task<IActionResult> DeleteMultipleCategories(LongIDsModel model)
+        {
+            if (model.ids == null || model.ids.Count == 0)
+            {
+                return BadRequest(new { error = "Danh sách các ID không được trống." });
+            }
 
-                        await _productService.DeleteProductsAsync(model.ids);
-                        return Ok(new { message ="Xóa danh mục thành công."});
+            await _productService.DeleteProductsAsync(model.ids);
+            return Ok(new { message = "Xóa danh mục thành công." });
 
 
-                }
+        }
 
-                                  [HttpPut("{id}/status")]
+        [HttpPut("{id}/status")]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Edit}")]
         public async Task<IActionResult> UpdateProductStatus(long id)
         {
             try
             {
-                var product =await _productService.UpdateProductStatusAsync(id);
+                var product = await _productService.UpdateProductStatusAsync(id);
                 return Ok(product);
             }
             catch (NotFoundException ex)

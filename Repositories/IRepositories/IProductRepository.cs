@@ -8,6 +8,10 @@ namespace backend.Repositories.IRepositories
     {
         Task<Product> GetByIdAsync(long id);
         Task<List<Product>> GetAllAsync();
+        Task<List<Product>> GetTopProductsByTotalItemsSoldAsync(int count);
+        Task<List<Product>> GetProductsByTagTypeAsync(TagType type);
+        Task<Product> GetLastProductByTagTypeAsync(TagType type);
+        Task RemoveProductTagAsync(ProductTag productTag);
         Task AddAsync(Product product);
         Task UpdateAsync(Product product);
         Task DeleteAsync(long id);

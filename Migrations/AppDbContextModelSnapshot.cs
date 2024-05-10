@@ -461,6 +461,9 @@ namespace backend.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<long>("TotalItemsSold")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -476,6 +479,21 @@ namespace backend.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("backend.Models.ProductTag", b =>
+                {
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TagId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ProductId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("ProductTags");
                 });
 
             modelBuilder.Entity("backend.Models.Slider", b =>
@@ -514,6 +532,31 @@ namespace backend.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("Sliders");
+                });
+
+            modelBuilder.Entity("backend.Models.Tag", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("Sort")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -683,6 +726,25 @@ namespace backend.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
+            modelBuilder.Entity("backend.Models.ProductTag", b =>
+                {
+                    b.HasOne("backend.Models.Product", "Product")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Tag", "Tag")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("backend.Models.Slider", b =>
                 {
                     b.HasOne("backend.Models.AppUser", "CreatedBy")
@@ -708,6 +770,13 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.Product", b =>
                 {
                     b.Navigation("Galleries");
+
+                    b.Navigation("ProductTags");
+                });
+
+            modelBuilder.Entity("backend.Models.Tag", b =>
+                {
+                    b.Navigation("ProductTags");
                 });
 #pragma warning restore 612, 618
         }

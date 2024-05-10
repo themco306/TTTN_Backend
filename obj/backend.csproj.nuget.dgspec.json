@@ -49,6 +49,10 @@
               "target": "Package",
               "version": "[13.0.1, )"
             },
+            "Cronos": {
+              "target": "Package",
+              "version": "[0.8.4, )"
+            },
             "FluentValidation.AspNetCore": {
               "target": "Package",
               "version": "[11.3.0, )"

@@ -75,6 +75,19 @@
           }
         }
       },
+      "Cronos/0.8.4": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Cronos.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Cronos.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "FluentValidation/11.5.1": {
         "type": "package",
         "compile": {
@@ -2550,6 +2563,28 @@
         "lib/netstandard2.0/BouncyCastle.Cryptography.dll",
         "lib/netstandard2.0/BouncyCastle.Cryptography.xml",
         "packageIcon.png"
+      ]
+    },
+    "Cronos/0.8.4": {
+      "sha512": "sTyvTH8hh5YWivinRGzL5QrfKKt59I/Hh+4m8j6vmtJdSOWA4I3B+AS9iJk3RdQqZ+i4E+0PlhYuY9iaxDLTcQ==",
+      "type": "package",
+      "path": "cronos/0.8.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "README.md",
+        "cronos.0.8.4.nupkg.sha512",
+        "cronos.nuspec",
+        "icon.png",
+        "lib/net40/Cronos.dll",
+        "lib/net40/Cronos.xml",
+        "lib/net45/Cronos.dll",
+        "lib/net45/Cronos.xml",
+        "lib/netstandard1.0/Cronos.dll",
+        "lib/netstandard1.0/Cronos.xml",
+        "lib/netstandard2.0/Cronos.dll",
+        "lib/netstandard2.0/Cronos.xml"
       ]
     },
     "FluentValidation/11.5.1": {
@@ -6562,6 +6597,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "AutoMapper >= 13.0.1",
+      "Cronos >= 0.8.4",
       "FluentValidation.AspNetCore >= 11.3.0",
       "MailKit >= 4.4.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 8.0.3",
@@ -6625,6 +6661,10 @@
           "AutoMapper": {
             "target": "Package",
             "version": "[13.0.1, )"
+          },
+          "Cronos": {
+            "target": "Package",
+            "version": "[0.8.4, )"
           },
           "FluentValidation.AspNetCore": {
             "target": "Package",

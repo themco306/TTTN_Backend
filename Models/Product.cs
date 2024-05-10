@@ -33,6 +33,8 @@ namespace backend.Models
 
         public int Quantity { get; set; }
 
+        public long TotalItemsSold {get;set;}=0;
+
         [Column(TypeName = "varchar(64)")]
         public string ProductType { get; set; }
 
@@ -46,6 +48,9 @@ namespace backend.Models
 
         [JsonIgnore]
         public virtual List<Gallery> Galleries { get; set; } = new List<Gallery>();
+        [JsonIgnore]
+        public List<ProductTag> ProductTags { get; set; }
+
 
         // Navigation property for the Category
         

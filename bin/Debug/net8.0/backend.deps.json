@@ -9,6 +9,7 @@
       "backend/1.0.0": {
         "dependencies": {
           "AutoMapper": "13.0.1",
+          "Cronos": "0.8.4",
           "FluentValidation.AspNetCore": "11.3.0",
           "MailKit": "4.4.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.3",
@@ -78,6 +79,14 @@
           "lib/net6.0/BouncyCastle.Cryptography.dll": {
             "assemblyVersion": "2.0.0.0",
             "fileVersion": "2.3.0.53016"
+          }
+        }
+      },
+      "Cronos/0.8.4": {
+        "runtime": {
+          "lib/netstandard2.0/Cronos.dll": {
+            "assemblyVersion": "0.8.4.0",
+            "fileVersion": "0.8.4.0"
           }
         }
       },
@@ -1429,6 +1438,13 @@
       "sha512": "sha512-IaVIiYxZLaBulveGDRUx/pBoW/Rc8QeXGF5u2E8xL8RWhVKCgfmtX9NUyGRbnSqnbFQU2zyP3MkXIdH+jUuQBw==",
       "path": "bouncycastle.cryptography/2.3.0",
       "hashPath": "bouncycastle.cryptography.2.3.0.nupkg.sha512"
+    },
+    "Cronos/0.8.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-sTyvTH8hh5YWivinRGzL5QrfKKt59I/Hh+4m8j6vmtJdSOWA4I3B+AS9iJk3RdQqZ+i4E+0PlhYuY9iaxDLTcQ==",
+      "path": "cronos/0.8.4",
+      "hashPath": "cronos.0.8.4.nupkg.sha512"
     },
     "FluentValidation/11.5.1": {
       "type": "package",

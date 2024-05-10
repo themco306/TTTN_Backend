@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class backendv2 : Migration
+    public partial class backendv1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,6 +57,23 @@ namespace backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "longtext", nullable: false),
+                    Sort = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.Id);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -378,6 +395,31 @@ namespace backend.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ProductTags",
+                columns: table => new
+                {
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
+                    TagId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductTags", x => new { x.ProductId, x.TagId });
+                    table.ForeignKey(
+                        name: "FK_ProductTags_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductTags_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "OrderDetails",
                 columns: table => new
                 {
@@ -510,6 +552,11 @@ namespace backend.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductTags_TagId",
+                table: "ProductTags",
+                column: "TagId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sliders_CreatedById",
                 table: "Sliders",
                 column: "CreatedById");
@@ -545,6 +592,9 @@ namespace backend.Migrations
                 name: "OrderDetails");
 
             migrationBuilder.DropTable(
+                name: "ProductTags");
+
+            migrationBuilder.DropTable(
                 name: "Sliders");
 
             migrationBuilder.DropTable(
@@ -555,6 +605,9 @@ namespace backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "OrderInfos");

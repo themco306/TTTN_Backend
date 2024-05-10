@@ -46,12 +46,17 @@ namespace backend.Controllers
 
             return Ok(new { User = signInResult.User, Token = signInResult.Token });
         }
-
-        [HttpGet("confirmEmail")]
-        public async Task<IActionResult> ConfirmEmail(string userId, string confirmEmailToken)
+        [HttpPost("sendEmailConfirm/{id}")]
+        public async Task<IActionResult> SendEmailConfirm(string id,[FromBody] string url  )
         {
-            await _accountService.ConfirmEmailAsync(userId, confirmEmailToken);
-            return NoContent();
+           await _accountService.SendEmailConfirm(id,url);
+           return Ok(new{message="Gửi liên kết thành công vui lòng vào Email để xác nhận"});
+        }
+        [HttpPost("confirmEmail/{id}")]
+        public async Task<IActionResult> ConfirmEmail(string id,[FromBody] string confirmEmailToken)
+        {
+            await _accountService.ConfirmEmailAsync(id, confirmEmailToken);
+            return Ok(new{message="Xác nhận email thành công"});
         }
         [HttpGet]
         public async Task<IActionResult> GetUsers(int pageIndex = 1, int pageSize = 5)

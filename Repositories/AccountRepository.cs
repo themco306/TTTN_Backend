@@ -203,7 +203,7 @@ namespace backend.Repositories
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             return token;
-        }
+        }     
 
         public async Task<IEnumerable<string>> GetUserRolesAsync(string id)
         {

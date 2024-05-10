@@ -78,6 +78,7 @@ namespace backend.Services
                 await _orderDetailRepository.AddAsync(OrderDetail);
 
             }
+            await _productService.UpdateTagProductAsync();
             return order;
         }
         // public async Task<Order> UpdateAsync(long id, Order dataInput)

@@ -34,8 +34,34 @@ public async Task<List<Product>> GetAllAsync()
         .OrderByDescending(p => p.UpdatedAt)
         .ToListAsync();
 }
+   public async Task<List<Product>> GetProductsByTagTypeAsync(TagType type){
+           return await _context.Products
+        .Where(p => p.ProductTags.Any(pt => pt.Tag.Type == type))
+        .OrderByDescending(p => p.CreatedAt)
+        .ToListAsync();
+        }
+        public async Task<Product> GetLastProductByTagTypeAsync(TagType type)
+{
+    return await _context.Products
+        .Where(p => p.ProductTags.Any(pt => pt.Tag.Type == type))
+        .OrderBy(p => p.CreatedAt)
+        .FirstOrDefaultAsync();
+}
+public async Task RemoveProductTagAsync(ProductTag productTag)
+        {
+                _context.ProductTags.Remove(productTag);
+                await _context.SaveChangesAsync();
+        }
+public async Task<List<Product>> GetTopProductsByTotalItemsSoldAsync(int count)
+        {
+            // Lấy ra 'count' sản phẩm có TotalItemsSold cao nhất
+            var topProducts = await _context.Products
+                .OrderByDescending(p => p.TotalItemsSold)
+                .Take(count)
+                .ToListAsync();
 
-
+            return topProducts;
+        }
         public async Task AddAsync(Product product)
         {
             _context.Products.Add(product);

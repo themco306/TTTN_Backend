@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "etgh76IsffkF1gR9NmcPnGB2Et7ximOSgXEaghOLkk8=",
+  "Hash": "2iCLGaD9QYv5yEq8OZRF0ItAsPdI0m/naJAFWJ3x6tY=",
   "Source": "backend",
   "BasePath": "_content/backend",
   "Mode": "Default",
@@ -17,12 +17,12 @@
   ],
   "Assets": [
     {
-      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffff_638500243738310508.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\asd_638509540433722967.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
-      "RelativePath": "images/products/fffff_638500243738310508.jpg",
+      "RelativePath": "images/products/asd_638509540433722967.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -33,15 +33,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\products\\fffff_638500243738310508.jpg"
+      "OriginalItemSpec": "wwwroot\\images\\products\\asd_638509540433722967.jpg"
     },
     {
-      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffff_638500243738574996.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\asd_638509540436833072.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
-      "RelativePath": "images/products/fffff_638500243738574996.jpg",
+      "RelativePath": "images/products/asd_638509540436833072.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -52,15 +52,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\products\\fffff_638500243738574996.jpg"
+      "OriginalItemSpec": "wwwroot\\images\\products\\asd_638509540436833072.jpg"
     },
     {
-      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638505182346189087.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638509439380427624.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
-      "RelativePath": "images/products/shank-luffy_638505182346189087.jpg",
+      "RelativePath": "images/products/one-piece_638509439380427624.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -71,15 +71,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\products\\shank-luffy_638505182346189087.jpg"
+      "OriginalItemSpec": "wwwroot\\images\\products\\one-piece_638509439380427624.jpg"
     },
     {
-      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638505182348573240.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638509439383031366.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
-      "RelativePath": "images/products/shank-luffy_638505182348573240.jpg",
+      "RelativePath": "images/products/one-piece_638509439383031366.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -90,15 +90,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\products\\shank-luffy_638505182348573240.jpg"
+      "OriginalItemSpec": "wwwroot\\images\\products\\one-piece_638509439383031366.jpg"
     },
     {
-      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638505212052546159.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638509528613876403.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
-      "RelativePath": "images/products/shank-luffy_638505212052546159.jpg",
+      "RelativePath": "images/products/shank-luffy_638509528613876403.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -109,15 +109,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\products\\shank-luffy_638505212052546159.jpg"
+      "OriginalItemSpec": "wwwroot\\images\\products\\shank-luffy_638509528613876403.jpg"
     },
     {
-      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638505212054375840.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638509528614508515.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
-      "RelativePath": "images/products/shank-luffy_638505212054375840.jpg",
+      "RelativePath": "images/products/shank-luffy_638509528614508515.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -128,15 +128,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\products\\shank-luffy_638505212054375840.jpg"
+      "OriginalItemSpec": "wwwroot\\images\\products\\shank-luffy_638509528614508515.jpg"
     },
     {
-      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffyda_638505206411016999.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\viet-nam_638509528423714024.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
-      "RelativePath": "images/products/shank-luffyda_638505206411016999.jpg",
+      "RelativePath": "images/products/viet-nam_638509528423714024.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -147,15 +147,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\products\\shank-luffyda_638505206411016999.jpg"
+      "OriginalItemSpec": "wwwroot\\images\\products\\viet-nam_638509528423714024.jpg"
     },
     {
-      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffyda_638505206414340639.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\viet-nam_638509528427107625.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
-      "RelativePath": "images/products/shank-luffyda_638505206414340639.jpg",
+      "RelativePath": "images/products/viet-nam_638509528427107625.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -166,7 +166,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\products\\shank-luffyda_638505206414340639.jpg"
+      "OriginalItemSpec": "wwwroot\\images\\products\\viet-nam_638509528427107625.jpg"
     },
     {
       "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\nguyen_638503680290345638.jpg",
@@ -205,6 +205,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\sliders\\nguyen_638503680440129511.jpg"
+    },
+    {
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\nguyen_638508473899786474.jpg",
+      "SourceId": "backend",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "BasePath": "_content/backend",
+      "RelativePath": "images/sliders/nguyen_638508473899786474.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\sliders\\nguyen_638508473899786474.jpg"
     },
     {
       "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\one-piece_638503681284751156.jpg",
@@ -395,6 +414,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\users\\User_638500090823282291.jpg"
+    },
+    {
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\pages\\EmailConfirmed.html",
+      "SourceId": "backend",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "BasePath": "_content/backend",
+      "RelativePath": "pages/EmailConfirmed.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pages\\EmailConfirmed.html"
     }
   ]
 }

@@ -62,6 +62,12 @@ namespace backend.Services
             {
                 throw new BadRequestException("Mật khẩu không chính sát");
             }
+            // if(!user.EmailConfirmed){
+            //      var confirmEmailToken = await _accountRepository.GenerateEmailConfirmationTokenAsync(user);
+            //      var confirmationLink = GenerateConfirmationLink(user, confirmEmailToken);
+            //     await _emailService.SendEmailAsync(user.Email, "Xác nhận email của bạn", $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href=\"{confirmationLink}\">liên kết này</a>");
+            //     throw new BadRequestException("Bạn chưa xác thực Email.Vui lòng vào Gmail để xác thực");
+            // }
             var roles = await _accountRepository.GetUserRolesAsync(user.Id);
             if (roles == null || !(roles.Contains(AppRole.Admin) || roles.Contains(AppRole.SuperAdmin)))
             {
@@ -110,7 +116,20 @@ namespace backend.Services
             }
             return IdentityResult.Success;
         }
-
+        public async Task SendEmailConfirm(string id, string url){
+            var user = await _accountRepository.GetUserByIdAsync(id);
+            if (user == null){
+                throw new NotFoundException("Người dùng không tồn tại");
+            }
+              var confirmEmailToken = await _accountRepository.GenerateEmailConfirmationTokenAsync(user);
+            if (confirmEmailToken == null)
+            {
+                throw new Exception("Có lỗi xảy ra");
+            }
+            var encodedToken = System.Net.WebUtility.UrlEncode(confirmEmailToken);
+            var confirmationLink = $"{url}/{id}/{encodedToken}";
+             await _emailService.SendEmailAsync(user.Email, "Xác nhận email của bạn", $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href=\"{confirmationLink}\">liên kết này</a>");
+        }
         public async Task<bool> ConfirmEmailAsync(string userId, string confirmEmailToken)
         {
 
@@ -128,7 +147,7 @@ namespace backend.Services
             var confirmed = await _accountRepository.ConfirmEmailAsync(user, confirmEmailToken);
             if (!confirmed)
             {
-                throw new BadRequestException("Thất bại vui lòng thử lại");
+                throw new BadRequestException("Đường dẫn hết hạn hoặc có lỗi xảy ra!");
             }
             return confirmed;
         }

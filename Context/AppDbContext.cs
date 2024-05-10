@@ -15,11 +15,13 @@ namespace backend.Context
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<ProductTag> ProductTags { get; set; }
         public DbSet<Gallery> Galleries { get; set; }
-        public DbSet<Slider> Sliders{ get; set; }
-        public DbSet<Order> Orders{ get; set; }
-        public DbSet<OrderInfo> OrderInfos{ get; set; }
-        public DbSet<OrderDetail> OrderDetails{ get; set; }
+        public DbSet<Slider> Sliders { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderInfo> OrderInfos { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
 
         // public DbSet<Cart> Carts { get; set; }
         // public DbSet<CartItem> CartItems{ get; set; }
@@ -84,10 +86,10 @@ namespace backend.Context
 
             modelBuilder.Entity<Product>(e =>
             {
-            //     e.HasOne(c => c.Category)
-            //    .WithMany()
-            //    .HasForeignKey(c => c.CategoryId)
-            //    .OnDelete(DeleteBehavior.Restrict);
+                //     e.HasOne(c => c.Category)
+                //    .WithMany()
+                //    .HasForeignKey(c => c.CategoryId)
+                //    .OnDelete(DeleteBehavior.Restrict);
 
 
                 e.HasOne(fk => fk.CreatedBy)
@@ -100,13 +102,30 @@ namespace backend.Context
                 .HasForeignKey(fk => fk.UpdatedById)
                 .OnDelete(DeleteBehavior.SetNull);
             });
- modelBuilder.Entity<OrderInfo>(e =>
+            modelBuilder.Entity<ProductTag>(e =>
             {
-                e.HasOne(fk => fk.User)
-                .WithMany()
-                .HasForeignKey(fk => fk.UserId)
-                .OnDelete(DeleteBehavior.SetNull);
+               // Khai báo khóa chính kết hợp của bảng ProductTag
+    e.HasKey(pt => new { pt.ProductId, pt.TagId });
+
+    // Định nghĩa mối quan hệ với bảng Product
+    e.HasOne(pt => pt.Product)
+          .WithMany(p => p.ProductTags) // Một Product có thể có nhiều ProductTag
+          .HasForeignKey(pt => pt.ProductId) // Khóa ngoại sẽ là ProductId
+        .OnDelete(DeleteBehavior.Cascade);
+
+    e.HasOne(pt => pt.Tag)
+          .WithMany(t => t.ProductTags) // Một Tag có thể có nhiều ProductTag
+          .HasForeignKey(pt => pt.TagId)
+        .OnDelete(DeleteBehavior.Cascade);
+
             });
+            modelBuilder.Entity<OrderInfo>(e =>
+                       {
+                           e.HasOne(fk => fk.User)
+                           .WithMany()
+                           .HasForeignKey(fk => fk.UserId)
+                           .OnDelete(DeleteBehavior.Cascade);
+                       });
             modelBuilder.Entity<Order>(e =>
             {
                 e.HasOne(fk => fk.User)
@@ -124,11 +143,11 @@ namespace backend.Context
                 .HasForeignKey(fk => fk.UpdatedById)
                 .OnDelete(DeleteBehavior.SetNull);
             });
-                       
+
             modelBuilder.Entity<OrderDetail>(e =>
             {
                 e.HasOne(fk => fk.Order)
-                .WithMany(fk=>fk.OrderDetails)
+                .WithMany(fk => fk.OrderDetails)
                 .HasForeignKey(fk => fk.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
                 e.HasOne(fk => fk.Product)
@@ -136,7 +155,7 @@ namespace backend.Context
                 .HasForeignKey(fk => fk.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
             });
-            
+
 
             // modelBuilder.Entity<Cart>(e =>
             // {

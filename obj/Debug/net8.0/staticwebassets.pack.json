@@ -1,36 +1,36 @@
 {
   "Files": [
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffff_638500243738310508.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\fffff_638500243738310508.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\asd_638509540433722967.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\asd_638509540433722967.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffff_638500243738574996.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\fffff_638500243738574996.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\asd_638509540436833072.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\asd_638509540436833072.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638505182346189087.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638505182346189087.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638509439380427624.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\one-piece_638509439380427624.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638505182348573240.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638505182348573240.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638509439383031366.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\one-piece_638509439383031366.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638505212052546159.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638505212052546159.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638509528613876403.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638509528613876403.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638505212054375840.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638505212054375840.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638509528614508515.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638509528614508515.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffyda_638505206411016999.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\shank-luffyda_638505206411016999.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\viet-nam_638509528423714024.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\viet-nam_638509528423714024.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffyda_638505206414340639.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\shank-luffyda_638505206414340639.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\viet-nam_638509528427107625.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\viet-nam_638509528427107625.jpg"
     },
     {
       "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\nguyen_638503680290345638.jpg",
@@ -39,6 +39,10 @@
     {
       "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\nguyen_638503680440129511.jpg",
       "PackagePath": "staticwebassets\\images\\sliders\\nguyen_638503680440129511.jpg"
+    },
+    {
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\nguyen_638508473899786474.jpg",
+      "PackagePath": "staticwebassets\\images\\sliders\\nguyen_638508473899786474.jpg"
     },
     {
       "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\one-piece_638503681284751156.jpg",
@@ -79,6 +83,10 @@
     {
       "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\khanh_638499354592724816.jpg",
       "PackagePath": "staticwebassets\\images\\users\\khanh_638499354592724816.jpg"
+    },
+    {
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\pages\\EmailConfirmed.html",
+      "PackagePath": "staticwebassets\\pages\\EmailConfirmed.html"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.backend.Microsoft.AspNetCore.StaticWebAssets.props",

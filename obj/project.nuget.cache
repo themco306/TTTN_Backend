@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "EyROolA9VIm4HaebE9gBW8lH7PXNhCqDN2ln5g5jzJmh8B43dOrWA/K8aky92Hfk5vMRZTyYgRGNXECQSa5aNg==",
+  "dgSpecHash": "zpxpJRjGqhKNe0kxFMKXXIHZGI2FzXG0ocvMO9HVgijdqtGqt7isze8sC0Gx/X35VPyHkodZcc7WF3i4rBh+Xw==",
   "success": true,
   "projectFilePath": "D:\\ThucTapTotNghiep\\backend\\backend.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,7 @@
     "C:\\Users\\Nguyen Tuan Khanh\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\Nguyen Tuan Khanh\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
     "C:\\Users\\Nguyen Tuan Khanh\\.nuget\\packages\\bouncycastle.cryptography\\2.3.0\\bouncycastle.cryptography.2.3.0.nupkg.sha512",
+    "C:\\Users\\Nguyen Tuan Khanh\\.nuget\\packages\\cronos\\0.8.4\\cronos.0.8.4.nupkg.sha512",
     "C:\\Users\\Nguyen Tuan Khanh\\.nuget\\packages\\fluentvalidation\\11.5.1\\fluentvalidation.11.5.1.nupkg.sha512",
     "C:\\Users\\Nguyen Tuan Khanh\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.3.0\\fluentvalidation.aspnetcore.11.3.0.nupkg.sha512",
     "C:\\Users\\Nguyen Tuan Khanh\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.5.1\\fluentvalidation.dependencyinjectionextensions.11.5.1.nupkg.sha512",

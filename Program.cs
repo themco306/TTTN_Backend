@@ -21,7 +21,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name:Example07JSDomain,
-        builder => builder.WithOrigins("http://localhost:3000")
+        builder => builder.WithOrigins("http://localhost:3000", "http://localhost:3001")
                           .AllowAnyHeader()
                           .AllowAnyMethod());
 });
@@ -86,6 +86,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(connecti
 // {
 //     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectString") + "Encrypt=True;");
 // });
+// builder.Services.AddHostedService<UpdateDatabaseService>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<CategoryService>();
@@ -102,6 +103,9 @@ builder.Services.AddScoped<AccountService>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ProductService>();
+
+builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<TagService>();
 
 builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
 builder.Services.AddScoped<GalleryService>();
@@ -124,7 +128,8 @@ using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 var userManager = services.GetRequiredService<UserManager<AppUser>>();
 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-await SeedData.InitializeAsync(userManager, roleManager);
+var dbContext = services.GetRequiredService<AppDbContext>();
+await SeedData.InitializeAsync(userManager, roleManager, dbContext);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
