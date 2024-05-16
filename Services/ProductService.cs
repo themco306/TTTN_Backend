@@ -57,7 +57,12 @@ namespace backend.Services
             var products = await _productRepository.GetAllAsync();
             return _mapper.Map<List<ProductGetDTO>>(products);
         }
-
+        public async Task<List<ProductGetDTO>> GetAllProductsByTagAsync(long tagId)
+        {
+            var tag=await _tagService.GetTagByIdAsync(tagId);
+            var products = await _productRepository.GetProductsByTagTypeAsync(tag.Type);
+            return _mapper.Map<List<ProductGetDTO>>(products);
+        }
         public async Task<ProductGetDTO> GetProductByIdAsync(long id)
         {
             var product = await _productRepository.GetByIdAsync(id);
@@ -84,7 +89,7 @@ namespace backend.Services
 
             await _productRepository.AddAsync(product);
             var newProduct=await _productRepository.GetProductsByTagTypeAsync(TagType.NewModel);
-                if ( newProduct.Count>= 3)
+                if ( newProduct.Count>= 13)
                 {
         // Lấy ra sản phẩm cũ nhất có tag "NewModel"
         var oldestProduct = await _productRepository.GetLastProductByTagTypeAsync(TagType.NewModel);

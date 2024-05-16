@@ -37,6 +37,8 @@ public async Task<List<Product>> GetAllAsync()
    public async Task<List<Product>> GetProductsByTagTypeAsync(TagType type){
            return await _context.Products
         .Where(p => p.ProductTags.Any(pt => pt.Tag.Type == type))
+        .Include(c=>c.Category)
+        .Include(c => c.Galleries.OrderBy(g => g.Order))
         .OrderByDescending(p => p.CreatedAt)
         .ToListAsync();
         }

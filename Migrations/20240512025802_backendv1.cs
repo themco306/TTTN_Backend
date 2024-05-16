@@ -69,11 +69,36 @@ namespace backend.Migrations
                     Name = table.Column<string>(type: "longtext", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "longtext", nullable: false),
-                    Sort = table.Column<long>(type: "bigint", nullable: false)
+                    Sort = table.Column<long>(type: "bigint", nullable: false),
+                    Status = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tags", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "WebInfos",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Icon = table.Column<string>(type: "longtext", nullable: true),
+                    ShopName = table.Column<string>(type: "longtext", nullable: true),
+                    Description = table.Column<string>(type: "longtext", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "longtext", nullable: true),
+                    Email = table.Column<string>(type: "longtext", nullable: true),
+                    Address = table.Column<string>(type: "longtext", nullable: true),
+                    GoogleMap = table.Column<string>(type: "longtext", nullable: true),
+                    WorkingHours = table.Column<string>(type: "longtext", nullable: true),
+                    FacebookLink = table.Column<string>(type: "longtext", nullable: true),
+                    InstagramLink = table.Column<string>(type: "longtext", nullable: true),
+                    TwitterLink = table.Column<string>(type: "longtext", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WebInfos", x => x.Id);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -298,6 +323,7 @@ namespace backend.Migrations
                     ComparePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     BuyingPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
+                    TotalItemsSold = table.Column<long>(type: "bigint", nullable: false),
                     ProductType = table.Column<string>(type: "varchar(64)", nullable: false),
                     Note = table.Column<string>(type: "longtext", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
@@ -596,6 +622,9 @@ namespace backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "Sliders");
+
+            migrationBuilder.DropTable(
+                name: "WebInfos");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

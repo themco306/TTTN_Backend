@@ -22,9 +22,11 @@ namespace backend.Context
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderInfo> OrderInfos { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
-
-        // public DbSet<Cart> Carts { get; set; }
-        // public DbSet<CartItem> CartItems{ get; set; }
+        public DbSet<WebInfo> WebInfos { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Coupon> Coupons { get; set; }
+        public DbSet<CouponUsage> CouponUsages { get; set; }
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
             OnBeforeSaving();
@@ -104,19 +106,19 @@ namespace backend.Context
             });
             modelBuilder.Entity<ProductTag>(e =>
             {
-               // Khai báo khóa chính kết hợp của bảng ProductTag
-    e.HasKey(pt => new { pt.ProductId, pt.TagId });
+                // Khai báo khóa chính kết hợp của bảng ProductTag
+                e.HasKey(pt => new { pt.ProductId, pt.TagId });
 
-    // Định nghĩa mối quan hệ với bảng Product
-    e.HasOne(pt => pt.Product)
-          .WithMany(p => p.ProductTags) // Một Product có thể có nhiều ProductTag
-          .HasForeignKey(pt => pt.ProductId) // Khóa ngoại sẽ là ProductId
-        .OnDelete(DeleteBehavior.Cascade);
+                // Định nghĩa mối quan hệ với bảng Product
+                e.HasOne(pt => pt.Product)
+                      .WithMany(p => p.ProductTags) // Một Product có thể có nhiều ProductTag
+                      .HasForeignKey(pt => pt.ProductId) // Khóa ngoại sẽ là ProductId
+                    .OnDelete(DeleteBehavior.Cascade);
 
-    e.HasOne(pt => pt.Tag)
-          .WithMany(t => t.ProductTags) // Một Tag có thể có nhiều ProductTag
-          .HasForeignKey(pt => pt.TagId)
-        .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(pt => pt.Tag)
+                      .WithMany(t => t.ProductTags) // Một Tag có thể có nhiều ProductTag
+                      .HasForeignKey(pt => pt.TagId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
             });
             modelBuilder.Entity<OrderInfo>(e =>
@@ -157,25 +159,58 @@ namespace backend.Context
             });
 
 
-            // modelBuilder.Entity<Cart>(e =>
-            // {
-            //     e.HasOne(c => c.User)
-            //    .WithMany()
-            //    .HasForeignKey(c => c.UserId)
-            //    .OnDelete(DeleteBehavior.Cascade);
-            // });
-            // modelBuilder.Entity<CartItem>(e =>
-            // {
-            //     e.HasOne(c => c.Cart)
-            //    .WithMany()
-            //    .HasForeignKey(c => c.CartId)
-            //    .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Cart>(e =>
+            {
+                e.HasOne(c => c.User)
+               .WithMany()
+               .HasForeignKey(c => c.UserId)
+               .OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<CartItem>(e =>
+            {
+                e.HasOne(c => c.Cart)
+               .WithMany(c=>c.CartItems)
+               .HasForeignKey(c => c.CartId)
+               .OnDelete(DeleteBehavior.Cascade);
 
-            //    e.HasOne(c => c.Product)
-            //    .WithMany()
-            //    .HasForeignKey(c => c.ProductId)
-            //    .OnDelete(DeleteBehavior.Cascade);
-            // });
+               e.HasOne(c => c.Product)
+               .WithMany()
+               .HasForeignKey(c => c.ProductId)
+               .OnDelete(DeleteBehavior.Cascade);
+            });
+
+                        modelBuilder.Entity<Coupon>(e =>
+            {
+                 e.HasIndex(c => c.Code)
+                .IsUnique();
+
+                e.HasOne(fk => fk.CreatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.CreatedById)
+                .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(fk => fk.UpdatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.UpdatedById)
+                .OnDelete(DeleteBehavior.Cascade);
+            });
+                         modelBuilder.Entity<CouponUsage>(e =>
+            {
+                e.HasOne(fk=>fk.User)
+                .WithMany()
+                .HasForeignKey(fk=>fk.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(fk=>fk.Coupon)
+                .WithMany()
+                .HasForeignKey(fk=>fk.CouponId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(fk=>fk.Order)
+                .WithMany()
+                .HasForeignKey(fk=>fk.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+            });
 
             base.OnModelCreating(modelBuilder);
 

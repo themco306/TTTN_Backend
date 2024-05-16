@@ -37,7 +37,7 @@ namespace backend.Services
             _mapper = mapper;
             _galleryService = galleryService;
         }
-        public async Task<SignInResultDTO> SignInAsync(SignIn signIn)
+        public async Task<SignInResultDTO> SignInAdminAsync(SignIn signIn)
         {
             var isEmail = signIn.EmailOrUsername.Contains("@");
             var user = new AppUser();
@@ -85,6 +85,44 @@ namespace backend.Services
             signInResult.User.Claims = claims;
             return signInResult;
         }
+        public async Task<SignInResultDTO> SignInAsync(SignIn signIn)
+        {
+            var isEmail = signIn.EmailOrUsername.Contains("@");
+            var user = new AppUser();
+            if (isEmail)
+            {
+                user = await _accountRepository.GetUserByEmailAsync(signIn.EmailOrUsername);
+            }
+            else
+            {
+                user = await _accountRepository.GetUserByUserNameAsync(signIn.EmailOrUsername);
+            }
+            if (user == null && isEmail)
+            {
+                throw new BadRequestException("Email không tồn tại");
+            }
+            if (user == null && !isEmail)
+            {
+                throw new BadRequestException("Tên đăng nhập không tồn tại");
+            }
+            var checkPassword = await _accountRepository.CheckPasswordAsync(user, signIn.Password);
+            if (!checkPassword)
+            {
+                throw new BadRequestException("Mật khẩu không chính sát");
+            }
+            var roles = await _accountRepository.GetUserRolesAsync(user.Id);
+            var token = await _accountRepository.GenerateJwtToken(user);
+            var claims = await _accountRepository.GetUserClaimsAsync(user.Id);
+
+            var signInResult = new SignInResultDTO
+            {
+                User = _mapper.Map<UserGetDTO>(user),
+                Token = token
+            };
+            signInResult.User.Roles = roles;
+            signInResult.User.Claims = claims;
+            return signInResult;
+        }
 
         public async Task<IdentityResult> SignUpAsync(SignUp signUp)
         {
@@ -103,32 +141,60 @@ namespace backend.Services
             {
                 throw new Exception("Quyền này không tồn tại");
             }
-            var confirmEmailToken = await _accountRepository.GenerateEmailConfirmationTokenAsync(userCreated);
-            if (confirmEmailToken == null)
-            {
-                throw new Exception("Có lỗi xảy ra");
-            }
-            else
-            {
-                var confirmationLink = GenerateConfirmationLink(userCreated, confirmEmailToken);
-                await _emailService.SendEmailAsync(userCreated.Email, "Xác nhận email của bạn", $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href=\"{confirmationLink}\">liên kết này</a>");
+            // var confirmEmailToken = await _accountRepository.GenerateEmailConfirmationTokenAsync(userCreated);
+            // if (confirmEmailToken == null)
+            // {
+            //     throw new Exception("Có lỗi xảy ra");
+            // }
+            // else
+            // {
+            //     var confirmationLink = GenerateConfirmationLink(userCreated, confirmEmailToken);
+            //     await _emailService.SendEmailAsync(userCreated.Email, "Xác nhận email của bạn", $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href=\"{confirmationLink}\">liên kết này</a>");
 
-            }
+            // }
             return IdentityResult.Success;
         }
-        public async Task SendEmailConfirm(string id, string url){
+        public async Task SendEmailConfirm(string id, string url)
+        {
             var user = await _accountRepository.GetUserByIdAsync(id);
-            if (user == null){
+            if (user == null)
+            {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
-              var confirmEmailToken = await _accountRepository.GenerateEmailConfirmationTokenAsync(user);
+            var confirmEmailToken = await _accountRepository.GenerateEmailConfirmationTokenAsync(user);
             if (confirmEmailToken == null)
             {
                 throw new Exception("Có lỗi xảy ra");
             }
             var encodedToken = System.Net.WebUtility.UrlEncode(confirmEmailToken);
             var confirmationLink = $"{url}/{id}/{encodedToken}";
-             await _emailService.SendEmailAsync(user.Email, "Xác nhận email của bạn", $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href=\"{confirmationLink}\">liên kết này</a>");
+            await _emailService.SendEmailAsync(user.Email, "Xác nhận email của bạn", $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href=\"{confirmationLink}\">liên kết này</a>");
+        }
+                public async Task SendRestPasswordConfirm(ResetPasswordInputDTO inputDTO)
+        {
+            var isEmail = inputDTO.EmailOrUsername.Contains("@");
+            var user = new AppUser();
+            if (isEmail)
+            {
+                user = await _accountRepository.GetUserByEmailAsync(inputDTO.EmailOrUsername);
+            }
+            else
+            {
+                user = await _accountRepository.GetUserByUserNameAsync(inputDTO.EmailOrUsername);
+            }
+
+            if (user == null)
+            {
+                throw new NotFoundException("Người dùng không tồn tại");
+            }
+            var confirmEmailToken = await _accountRepository.GeneratePasswordResetTokenAsync(user);
+            if (confirmEmailToken == null)
+            {
+                throw new Exception("Có lỗi xảy ra");
+            }
+            var encodedToken = System.Net.WebUtility.UrlEncode(confirmEmailToken);
+            var confirmationLink = $"{inputDTO.CurrentHost}/{user.Email}/{encodedToken}";
+            await _emailService.SendEmailAsync(user.Email, "Xác nhận email của bạn", $"Nếu bạn muốn đặt lại mật khẩu của bạn hãy nhấp vào liên kết này: <a href=\"{confirmationLink}\">liên kết này</a>");
         }
         public async Task<bool> ConfirmEmailAsync(string userId, string confirmEmailToken)
         {
@@ -151,7 +217,27 @@ namespace backend.Services
             }
             return confirmed;
         }
+        public async Task<bool> ConfirmSetPasswordAsync(SetPasswordInputDTO inputDTO)
+        {
 
+            // Kiểm tra thông tin xác thực
+            if (string.IsNullOrEmpty(inputDTO.Email) || string.IsNullOrEmpty(inputDTO.Token))
+            {
+                throw new BadRequestException("Đường đẫn có vấn đề.");
+            }
+            // Tìm người dùng
+            var user = await _accountRepository.GetUserByEmailAsync(inputDTO.Email);
+            if (user == null)
+            {
+                throw new NotFoundException("Email sai hoặc không tông tại. Vui lòng tự nhận liên kết mới.");
+            }
+            var confirmed = await _accountRepository.ResetPasswordAsync(user,inputDTO.Token,inputDTO.Password);
+            if (!confirmed)
+            {
+                throw new BadRequestException("Đường dẫn hết hạn hoặc có lỗi xảy ra!");
+            }
+            return confirmed;
+        }
         private string GenerateConfirmationLink(AppUser user, string confirmEmailToken)
         {
             var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
@@ -166,9 +252,9 @@ namespace backend.Services
             return confirmationLink;
         }
 
-        public async Task<IEnumerable<UserGetDTO>> GetUsersAsync(int pageIndex, int pageSize)
+        public async Task<IEnumerable<UserGetDTO>> GetUsersAsync(int pageIndex, int pageSize, string email)
         {
-            var users = await _accountRepository.GetUsersAsync(pageIndex, pageSize);
+            var users = await _accountRepository.GetUsersAsync(pageIndex, pageSize, email);
             var usersDTO = new List<UserGetDTO>();
 
             foreach (var user in users)
@@ -234,8 +320,8 @@ namespace backend.Services
             {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
-            user.EmailConfirmed = user.EmailConfirmed==true?false:true;
-             var updated = await _accountRepository.UpdateUserAsync(id, user);
+            user.EmailConfirmed = user.EmailConfirmed == true ? false : true;
+            var updated = await _accountRepository.UpdateUserAsync(id, user);
             if (!updated)
             {
                 throw new BadRequestException("Có lỗi xảy ra");
@@ -257,14 +343,17 @@ namespace backend.Services
                     throw new NotFoundException("Tên này đã được dùng");
                 }
             }
-             if(user.Email!=userUpdateDto.Email){
-                var existingUserEmail = await _accountRepository.GetUserByEmailAsync(userUpdateDto.Email);
-            if (existingUserEmail != null)
+            if (user.Email != userUpdateDto.Email)
             {
-                throw new Exception("Email này đã được đăng ký");
-            }else{
-                user.EmailConfirmed=false;
-            }
+                var existingUserEmail = await _accountRepository.GetUserByEmailAsync(userUpdateDto.Email);
+                if (existingUserEmail != null)
+                {
+                    throw new Exception("Email này đã được đăng ký");
+                }
+                else
+                {
+                    user.EmailConfirmed = false;
+                }
             }
             if (userUpdateDto.Password != null)
             {
@@ -328,14 +417,14 @@ namespace backend.Services
 
             return true;
         }
-         public async Task<bool> UpdateMyUserAsync(string userId, MyUserUpdateDTO userUpdateDto, IFormFile avatar)
+        public async Task<UserGetDTO> UpdateMyUserAsync(string userId, MyUserUpdateDTO userUpdateDto, IFormFile avatar)
         {
             var user = await _accountRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
-            if (user.UserName != userUpdateDto.UserName)
+            if (user.UserName != userUpdateDto.UserName&&userUpdateDto.UserName!=null)
             {
                 var existingUsername = await _accountRepository.GetUserByUserNameAsync(userUpdateDto.UserName);
                 if (existingUsername != null)
@@ -343,27 +432,40 @@ namespace backend.Services
                     throw new NotFoundException("Tên này đã được dùng");
                 }
             }
-            if(user.Email!=userUpdateDto.Email){
+            if (user.Email != userUpdateDto.Email)
+            {
                 var existingUserEmail = await _accountRepository.GetUserByEmailAsync(userUpdateDto.Email);
-            if (existingUserEmail != null)
-            {
-                throw new Exception("Email này đã được đăng ký");
-            }else{
-                user.EmailConfirmed=false;
-            }
-            }
-            if (userUpdateDto.Password != null)
-            {
-                var resetToken = await _accountRepository.GeneratePasswordResetTokenAsync(user);
-                var result = await _accountRepository.ResetPasswordAsync(user, resetToken, userUpdateDto.Password);
-                if (!result)
+                if (existingUserEmail != null)
                 {
-                    throw new Exception("Không thể cập nhật mật khẩu");
+                    throw new Exception("Email này đã được đăng ký");
+                }
+                else
+                {
+                    user.EmailConfirmed = false;
                 }
             }
+            if (userUpdateDto.OldPassword != null)
+            {
+                var checkPassword=await _accountRepository.CheckPasswordAsync(user,userUpdateDto.OldPassword);
+                if(!checkPassword){
+                    throw new NotFoundException("Mật khẩu cũ không khớp");
+                }
+                if (userUpdateDto.Password != null)
+                {
+                    var resetToken = await _accountRepository.GeneratePasswordResetTokenAsync(user);
+                    var result = await _accountRepository.ResetPasswordAsync(user, resetToken, userUpdateDto.Password);
+                    if (!result)
+                    {
+                        throw new Exception("Không thể cập nhật mật khẩu");
+                    }
+                }
+            }
+
             user.FirstName = userUpdateDto.FirstName;
             user.LastName = userUpdateDto.LastName;
-            user.UserName = userUpdateDto.UserName;
+            if(userUpdateDto.UserName!=null){
+                 user.UserName = userUpdateDto.UserName;
+            }
             user.Email = userUpdateDto.Email;
             user.PhoneNumber = userUpdateDto.PhoneNumber;
             user.Gender = userUpdateDto.Gender;
@@ -387,8 +489,10 @@ namespace backend.Services
             {
                 throw new BadRequestException("Có lỗi xảy ra");
             }
-
-            return true;
+            var userDTO = _mapper.Map<UserGetDTO>(user);
+            userDTO.Roles = await _accountRepository.GetUserRolesAsync(userDTO.Id);
+            userDTO.Claims = await _accountRepository.GetUserClaimsAsync(userDTO.Id);
+            return userDTO;
         }
 
         public string ExtractEmailFromToken(string tokenWithBearer)
@@ -402,6 +506,19 @@ namespace backend.Services
 
             // Trích xuất claim chứa ID của người dùng
             var userIdClaim = decodedToken.Claims.FirstOrDefault(c => c.Type == "email");
+            return userIdClaim?.Value;
+        }
+        public string ExtractUserIdFromToken(string tokenWithBearer)
+        {
+            var token = tokenWithBearer.Replace("Bearer ", "");
+            // Khởi tạo đối tượng JwtSecurityTokenHandler để xử lý token
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            // Giải mã token
+            var decodedToken = tokenHandler.ReadJwtToken(token);
+
+            // Trích xuất claim chứa ID của người dùng
+            var userIdClaim = decodedToken.Claims.FirstOrDefault(c => c.Type == "nameid");
             return userIdClaim?.Value;
         }
         public async Task DeleteUserById(string id)

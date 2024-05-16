@@ -55,6 +55,7 @@ namespace backend.Repositories
         {
             var authClaim = new List<Claim>{
         new Claim(Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Email, user.Email),
+         new Claim(Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.NameId, user.Id),
         new Claim(Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -204,6 +205,7 @@ namespace backend.Repositories
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             return token;
         }     
+ 
 
         public async Task<IEnumerable<string>> GetUserRolesAsync(string id)
         {
@@ -246,9 +248,10 @@ namespace backend.Repositories
 
             return claimDTOs;
         }
-        public async Task<IEnumerable<AppUser>> GetUsersAsync(int pageIndex, int pageSize)
+        public async Task<IEnumerable<AppUser>> GetUsersAsync(int pageIndex, int pageSize,string email)
         {
             return await _userManager.Users
+                .Where(u => u.Email != email)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();

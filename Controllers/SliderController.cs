@@ -26,7 +26,12 @@ namespace backend.Controllers
             var sliders = await _sliderService.GetSlidersAsync();
             return Ok(sliders);
         }
-
+      [HttpGet("active")]
+        public async Task<IActionResult> GetSlidersActive()
+        {
+            var sliders = await _sliderService.GetSlidersActiveAsync();
+            return Ok(sliders);
+        }
         [HttpGet("{sliderId}")]
         public async Task<IActionResult> GetSliderById(long sliderId)
         {

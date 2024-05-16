@@ -14,7 +14,7 @@ namespace backend.Helper
 
             var claimValues = new[] { ClaimValue.Add, ClaimValue.Edit, ClaimValue.Show, ClaimValue.Delete };
 
-            var claimTypes = new[] { ClaimType.ProductClaim, ClaimType.CategoryClaim, ClaimType.UserClaim, ClaimType.SliderClaim };
+            var claimTypes = new[] { ClaimType.ProductClaim, ClaimType.CategoryClaim, ClaimType.UserClaim, ClaimType.SliderClaim ,ClaimType.CouponClaim};
             foreach (var claimType in claimTypes)
             {
                 foreach (var claimValue in claimValues)

@@ -7,7 +7,7 @@ namespace backend.Repositories.IRepositories
     public interface ISilderRepository
     {
         Task<Slider> GetByIdAsync(long id);
-        Task<List<Slider>> GetAllAsync();
+        Task<List<Slider>> GetAllAsync(bool active=false);
         Task AddAsync(Slider gallery);
         Task UpdateAsync(Slider gallery);
         Task DeleteAsync(Slider gallery);

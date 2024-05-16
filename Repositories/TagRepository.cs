@@ -25,11 +25,19 @@ namespace backend.Repositories
             return await _context.Tags
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
-        public async Task<List<Tag>> GetAllAsync()
+        public async Task<List<Tag>> GetAllAsync(bool active=false)
         {
-            return await _context.Tags
+            if(active){
+                  return await _context.Tags
+                  .Where(c=>c.Status==true)
             .OrderBy(c=>c.Sort)
             .ToListAsync();
+            }else{
+return await _context.Tags
+            .OrderBy(c=>c.Sort)
+            .ToListAsync();
+            }
+            
         }
         public async Task UpdateAsync(Tag Tag)
         {

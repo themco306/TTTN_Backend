@@ -23,9 +23,11 @@ namespace backend.Services
             _generate = generate;
             _accountService = accountService;
         }
-        public async Task<List<OrderInfo>> GetAllAsync()
+        public async Task<List<OrderInfo>> GetAllAsync(string token)
         {
-            var orderInfos = await _orderinfoRepository.GetAllAsync();
+            var userId = _accountService.ExtractUserIdFromToken(token);
+            var user =await _accountService.GetUserByIdAsync(userId);
+            var orderInfos = await _orderinfoRepository.GetAllAsync(user.Id);
             return orderInfos;
         }
        
@@ -42,15 +44,23 @@ namespace backend.Services
             // orderinfo.User=null;
             return orderinfo;
         }
-        public async Task<OrderInfo> CreateAsync(OrderInfo dataInput)
+        public async Task<OrderInfo> CreateAsync(OrderInfoInputDTO dataInput,string token)
         {
-            var existingUser=await _accountService.GetUserByIdAsync(dataInput.UserId);
+            var userId=_accountService.ExtractUserIdFromToken(token);
+            var existingUser=await _accountService.GetUserByIdAsync(userId);
             if (existingUser==null){
                 throw new NotFoundException("Người dùng không tồn tại");
             }
+            var orderInfos = await _orderinfoRepository.GetAllAsync(existingUser.Id);
+            if(orderInfos.Count>3){
+                throw new BadRequestException("Bạn chỉ có thể tạo tối đa 4.");
+            }
             var orderInfo=new OrderInfo{
-                UserId=dataInput.UserId,
+                UserId=existingUser.Id,
                 DeliveryAddress=dataInput.DeliveryAddress,
+                DeliveryProvince=dataInput.DeliveryProvince,
+                DeliveryDistrict=dataInput.DeliveryDistrict,
+                DeliveryWard=dataInput.DeliveryWard,
                 DeliveryName=dataInput.DeliveryName,
                 DeliveryPhone=dataInput.DeliveryPhone
             };
@@ -59,13 +69,20 @@ namespace backend.Services
 
             return orderInfo;
         }
-        public async Task<OrderInfo> UpdateAsync(long id, OrderInfo dataInput)
+        public async Task<OrderInfo> UpdateAsync(long id, OrderInfoInputDTO dataInput,string token)
         {
             var existing = await _orderinfoRepository.GetByIdAsync(id);
             if (existing == null){
                 throw new NotFoundException("Thông tin không tồn tại");
             }
+            var userId=_accountService.ExtractUserIdFromToken(token);
+            if(userId!=existing.UserId){
+                throw new NotFoundException("Thông tin không tồn tại");
+            }
             existing.DeliveryAddress=dataInput.DeliveryAddress;
+            existing.DeliveryProvince=dataInput.DeliveryProvince;
+            existing.DeliveryDistrict=dataInput.DeliveryDistrict;
+            existing.DeliveryWard=dataInput.DeliveryWard;
             existing.DeliveryName=dataInput.DeliveryName;
             existing.DeliveryPhone=dataInput.DeliveryPhone;
             await _orderinfoRepository.UpdateAsync(existing);

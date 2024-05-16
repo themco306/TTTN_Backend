@@ -5,25 +5,24 @@
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class backendv2 : Migration
+    public partial class backendv6 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<long>(
-                name: "TotalItemsSold",
-                table: "Products",
-                type: "bigint",
-                nullable: false,
-                defaultValue: 0L);
+            migrationBuilder.AddColumn<string>(
+                name: "Note",
+                table: "Orders",
+                type: "longtext",
+                nullable: false);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "TotalItemsSold",
-                table: "Products");
+                name: "Note",
+                table: "Orders");
         }
     }
 }

@@ -100,13 +100,14 @@ namespace backend.DTOs
         [Required(ErrorMessage = "Vui lòng nhập họ.")]
         public string LastName { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng nhập tên đăng nhập.")]
         [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Tên đăng nhập chỉ được chứa chữ thường, chữ hoa và số.")]
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập địa chỉ email.")]
         [EmailAddress(ErrorMessage = "Địa chỉ email không hợp lệ.")]
         public string Email { get; set; }
+        [DataType(DataType.Password)]
+        public string? OldPassword { get; set; }
 
         [DataType(DataType.Password)]
         public string? Password { get; set; }
@@ -123,6 +124,21 @@ namespace backend.DTOs
         public bool? Gender { get; set; }
 
 
+    }
+    public class ResetPasswordInputDTO {
+        public string EmailOrUsername {get;set;}
+        public string CurrentHost {get;set;}
+    }
+       public class SetPasswordInputDTO {
+        public string Email {get;set;}
+        public string Token {get;set;}
+        [DataType(DataType.Password)]
+        public string Password {get;set;}
+        
+         [Compare("Password", ErrorMessage = "Mật khẩu không khớp.")]
+        [DataType(DataType.Password)]
+
+        public string ConfirmPassword {get;set;}
     }
 
 }

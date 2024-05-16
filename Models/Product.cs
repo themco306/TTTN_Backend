@@ -46,7 +46,7 @@ namespace backend.Models
         public string? UpdatedById { get; set; }
         public virtual AppUser? UpdatedBy { get; set; }
 
-        [JsonIgnore]
+        // [JsonIgnore]
         public virtual List<Gallery> Galleries { get; set; } = new List<Gallery>();
         [JsonIgnore]
         public List<ProductTag> ProductTags { get; set; }

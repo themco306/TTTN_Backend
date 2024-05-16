@@ -29,7 +29,11 @@ namespace backend.Services
 
             return _mapper.Map<List<SliderGetDTO>>(sliders);
         }
-
+        public async Task<List<SliderGetDTO>> GetSlidersActiveAsync()
+        {
+            var sliders = await _sliderRepository.GetAllAsync(true);
+            return _mapper.Map<List<SliderGetDTO>>(sliders);
+        }
         public async Task<SliderGetDTO> GetSliderByIdAsync(long sliderId)
         {
             var slider = await _sliderRepository.GetByIdAsync(sliderId);

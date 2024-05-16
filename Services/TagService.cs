@@ -23,7 +23,11 @@ namespace backend.Services
             var tag = await _tagRepository.GetAllAsync();
             return tag;
         }
-      
+              public async Task<List<Tag>> GetAllTagActiveAsync()
+        {
+            var tag = await _tagRepository.GetAllAsync(true);
+            return tag;
+        }
         public async Task<Tag> GetTagByTypeAsync(TagType type)
         {
             var tag = await _tagRepository.GetByTypeAsync(type);
@@ -33,14 +37,24 @@ namespace backend.Services
             }
             return tag;
         }
-        public async Task<Tag> UpdateTagNameAsync(long id, string name)
+               public async Task<Tag> GetTagByIdAsync(long  id)
+        {
+            var tag = await _tagRepository.GetByIdAsync(id);
+            if (tag == null)
+            {
+                throw new NotFoundException("Thẻ không tồn tại.");
+            }
+            return tag;
+        }
+        public async Task<Tag> UpdateTagNameAsync(long id,TagNameUpdateDTO tagUpdate )
         {
             var tag= await _tagRepository.GetByIdAsync(id);
             if (tag == null)
             {
                  throw new NotFoundException("Thẻ không tồn tại.");
             }
-            tag.Name = name;
+            tag.Name = tagUpdate.Name;
+            tag.Status = tagUpdate.Status;
             await _tagRepository.UpdateAsync(tag);
             return tag;
         }

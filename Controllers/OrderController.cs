@@ -15,10 +15,12 @@ namespace backend.Controllers
     public class OrderController : ControllerBase
     {
         private readonly OrderService _orderService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public OrderController(OrderService orderService)
+        public OrderController(OrderService orderService, IHttpContextAccessor httpContextAccessor)
         {
             _orderService = orderService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
@@ -35,12 +37,12 @@ namespace backend.Controllers
                 return Ok(order);
         }
         [HttpPost]
-        //  [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.OrderInfoClaim}{ClaimValue.Add}")] 
+        [Authorize]
         public async Task<IActionResult> CreateOrderInfo(OrderInputDTO order)
         {
-        
-                var createdOrderInfo = await _orderService.CreateAsync(order);
-                return CreatedAtAction(nameof(GetOrderInfoById), new { id = createdOrderInfo.Id }, new {message="Thêm thông tin giao hàng thành công",data=createdOrderInfo});
+                 string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+                var createdOrderInfo = await _orderService.CreateAsync(order,tokenWithBearer);
+                return Ok(new {message="Thêm thông tin giao hàng thành công",data=createdOrderInfo});
         }
 
         // [HttpPut("{id}")]

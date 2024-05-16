@@ -107,6 +107,9 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<TagService>();
 
+builder.Services.AddScoped<IWebInfoRepository, WebInfoRepository>();
+builder.Services.AddScoped<WebInfoService>();
+
 builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
 builder.Services.AddScoped<GalleryService>();
 
@@ -121,6 +124,13 @@ builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<OrderService>();
 
+builder.Services.AddScoped<ICartItemRepository,CartItemRepository>();
+
+builder.Services.AddScoped<ICartRepository,CartRepository>();
+builder.Services.AddScoped<CartService>();
+
+builder.Services.AddScoped<ICouponRepository,CouponRepository>();
+builder.Services.AddScoped<CouponService>();
 var app = builder.Build();
 app.UseCors(Example07JSDomain);
 // Khởi tạo dữ liệu mẫu

@@ -13,6 +13,7 @@ namespace backend.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id {get;set;}
         public long CartId {get;set;}
+        [JsonIgnore]
         public virtual Cart? Cart {get;set;}
         public long ProductId {get;set;}
         public virtual Product? Product {get;set;}

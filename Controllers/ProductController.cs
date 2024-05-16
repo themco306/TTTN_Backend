@@ -29,7 +29,12 @@ namespace backend.Controllers
             var products = await _productService.GetAllProductsAsync();
             return Ok(products);
         }
-
+        [HttpGet("tag/{id}")]
+        public async Task<IActionResult> GetProductsByTag(long id)
+        {
+            var products = await _productService.GetAllProductsByTagAsync(id);
+            return Ok(products);
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(long id)
         {

@@ -46,10 +46,27 @@ namespace backend.Controllers
 
             return Ok(new { User = signInResult.User, Token = signInResult.Token });
         }
+                [HttpPost("signinAdmin")]
+        public async Task<IActionResult> SignAdminIn(SignIn signIn)
+        {
+            var signInResult = await _accountService.SignInAdminAsync(signIn);
+            if (signInResult == null)
+            {
+                throw new BadRequestException("Có lỗi xảy ra, bạn nên thử lại.");
+            }
+
+            return Ok(new { User = signInResult.User, Token = signInResult.Token });
+        }
         [HttpPost("sendEmailConfirm/{id}")]
         public async Task<IActionResult> SendEmailConfirm(string id,[FromBody] string url  )
         {
            await _accountService.SendEmailConfirm(id,url);
+           return Ok(new{message="Gửi liên kết thành công vui lòng vào Email để xác nhận"});
+        }
+        [HttpPost("sendResetPasswordConfirm")]
+        public async Task<IActionResult> SendResetPasswordConfirm([FromBody]ResetPasswordInputDTO inputDTO)
+        {
+           await _accountService.SendRestPasswordConfirm(inputDTO);
            return Ok(new{message="Gửi liên kết thành công vui lòng vào Email để xác nhận"});
         }
         [HttpPost("confirmEmail/{id}")]
@@ -58,10 +75,22 @@ namespace backend.Controllers
             await _accountService.ConfirmEmailAsync(id, confirmEmailToken);
             return Ok(new{message="Xác nhận email thành công"});
         }
+                [HttpPost("confirmSetPassword")]
+        public async Task<IActionResult> ConfirmSetPassword([FromBody] SetPasswordInputDTO inputDTO)
+        {
+            await _accountService.ConfirmSetPasswordAsync(inputDTO);
+            return Ok(new{message="Tạo mật khẩu mới thành công"});
+        }
         [HttpGet]
         public async Task<IActionResult> GetUsers(int pageIndex = 1, int pageSize = 5)
         {
-            var users = await _accountService.GetUsersAsync(pageIndex, pageSize);
+             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
+            if (userEmail == null)
+            {
+                return Unauthorized(new { error ="Có lỗi xãy ra vui lòng đăng nhập lại"});
+            }
+            var users = await _accountService.GetUsersAsync(pageIndex, pageSize,userEmail);
             return Ok(users);
         }
                 [HttpGet("roles")]
@@ -97,9 +126,10 @@ namespace backend.Controllers
             await _accountService.UpdateUserByAdminAsync(id, updateByAdminDTO,avatar);
             return Ok(new { message ="Cập nhật thành công"});
         }
-        [HttpPut("my/{id}")]
-        [Authorize(Roles = AppRole.SuperAdmin)]
-        [Authorize(Roles = AppRole.Admin)]
+[HttpPut("my/{id}")]
+[Authorize]
+
+
         public async Task<IActionResult> UpdateMyUser(string id,[FromForm] MyUserUpdateDTO userUpdateDTO,IFormFile? avatar)
         {
                         string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
@@ -114,8 +144,8 @@ namespace backend.Controllers
                 return BadRequest(new { error ="Bạn không thể sửa người khác"});
             }
 
-            await _accountService.UpdateMyUserAsync(id, userUpdateDTO,avatar);
-            return Ok(new { message ="Cập nhật thành công"});
+            var user =await _accountService.UpdateMyUserAsync(id, userUpdateDTO,avatar);
+            return Ok(new { message ="Cập nhật thành công",data=user});
 
         }
         [HttpPut("statusEmail/{id}")]

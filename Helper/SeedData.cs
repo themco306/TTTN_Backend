@@ -19,46 +19,67 @@ namespace backend.Helper
             yield return AppRole.Warehouse;
         }
         private static string GetDescriptionForTag(TagType tagType)
-{
-    // Xác định mô tả cho mỗi loại tag dựa trên enum TagType
-    switch (tagType)
-    {
-        case TagType.NewModel:
-            return "Những sản phẩm mới sẽ được hiển thị";
-        case TagType.BestSeller:
-            return "Những sản phẩm có nhiều lượt mua sẽ được hiển thị";
-        // Xác định mô tả cho các loại tag khác nếu cần
-        default:
-            return "Mô tả mặc định cho tag";
-    }
-}
-        public static async Task InitializeAsync(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager,AppDbContext dbContext)
+        {
+            // Xác định mô tả cho mỗi loại tag dựa trên enum TagType
+            switch (tagType)
+            {
+                case TagType.NewModel:
+                    return "Những sản phẩm mới sẽ được hiển thị";
+                case TagType.BestSeller:
+                    return "Những sản phẩm có nhiều lượt mua sẽ được hiển thị";
+                // Xác định mô tả cho các loại tag khác nếu cần
+                default:
+                    return "Mô tả mặc định cho tag";
+            }
+        }
+        public static async Task InitializeAsync(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, AppDbContext dbContext)
         {
             string adminEmail = "admin@example.com";
             string adminPassword = "Admin@123";
-            int sort=0;
-        foreach (TagType tagType in Enum.GetValues(typeof(TagType)))
-    {
-        string tagName = tagType.ToString(); // Sử dụng tên enum làm tên của tag
-        string description = GetDescriptionForTag(tagType);
-        
-        // Tạo một tag nếu chưa tồn tại
-        if (!dbContext.Tags.Any(t => t.Type == tagType))
-        {
-            var tag = new Tag
+            int sort = 0;
+            foreach (TagType tagType in Enum.GetValues(typeof(TagType)))
             {
-                Name = tagName,
-                Type = tagType,
-                Description = description,
-                Sort=sort++,
-            };
+                string tagName = tagType.ToString(); // Sử dụng tên enum làm tên của tag
+                string description = GetDescriptionForTag(tagType);
 
-            dbContext.Tags.Add(tag);
-        }
+                // Tạo một tag nếu chưa tồn tại
+                if (!dbContext.Tags.Any(t => t.Type == tagType))
+                {
+                    var tag = new Tag
+                    {
+                        Name = tagName,
+                        Type = tagType,
+                        Description = description,
+                        Sort = sort++,
+                    };
+
+                    dbContext.Tags.Add(tag);
+                }
+            }
+            // thêm webinfo 
+             if (!dbContext.WebInfos.Any())
+    {
+        // Nếu không có, tạo mới một WebInfo
+        var webInfo = new WebInfo
+        {
+            Icon = "default_icon.png", // Thay bằng đường dẫn đến icon mặc định của trang web
+            ShopName = "Tên Cửa hàng",
+            Description="Đam mê không chỉ có trên màn ảnh",
+            PhoneNumber = "Số điện thoại",
+            Email = "example@example.com",
+            Address = "Địa chỉ",
+            WorkingHours = "Giờ làm việc",
+            GoogleMap="Coppy iframe google map",
+            FacebookLink = "https://www.facebook.com",
+            InstagramLink = "https://www.instagram.com",
+            TwitterLink = "https://twitter.com"
+        };
+
+        dbContext.WebInfos.Add(webInfo);
     }
 
-    // Lưu thay đổi vào cơ sở dữ liệu
-    await dbContext.SaveChangesAsync();
+            // Lưu thay đổi vào cơ sở dữ liệu
+            await dbContext.SaveChangesAsync();
 
             foreach (var roleName in GetRoles())
             {
@@ -78,7 +99,10 @@ namespace backend.Helper
                     UserName = "Admin",
                     Email = adminEmail,
                     FirstName = "Admin",
-                    LastName = "User"
+                    LastName = "User",
+                    Avatar="avatar-nam.jpg",
+                    PhoneNumber="0366281394",
+                    Gender=true
                 };
 
                 var result = await userManager.CreateAsync(adminUser, adminPassword);

@@ -16,6 +16,7 @@ namespace backend.Helper
         public const string CategoryClaim = "CategoryClaim";
         public const string UserClaim = "UserClaim";
         public const string SliderClaim = "SliderClaim";
+        public const string CouponClaim = "CouponClaim";
     }
   
 }

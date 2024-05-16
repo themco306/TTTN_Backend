@@ -26,9 +26,15 @@ namespace backend.Controllers
             var tags = await _tagService.GetAllTagAsync();
             return Ok(tags);
         }
+                [HttpGet("active")]
+        public async Task<IActionResult> GetTagsActive()
+        {
+            var tags = await _tagService.GetAllTagActiveAsync();
+            return Ok(tags);
+        }
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTagName(long id,[FromBody] TagNameUpdateDTO tagI){
-                var tag = await _tagService.UpdateTagNameAsync(id,tagI.Name);
+                var tag = await _tagService.UpdateTagNameAsync(id,tagI);
                 return Ok(new {message="Cập nhật tên thành công",data=tag});
         }
         [HttpPut("sort")]

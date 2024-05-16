@@ -15,16 +15,19 @@ namespace backend.Controllers
     public class OrderInfoController : ControllerBase
     {
         private readonly OrderInfoService _orderinfoService;
-
-        public OrderInfoController(OrderInfoService orderinfoService)
+          private readonly IHttpContextAccessor _httpContextAccessor;
+        public OrderInfoController(OrderInfoService orderinfoService,IHttpContextAccessor httpContextAccessor)
         {
             _orderinfoService = orderinfoService;
+            _httpContextAccessor=httpContextAccessor;
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetOrderInfos()
         {
-            var orderinfos = await _orderinfoService.GetAllAsync();
+            string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var orderinfos = await _orderinfoService.GetAllAsync(tokenWithBearer);
             return Ok(orderinfos);
         }
 
@@ -35,27 +38,28 @@ namespace backend.Controllers
                 return Ok(orderinfo);
         }
         [HttpPost]
-        //  [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.OrderInfoClaim}{ClaimValue.Add}")] 
-        public async Task<IActionResult> CreateOrderInfo(OrderInfo orderInfo)
+                [Authorize]
+
+        public async Task<IActionResult> CreateOrderInfo(OrderInfoInputDTO orderInfo)
         {
-        
-                var createdOrderInfo = await _orderinfoService.CreateAsync(orderInfo);
-                return CreatedAtAction(nameof(GetOrderInfoById), new { id = createdOrderInfo.Id }, new {message="Thêm thông tin giao hàng thành công",data=createdOrderInfo});
+         string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+                var createdOrderInfo = await _orderinfoService.CreateAsync(orderInfo,tokenWithBearer);
+                 return Ok(new {message="Thêm thông tin thành công",data=createdOrderInfo});
         }
 
         [HttpPut("{id}")]
-        //  [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.OrderInfoClaim}{ClaimValue.Edit}")] 
-
-        public async Task<IActionResult> UpdateOrderInfo(long id,OrderInfo orderInfo)
+        [Authorize]
+        public async Task<IActionResult> UpdateOrderInfo(long id,OrderInfoInputDTO orderInfo)
         {
-                var orderinfo=await _orderinfoService.UpdateAsync(id, orderInfo);
-                return Ok(new {message="Sửa hình ảnh thành công",data=orderinfo});
+            string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+                var orderinfo=await _orderinfoService.UpdateAsync(id, orderInfo,tokenWithBearer);
+                return Ok(new {message="Sửa thông tin thành công",data=orderinfo});
         }
 
         [HttpDelete("{id}")]
-        //  [Authorize] 
+         [Authorize] 
         public async Task<IActionResult> DeleteOrderInfo(long id)
-        {
+        {       
                 await _orderinfoService.DeleteOrderInfoAsync(id);
                 return Ok(new{message="Xóa thành công thông tin."});
             

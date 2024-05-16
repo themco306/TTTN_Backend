@@ -21,6 +21,7 @@ namespace backend.Models
         public TagType Type {get;set;}
         public string Description { get; set; }
         public long Sort {get;set;}
+        public bool Status {get;set;}=true;
         public List<ProductTag> ProductTags { get; set; }
         
     }

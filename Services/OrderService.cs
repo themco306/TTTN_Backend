@@ -13,21 +13,23 @@ namespace backend.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly CouponService _couponService;
         private readonly OrderInfoService _orderInfoService;
         private readonly ProductService _productService;
         private readonly IMapper _mapper;
         private readonly Generate _generate;
         private readonly AccountService _accountService;
 
-        public OrderService(IOrderRepository orderRepository, IMapper mapper, Generate generate, AccountService accountService,OrderInfoService orderInfoService,ProductService productService,IOrderDetailRepository orderDetailRepository)
+        public OrderService(IOrderRepository orderRepository, IMapper mapper, Generate generate, AccountService accountService, OrderInfoService orderInfoService, ProductService productService, IOrderDetailRepository orderDetailRepository, CouponService couponService)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
             _generate = generate;
             _accountService = accountService;
             _orderInfoService = orderInfoService;
-            _productService=productService;
-            _orderDetailRepository=orderDetailRepository;
+            _productService = productService;
+            _orderDetailRepository = orderDetailRepository;
+            _couponService = couponService;
         }
         public async Task<List<OrderGetDTO>> GetAllAsync()
         {
@@ -46,40 +48,85 @@ namespace backend.Services
         }
 
 
-        public async Task<Order> CreateAsync(OrderInputDTO dataInput)
+        public async Task<OrderGetDTO> CreateAsync(OrderInputDTO dataInput, string token)
         {
-             await _accountService.GetUserByIdAsync(dataInput.UserId);
+            var userId = _accountService.ExtractUserIdFromToken(token);
+            var existingUser = await _accountService.GetUserByIdAsync(userId);
+
             await _orderInfoService.GetByIdAsync(dataInput.OrderInfoId);
-            foreach(var data in dataInput.OrderDetails){
+            var coupon = await _couponService.SubmitCodeAsync(dataInput.Code);
+            var totalPrice = 0.0m;
+            foreach (var data in dataInput.OrderDetails)
+            {
+                var product = await _productService.GetProductByIdAsync(data.ProductId);
+                if (data.Quantity > product.Quantity)
+                {
+                    throw new BadRequestException($"Số lượng sản phẩm {product.Name} không phù hợp");
+                }
+                if (coupon.ApplicableProducts != null)
+                {
+                    if (coupon.ApplicableProducts.CategoryIds != null)
+                    {
+                        if (!coupon.ApplicableProducts.CategoryIds.Contains(product.Category.Id))
+                        {
+                            if (coupon.ApplicableProducts.ProductIds != null)
+                            {
+                                if (!coupon.ApplicableProducts.ProductIds.Contains(product.Id))
+                                {
+                                    throw new NotFoundException($"Sản phẩm {product.Name} không nằm trong chương trình khuyến mãi");
+                                }
+                            }else{
+                                 throw new NotFoundException($"Sản phẩm {product.Name} không nằm trong chương trình khuyến mãi");
+                            }
+                        }
+                    }
 
-            var product=await _productService.GetProductByIdAsync(data.ProductId);
-            if(data.Quantity>product.Quantity){
-                throw new BadRequestException("Số lượng không phù hợp");
-            }
-            }
 
-            var order=new Order{
-                UserId=dataInput.UserId,
-                OrderInfoId=dataInput.OrderInfoId,
-                Code=_generate.GenerateOrderCode(),
-                UpdatedById=dataInput.UserId,
-                Status=0
+                }
+                totalPrice += data.Quantity * product.SalePrice;
+            }
+            if(totalPrice<coupon.MinimumOrderValue){
+                throw new BadRequestException($"Mua thêm để đủ {(long)coupon.MinimumOrderValue} VND");
+            }
+            if (coupon.DiscountType == DiscountType.Percentage)
+            {
+                totalPrice = totalPrice-(totalPrice * coupon.DiscountValue/100);
+            }
+            if (coupon.DiscountType == DiscountType.FixedAmount)
+            {
+                totalPrice -= coupon.DiscountValue;
+            }
+            var expiresAt = DateTime.UtcNow.AddHours(1);
+            var order = new Order
+            {
+                UserId = existingUser.Id,
+                OrderInfoId = dataInput.OrderInfoId,
+                Code = _generate.GenerateOrderCode(),
+                UpdatedById = existingUser.Id,
+                Token = Guid.NewGuid().ToString(),
+                ExpiresAt = expiresAt,
+                Total = totalPrice,
+                PaymentType = dataInput.PaymentType,
+                Note = dataInput.Note,
+                Status = 0
             };
             await _orderRepository.AddAsync(order);
-            foreach(var detail in dataInput.OrderDetails){
-                var product=await _productService.GetProductByIdAsync(detail.ProductId);
-                var OrderDetail=new OrderDetail{
-                    OrderId=order.Id,
-                    Price=product.SalePrice,
-                    ProductId=detail.ProductId,
-                    Quantity=detail.Quantity,
-                    TotalPrice=product.SalePrice*detail.Quantity,
+            foreach (var detail in dataInput.OrderDetails)
+            {
+                var product = await _productService.GetProductByIdAsync(detail.ProductId);
+                var OrderDetail = new OrderDetail
+                {
+                    OrderId = order.Id,
+                    Price = product.SalePrice,
+                    ProductId = detail.ProductId,
+                    Quantity = detail.Quantity,
+                    TotalPrice = product.SalePrice * detail.Quantity,
                 };
                 await _orderDetailRepository.AddAsync(OrderDetail);
 
             }
             await _productService.UpdateTagProductAsync();
-            return order;
+            return _mapper.Map<OrderGetDTO>(order);
         }
         // public async Task<Order> UpdateAsync(long id, Order dataInput)
         // {

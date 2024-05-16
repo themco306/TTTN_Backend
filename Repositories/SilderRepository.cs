@@ -24,11 +24,19 @@ namespace backend.Repositories
             .FirstAsync(p => p.Id == id);
         }
 
-        public async Task<List<Slider>> GetAllAsync()
+        public async Task<List<Slider>> GetAllAsync(bool active=false)
         {
-            return await _context.Sliders
+            if(active==true){ 
+                 return await _context.Sliders
+            .Where(c=>c.Status==1)
             .OrderByDescending(c=>c.UpdatedAt)
             .ToListAsync();
+            }else{
+                  return await _context.Sliders
+            .OrderByDescending(c=>c.UpdatedAt)
+            .ToListAsync();
+            }
+          
         }
 
         public async Task AddAsync(Slider slider)

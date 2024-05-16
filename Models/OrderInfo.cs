@@ -15,6 +15,11 @@ namespace backend.Models
         public string UserId {get;set;}
         public virtual  AppUser? User {get;set;}
         public string DeliveryAddress {get;set;}
+       
+        public string DeliveryProvince {get;set;}
+        public string DeliveryDistrict {get;set;}
+         public string DeliveryWard {get;set;}
+
         public string DeliveryName {get;set;}
         public string DeliveryPhone {get;set;}
 

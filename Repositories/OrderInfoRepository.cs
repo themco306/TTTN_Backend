@@ -20,13 +20,16 @@ namespace backend.Repositories
             return await _context.OrderInfos.FindAsync(id);
         }
 
-        public async Task<List<OrderInfo>> GetAllAsync()
+        public async Task<List<OrderInfo>> GetAllAsync(string userId)
         {
-            return await _context.OrderInfos.Select(o => new OrderInfo
+            return await _context.OrderInfos.Where(c=>c.UserId==userId).Select(o => new OrderInfo
         {
             Id = o.Id,
             UserId=o.UserId,
             DeliveryAddress = o.DeliveryAddress,
+            DeliveryProvince=o.DeliveryProvince,
+            DeliveryDistrict=o.DeliveryDistrict,
+            DeliveryWard=o.DeliveryWard,
             DeliveryName = o.DeliveryName,
             DeliveryPhone = o.DeliveryPhone
         })

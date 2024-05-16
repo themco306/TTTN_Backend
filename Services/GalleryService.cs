@@ -83,22 +83,23 @@ namespace backend.Services
         }
 
 
-        public async Task<string> UploadImage(string productSlug, IFormFile imageFile,string  type="products")
-        {
-            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/images/"+type);
-            if (!Directory.Exists(uploadPath))
-            {
-                Directory.CreateDirectory(uploadPath);
-            }
-            var fileName = $"{productSlug}_{DateTime.Now.Ticks}.jpg";
-            var filePath = Path.Combine(uploadPath, fileName);
-            using (var image = await Image.LoadAsync(imageFile.OpenReadStream()))
-            {
-                await image.SaveAsJpegAsync(filePath);
-            }
+public async Task<string> UploadImage(string productSlug, IFormFile imageFile, string type = "products")
+{
+    var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/images/" + type);
+    if (!Directory.Exists(uploadPath))
+    {
+        Directory.CreateDirectory(uploadPath);
+    }
+    var fileExtension = Path.GetExtension(imageFile.FileName); // Lấy đuôi của tệp ảnh
+    var fileName = $"{productSlug}_{DateTime.Now.Ticks}{fileExtension}";
+    var filePath = Path.Combine(uploadPath, fileName);
+    using (var image = await Image.LoadAsync(imageFile.OpenReadStream()))
+    {
+        await image.SaveAsJpegAsync(filePath);
+    }
 
-            return fileName;
-        }
+    return fileName;
+}
 
 public async Task UpdateGalleryImagesAsync(long productId, List<long> ids, List<IFormFile> newImages)
 {
@@ -156,7 +157,7 @@ public async Task UpdateGalleryImagesAsync(long productId, List<long> ids, List<
             // Kiểm tra nếu tên hình ảnh không hợp lệ
             if (string.IsNullOrEmpty(imageName))
             {
-                throw new ArgumentException("Tên hình ảnh không hợp lệ.");
+                return;
             }
 
             // Đường dẫn đến thư mục chứa hình ảnh

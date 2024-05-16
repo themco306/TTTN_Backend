@@ -1,91 +1,59 @@
 {
   "Files": [
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\asd_638509540433722967.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\asd_638509540433722967.jpg"
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\default_icon.png",
+      "PackagePath": "staticwebassets\\images\\logo\\default_icon.png"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\asd_638509540436833072.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\asd_638509540436833072.jpg"
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\ten-cua-hang_638511057564112171.jpg",
+      "PackagePath": "staticwebassets\\images\\logo\\ten-cua-hang_638511057564112171.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638509439380427624.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\one-piece_638509439380427624.jpg"
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffffffff_638512853683777949.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\fffffffff_638512853683777949.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638509439383031366.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\one-piece_638509439383031366.jpg"
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\kkkkkkkkkk_638512875564114444.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\kkkkkkkkkk_638512875564114444.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638509528613876403.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638509528613876403.jpg"
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086325495888.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\one-piece_638511086325495888.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638509528614508515.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638509528614508515.jpg"
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086327851408.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\one-piece_638511086327851408.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\viet-nam_638509528423714024.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\viet-nam_638509528423714024.jpg"
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086328167235.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\one-piece_638511086328167235.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\viet-nam_638509528427107625.jpg",
-      "PackagePath": "staticwebassets\\images\\products\\viet-nam_638509528427107625.jpg"
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner1_638511057980338628.jpg",
+      "PackagePath": "staticwebassets\\images\\sliders\\banner1_638511057980338628.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\nguyen_638503680290345638.jpg",
-      "PackagePath": "staticwebassets\\images\\sliders\\nguyen_638503680290345638.jpg"
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner2_638511917526404409.jpg",
+      "PackagePath": "staticwebassets\\images\\sliders\\banner2_638511917526404409.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\nguyen_638503680440129511.jpg",
-      "PackagePath": "staticwebassets\\images\\sliders\\nguyen_638503680440129511.jpg"
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638511499500584904.jpg",
+      "PackagePath": "staticwebassets\\images\\users\\User_638511499500584904.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\nguyen_638508473899786474.jpg",
-      "PackagePath": "staticwebassets\\images\\sliders\\nguyen_638508473899786474.jpg"
-    },
-    {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\one-piece_638503681284751156.jpg",
-      "PackagePath": "staticwebassets\\images\\sliders\\one-piece_638503681284751156.jpg"
-    },
-    {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\shank-luffy2_638503676092592782.jpg",
-      "PackagePath": "staticwebassets\\images\\sliders\\shank-luffy2_638503676092592782.jpg"
-    },
-    {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\shank-luffy3_638503676161695724.jpg",
-      "PackagePath": "staticwebassets\\images\\sliders\\shank-luffy3_638503676161695724.jpg"
-    },
-    {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\shank-luffy_638503676528670058.jpg",
-      "PackagePath": "staticwebassets\\images\\sliders\\shank-luffy_638503676528670058.jpg"
-    },
-    {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\viet-nam_638503681784478803.jpg",
-      "PackagePath": "staticwebassets\\images\\sliders\\viet-nam_638503681784478803.jpg"
-    },
-    {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\viet-nam_638503690097105460.jpg",
-      "PackagePath": "staticwebassets\\images\\sliders\\viet-nam_638503690097105460.jpg"
-    },
-    {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638500090823282291.jpg",
-      "PackagePath": "staticwebassets\\images\\users\\User_638500090823282291.jpg"
-    },
-    {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nam.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nam.jpg",
       "PackagePath": "staticwebassets\\images\\users\\avatar-nam.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nu.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nu.jpg",
       "PackagePath": "staticwebassets\\images\\users\\avatar-nu.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\khanh_638499354592724816.jpg",
-      "PackagePath": "staticwebassets\\images\\users\\khanh_638499354592724816.jpg"
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne1_638513252674556994.jpg",
+      "PackagePath": "staticwebassets\\images\\users\\ne1_638513252674556994.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\pages\\EmailConfirmed.html",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\pages\\EmailConfirmed.html",
       "PackagePath": "staticwebassets\\pages\\EmailConfirmed.html"
     },
     {

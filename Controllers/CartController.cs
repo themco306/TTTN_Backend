@@ -1,79 +1,68 @@
-// using backend.Exceptions;
-// using backend.Services;
-// using Microsoft.AspNetCore.Mvc;
-// using System;
-// using System.Threading.Tasks;
+using backend.DTOs;
+using backend.Exceptions;
+using backend.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
-// namespace backend.Controllers
-// {
-//     [ApiController]
-//     [Route("api/carts")]
-//     public class CartController : ControllerBase
-//     {
-//         private readonly CartService _cartService;
+namespace backend.Controllers
+{
+    [ApiController]
+    [Route("api/carts")]
+    public class CartController : ControllerBase
+    {
+        private readonly CartService _cartService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-//         public CartController(CartService cartService)
-//         {
-//             _cartService = cartService;
-//         }
+        public CartController(CartService cartService, IHttpContextAccessor httpContextAccessor)
+        {
+            _cartService = cartService;
+            _httpContextAccessor=httpContextAccessor;
+        }
 
-//         [HttpGet]
-//         public async Task<IActionResult> GetCarts()
-//         {
-//             var carts = await _cartService.GetAllCartsAsync();
-//             return Ok(carts);
-//         }
+        [HttpGet]
+        public async Task<IActionResult> GetCarts()
+        {
+            var carts = await _cartService.GetAllCartsAsync();
+            return Ok(carts);
+        }
 
-//         [HttpGet("{id}")]
-//         public async Task<IActionResult> GetCart(long id)
-//         {
-//             try
-//             {
-//                 var cart = await _cartService.GetCartByIdAsync(id);
-//                 return Ok(cart);
-//             }
-//             catch (NotFoundException ex)
-//             {
-//                 return NotFound(ex.Message);
-//             }
-//             catch (Exception ex)
-//             {
-//                 return StatusCode(500, ex.Message);
-//             }
-//         }
+        [HttpGet("my-cart")]
+        [Authorize]
+        public async Task<IActionResult> GetCart()
+        {
+             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+                var cart = await _cartService.GetCartByUserIdAsync(tokenWithBearer);
+                return Ok(cart);
+        }
 
-//         // [HttpPost]
-//         // public async Task<IActionResult> PostCart(string userId)
-//         // {
-//         //     try
-//         //     {
-//         //         var cart = await _cartService.CreateCartAsync(userId);
-//         //         return CreatedAtAction("GetCart", new { id = cart.Id }, cart);
-//         //     }
-//         //     catch (Exception ex)
-//         //     {
-//         //         return StatusCode(500, ex.Message);
-//         //     }
-//         // }
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> PostCart(CartInputDTO cartInput)
+        {
+                        string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
 
-//         [HttpDelete("{id}")]
-//         public async Task<IActionResult> DeleteCart(long id)
-//         {
-//             try
-//             {
-//                 await _cartService.DeleteCartAsync(id);
-//                 return NoContent();
-//             }
-//             catch (NotFoundException ex)
-//             {
-//                 return NotFound(ex.Message);
-//             }
-//             catch (Exception ex)
-//             {
-//                 return StatusCode(500, ex.Message);
-//             }
-//         }
+                var cart = await _cartService.CreateCartAsync(cartInput,tokenWithBearer);
+                return Ok(new {message="Thêm giỏ hàng thành công",data=cart});
+        }
+         [HttpPut("quantity/{id}/{quantity}")]
+        [Authorize]
+        public async Task<IActionResult> ChangeQuantity(long id, int quantity)
+        {
+                        string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
 
-//         // Các phương thức khác cần thiết cho quản lý giỏ hàng có thể được thêm vào ở đây
-//     }
-// }
+                await _cartService.ChangeQuantityAsync(id,quantity,tokenWithBearer);
+                return Ok();
+        }
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteCart(long id)
+        {
+             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+                await _cartService.DeleteCartAsync(id,tokenWithBearer);
+                return Ok(new{message="Xóa khỏi giỏ hàng thành công"});
+           
+        }
+    }
+}

@@ -24,7 +24,8 @@ Task<bool> DeleteClaimsAsync(string userId);
     Task<string> GenerateJwtToken(AppUser user);
     Task<string> GenerateEmailConfirmationTokenAsync(AppUser user);
 
-    Task<IEnumerable<AppUser>> GetUsersAsync(int pageIndex, int pageSize);
+
+    Task<IEnumerable<AppUser>> GetUsersAsync(int pageIndex, int pageSize,string email);
 
     Task<AppUser> GetUserByIdAsync(string id);
 
