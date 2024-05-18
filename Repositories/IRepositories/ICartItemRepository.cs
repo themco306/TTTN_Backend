@@ -12,5 +12,6 @@ namespace backend.Repositories.IRepositories
         Task AddAsync(CartItem cartItem);
         Task UpdateAsync(CartItem cartItem);
         Task DeleteAsync(long id);
+        Task DeleteAsync(long cartId,long productId);
     }
 }

@@ -105,6 +105,7 @@ namespace backend.Services
             cartItem.Quantity=quantity;
             await _cartItemRepository.UpdateAsync(cartItem);
         }
+
         public async Task DeleteCartAsync(long id,string token)
         {
                 try

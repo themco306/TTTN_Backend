@@ -6,6 +6,16 @@ using System.Text.Json.Serialization;
 
 namespace backend.Models
 {
+    public enum OrderStatus
+    {
+        PendingUserConfirmation,  // Đơn hàng chờ người dùng xác nhận
+        Confirmed,                // Đơn hàng đã xác nhận
+        Shipped,                  // Đơn hàng đang giao
+        Delivered,                // Đơn hàng đã giao
+        Received,                 // Người dùng đã nhận
+        Cancelled,                // Đơn hàng đã hủy
+        PaymentCompleted          // Đã thanh toán trực tuyến thành công
+    }
     public enum PaymentType {
     CashOnDelivery, // Thanh toán khi nhận hàng
     OnlinePayment // Thanh toán trực tuyến
@@ -32,7 +42,7 @@ namespace backend.Models
         public virtual AppUser? UpdatedBy { get; set; }
          
         public PaymentType PaymentType {get;set;}=PaymentType.CashOnDelivery;
-        public int Status {get;set;}
+        public OrderStatus Status { get; set; } = OrderStatus.PendingUserConfirmation;
         public virtual List<OrderDetail>? OrderDetails {get;set;}
 
 

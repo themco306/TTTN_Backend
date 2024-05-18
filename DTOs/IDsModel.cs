@@ -7,4 +7,8 @@ namespace backend.DTOs
     public class StringIDsModel{
         public List<string>? ids {get;set;}
     }
+    public class ConfirmationUrlModel
+{
+    public string Url { get; set; }
+}
     }

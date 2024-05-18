@@ -105,7 +105,12 @@ namespace backend.Services
 
             return _mapper.Map<CouponGetDTO>(coupon);
         }
-
+                public async Task UpdateCouponUsageLimitAsync(long id, int limit)
+        {
+            var existingCoupon = await _couponRepository.GetByIdAsync(id);
+            existingCoupon.UsageLimit=limit;
+            await _couponRepository.UpdateAsync(existingCoupon);
+        }
         public async Task<CouponGetDTO> UpdateCouponAsync(long id, CouponInputDTO couponInputDTO)
         {
             var existingCoupon = await _couponRepository.GetByIdAsync(id);

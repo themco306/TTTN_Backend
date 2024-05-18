@@ -1,6 +1,8 @@
+using System.Data.OleDb;
 using AutoMapper;
 using backend.DTOs;
 using backend.Models;
+using Microsoft.VisualBasic;
 
 namespace backend.Helper
 {
@@ -60,11 +62,27 @@ namespace backend.Helper
                         DeliveryAddress = src.OrderInfo.DeliveryAddress,
                         DeliveryName = src.OrderInfo.DeliveryName,
                         DeliveryPhone = src.OrderInfo.DeliveryPhone,
-                        // Nếu cần thêm các thông tin khác của OrderInfo, bạn có thể thực hiện tương tự
-                    }));
-            
-                        CreateMap<CouponInputDTO, Coupon>();
-                  CreateMap<Coupon, CouponGetDTO>();
+                        DeliveryDistrict = src.OrderInfo.DeliveryDistrict,
+                        DeliveryProvince = src.OrderInfo.DeliveryProvince,
+                        DeliveryWard = src.OrderInfo.DeliveryWard
+                    }))
+                        .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails.Select(od => new OrderDetail
+                        {
+                            Id = od.Id,
+                            ProductId=od.ProductId,
+                            Quantity=od.Quantity,
+                            Product= new Product{
+                                Id=od.Product.Id,
+                                Name=od.Product.Name,
+                                Galleries=od.Product.Galleries
+                            },
+                            Price=od.Price,
+                            TotalPrice=od.TotalPrice
+                        }).ToList()))
+                    ;
+
+            CreateMap<CouponInputDTO, Coupon>();
+            CreateMap<Coupon, CouponGetDTO>();
         }
     }
 }

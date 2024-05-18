@@ -1,59 +1,59 @@
 {
   "Files": [
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\default_icon.png",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\default_icon.png",
       "PackagePath": "staticwebassets\\images\\logo\\default_icon.png"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\ten-cua-hang_638511057564112171.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\ten-cua-hang_638511057564112171.jpg",
       "PackagePath": "staticwebassets\\images\\logo\\ten-cua-hang_638511057564112171.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffffffff_638512853683777949.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffffffff_638512853683777949.jpg",
       "PackagePath": "staticwebassets\\images\\products\\fffffffff_638512853683777949.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\kkkkkkkkkk_638512875564114444.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\kkkkkkkkkk_638512875564114444.jpg",
       "PackagePath": "staticwebassets\\images\\products\\kkkkkkkkkk_638512875564114444.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086325495888.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086325495888.jpg",
       "PackagePath": "staticwebassets\\images\\products\\one-piece_638511086325495888.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086327851408.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086327851408.jpg",
       "PackagePath": "staticwebassets\\images\\products\\one-piece_638511086327851408.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086328167235.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086328167235.jpg",
       "PackagePath": "staticwebassets\\images\\products\\one-piece_638511086328167235.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner1_638511057980338628.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner1_638511057980338628.jpg",
       "PackagePath": "staticwebassets\\images\\sliders\\banner1_638511057980338628.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner2_638511917526404409.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner2_638511917526404409.jpg",
       "PackagePath": "staticwebassets\\images\\sliders\\banner2_638511917526404409.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638511499500584904.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638511499500584904.jpg",
       "PackagePath": "staticwebassets\\images\\users\\User_638511499500584904.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nam.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nam.jpg",
       "PackagePath": "staticwebassets\\images\\users\\avatar-nam.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nu.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nu.jpg",
       "PackagePath": "staticwebassets\\images\\users\\avatar-nu.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne1_638513252674556994.jpg",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne1_638513252674556994.jpg",
       "PackagePath": "staticwebassets\\images\\users\\ne1_638513252674556994.jpg"
     },
     {
-      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\pages\\EmailConfirmed.html",
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\pages\\EmailConfirmed.html",
       "PackagePath": "staticwebassets\\pages\\EmailConfirmed.html"
     },
     {

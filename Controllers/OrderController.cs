@@ -1,12 +1,10 @@
 using backend.DTOs;
-using backend.Exceptions;
-using backend.Helper;
-using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
+
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+
+
 
 namespace backend.Controllers
 {
@@ -29,12 +27,42 @@ namespace backend.Controllers
             var orderinfos = await _orderService.GetAllAsync();
             return Ok(orderinfos);
         }
-
+        [HttpGet("myOrder")]
+        [Authorize]
+        public async Task<IActionResult> GetMyOrder(int page=1,int pageSize=5)
+        {
+              string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var orderinfos = await _orderService.GetMyOrderAsync(tokenWithBearer,page,pageSize);
+            return Ok(orderinfos);
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderInfoById(long id)
         {
                 var order = await _orderService.GetByIdAsync(id);
                 return Ok(order);
+        }
+        [HttpGet("code/{code}")]
+        // [Authorize]
+        public async Task<IActionResult> GetOrderByCode(string code)
+        {
+                  string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+                var order = await _orderService.GetByCodeAsync(code,tokenWithBearer);
+                return Ok(order);
+        }
+        [HttpPost("sendEmailConfirm/{id}")]
+        [Authorize]
+        public async Task<IActionResult> SendEmailConfirmOrder(long id,[FromBody] string confirmationUrl  )
+        {
+             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+           await _orderService.SendEmailConfirm(id,confirmationUrl,tokenWithBearer);
+           return Ok(new{message="Gửi liên kết thành công vui lòng vào Email để xác nhận"});
+        }
+        [HttpPost("confirmEmail/{id}")]
+        [Authorize]
+        public async Task<IActionResult> ConfirmEmail(string id,[FromBody] string confirmEmailToken)
+        {
+            await _orderService.ConfirmEmailAsync(id, confirmEmailToken);
+            return Ok(new{message="Xác nhận đặt hàng thành công"});
         }
         [HttpPost]
         [Authorize]
@@ -42,7 +70,7 @@ namespace backend.Controllers
         {
                  string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
                 var createdOrderInfo = await _orderService.CreateAsync(order,tokenWithBearer);
-                return Ok(new {message="Thêm thông tin giao hàng thành công",data=createdOrderInfo});
+                return Ok(new {message="Đặt hàng thành công",data=createdOrderInfo});
         }
 
         // [HttpPut("{id}")]

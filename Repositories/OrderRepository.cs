@@ -18,14 +18,36 @@ namespace backend.Repositories
         public async Task<Order> GetByIdAsync(long id)
         {
 
-            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).FirstOrDefaultAsync(c=>c.Id==id);
+            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product).FirstOrDefaultAsync(c=>c.Id==id);
         }
+        public async Task<Order> GetByCodeAsync(string code)
+        {
 
+            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product).FirstOrDefaultAsync(c=>c.Code==code);
+        }
         public async Task<List<Order>> GetAllAsync()
         {
-            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails)
+            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product)
             .ToListAsync();
         }
+        public async Task<int> GetTotalOrderCountAsync(string userId)
+{
+    return await _context.Orders.CountAsync(c => c.UserId == userId);
+}
+
+public async Task<List<Order>> GetMyOrderAsync(string userId, int page, int pageSize)
+{
+    return await _context.Orders
+        .Where(c => c.UserId == userId)
+        .Include(o => o.User)
+        .Include(o => o.OrderInfo)
+        .Include(o => o.OrderDetails)
+        .ThenInclude(c => c.Product)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .OrderBy(c=>c.UpdatedAt)
+        .ToListAsync();
+}
 
         public async Task AddAsync(Order orderinfo)
         {

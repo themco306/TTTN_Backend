@@ -37,7 +37,15 @@ namespace backend.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-
+        public async Task DeleteAsync(long cartId,long productId)
+        {
+            var cartItem = await _context.CartItems.FirstOrDefaultAsync(c=>c.CartId==cartId&&c.ProductId==productId);
+            if (cartItem != null)
+            {
+                _context.CartItems.Remove(cartItem);
+                await _context.SaveChangesAsync();
+            }
+        }
         public async Task<List<CartItem>> GetAllAsync()
         {
             return await _context.CartItems.ToListAsync();

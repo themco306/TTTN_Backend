@@ -21,12 +21,16 @@ namespace backend.DTOs
          public long Id {get;set;}
         public  UserGetShortDTO User {get;set;}
         public string Code {get;set;}
+        public decimal Total { get; set; }
+
+        public string Token { get; set;}
         public string? Note {get;set;}
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public PaymentType PaymentType {get;set;}
         public  OrderInfo OrderInfo {get;set;}
         public  UserGetShortDTO UpdatedBy { get; set; }
-        public int Status {get;set;}
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public OrderStatus Status { get; set; }
         
         public DateTime? CreatedAt {get;set;}
         public DateTime? UpdatedAt {get;set;}
@@ -34,8 +38,16 @@ namespace backend.DTOs
 
 
     }
+        public class OrderGetCreateDTO{
+        public string Code {get;set;}
+        public string Token {get;set;}
+        public DateTime ExpiresAt {get;set;}
+
+
+    }
         public class OrderDetailInputDTO
     { 
+        public long CartId {get;set;}
         public long ProductId {get;set;}
         public int Quantity {get;set;}
 

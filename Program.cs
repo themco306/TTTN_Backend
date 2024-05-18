@@ -131,6 +131,12 @@ builder.Services.AddScoped<CartService>();
 
 builder.Services.AddScoped<ICouponRepository,CouponRepository>();
 builder.Services.AddScoped<CouponService>();
+
+builder.Services.AddScoped<ICouponUsageRepository,CouponUsageRepository>();
+
+builder.Services.AddScoped<IProductTagRepository,ProductTagRepository>();
+
+
 var app = builder.Build();
 app.UseCors(Example07JSDomain);
 // Khởi tạo dữ liệu mẫu

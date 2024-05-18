@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "+DoiY7qRlKs/Z/3pBe0kcDrRv3ZpP/FzQEy7pyTAyW8=",
+  "Hash": "HHe28zvaBTQcqlb/mHVlETX+sTH0akrK0sXBW60PVcU=",
   "Source": "backend",
   "BasePath": "_content/backend",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "backend\\wwwroot",
       "Source": "backend",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\default_icon.png",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\default_icon.png",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/logo/default_icon.png",
       "AssetKind": "All",
@@ -36,10 +36,10 @@
       "OriginalItemSpec": "wwwroot\\images\\logo\\default_icon.png"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\ten-cua-hang_638511057564112171.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\ten-cua-hang_638511057564112171.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/logo/ten-cua-hang_638511057564112171.jpg",
       "AssetKind": "All",
@@ -55,10 +55,10 @@
       "OriginalItemSpec": "wwwroot\\images\\logo\\ten-cua-hang_638511057564112171.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffffffff_638512853683777949.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffffffff_638512853683777949.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/products/fffffffff_638512853683777949.jpg",
       "AssetKind": "All",
@@ -74,10 +74,10 @@
       "OriginalItemSpec": "wwwroot\\images\\products\\fffffffff_638512853683777949.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\kkkkkkkkkk_638512875564114444.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\kkkkkkkkkk_638512875564114444.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/products/kkkkkkkkkk_638512875564114444.jpg",
       "AssetKind": "All",
@@ -93,10 +93,10 @@
       "OriginalItemSpec": "wwwroot\\images\\products\\kkkkkkkkkk_638512875564114444.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086325495888.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086325495888.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/products/one-piece_638511086325495888.jpg",
       "AssetKind": "All",
@@ -112,10 +112,10 @@
       "OriginalItemSpec": "wwwroot\\images\\products\\one-piece_638511086325495888.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086327851408.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086327851408.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/products/one-piece_638511086327851408.jpg",
       "AssetKind": "All",
@@ -131,10 +131,10 @@
       "OriginalItemSpec": "wwwroot\\images\\products\\one-piece_638511086327851408.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086328167235.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086328167235.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/products/one-piece_638511086328167235.jpg",
       "AssetKind": "All",
@@ -150,10 +150,10 @@
       "OriginalItemSpec": "wwwroot\\images\\products\\one-piece_638511086328167235.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner1_638511057980338628.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner1_638511057980338628.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/sliders/banner1_638511057980338628.jpg",
       "AssetKind": "All",
@@ -169,10 +169,10 @@
       "OriginalItemSpec": "wwwroot\\images\\sliders\\banner1_638511057980338628.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner2_638511917526404409.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner2_638511917526404409.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/sliders/banner2_638511917526404409.jpg",
       "AssetKind": "All",
@@ -188,10 +188,10 @@
       "OriginalItemSpec": "wwwroot\\images\\sliders\\banner2_638511917526404409.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nam.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nam.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/users/avatar-nam.jpg",
       "AssetKind": "All",
@@ -207,10 +207,10 @@
       "OriginalItemSpec": "wwwroot\\images\\users\\avatar-nam.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nu.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nu.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/users/avatar-nu.jpg",
       "AssetKind": "All",
@@ -226,10 +226,10 @@
       "OriginalItemSpec": "wwwroot\\images\\users\\avatar-nu.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne1_638513252674556994.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne1_638513252674556994.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/users/ne1_638513252674556994.jpg",
       "AssetKind": "All",
@@ -245,10 +245,10 @@
       "OriginalItemSpec": "wwwroot\\images\\users\\ne1_638513252674556994.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638511499500584904.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638511499500584904.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "images/users/User_638511499500584904.jpg",
       "AssetKind": "All",
@@ -264,10 +264,10 @@
       "OriginalItemSpec": "wwwroot\\images\\users\\User_638511499500584904.jpg"
     },
     {
-      "Identity": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\pages\\EmailConfirmed.html",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\pages\\EmailConfirmed.html",
       "SourceId": "backend",
       "SourceType": "Discovered",
-      "ContentRoot": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\",
+      "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
       "RelativePath": "pages/EmailConfirmed.html",
       "AssetKind": "All",

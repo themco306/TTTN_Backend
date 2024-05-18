@@ -17,8 +17,9 @@ namespace backend.Services
         private readonly AccountService _accountService;
         private readonly GalleryService _galleryService;
         private readonly TagService _tagService;
+        private readonly IProductTagRepository _productTagRepository;
 
-        public ProductService(IProductRepository productRepository, IMapper mapper, Generate generate, AccountService accountService, GalleryService galleryService, TagService tagService)
+        public ProductService(IProductRepository productRepository, IMapper mapper, Generate generate, AccountService accountService, GalleryService galleryService, TagService tagService,IProductTagRepository productTagRepository)
         {
             _productRepository = productRepository;
             _mapper = mapper;
@@ -26,6 +27,7 @@ namespace backend.Services
             _accountService = accountService;
             _galleryService = galleryService;
             _tagService = tagService;
+            _productTagRepository=productTagRepository;
         }
         public async Task UpdateTagProductAsync()
         {
@@ -34,14 +36,7 @@ namespace backend.Services
 
             // Lấy ra danh sách sản phẩm đã được gắn tag "BestSeller" trước đó
             var previousBestSellers = await _productRepository.GetProductsByTagTypeAsync(TagType.BestSeller);
-            foreach (var product in topSold)
-            {
-                if(product.TotalItemsSold>0){
-                    product.ProductTags.Add(new ProductTag {ProductId=product.Id, Tag = bestSellerTag });
-                }
-            }
-
-            foreach (var product in previousBestSellers)
+             foreach (var product in previousBestSellers)
             {
                 // Loại bỏ tag "BestSeller" cho các sản phẩm đã được gắn trước đó
                 var productTag =new ProductTag{ProductId=product.Id,TagId=bestSellerTag.Id};
@@ -50,6 +45,18 @@ namespace backend.Services
                     await _productRepository.RemoveProductTagAsync(productTag);
                 }
             }
+            foreach (var product in topSold)
+            {
+                if(product.TotalItemsSold>0){
+                    var productTag=new ProductTag{
+                        ProductId=product.Id,
+                        TagId=bestSellerTag.Id
+                    };
+                    await _productTagRepository.AddAsync(productTag);
+                }
+            }
+
+           
         }
 
         public async Task<List<ProductGetDTO>> GetAllProductsAsync()
@@ -100,7 +107,17 @@ namespace backend.Services
     }
             return product;
         }
+        public async Task UpdateProductQuantityAsync(long id,int mQuantity){
+             var existingProduct = await _productRepository.GetByIdAsync(id);
 
+            if (existingProduct == null)
+            {
+                throw new NotFoundException("Sản phẩm không tồn tại.");
+            }
+            existingProduct.Quantity=existingProduct.Quantity-mQuantity;
+            existingProduct.TotalItemsSold=existingProduct.TotalItemsSold+mQuantity;
+            await _productRepository.UpdateAsync(existingProduct);
+        }
         public async Task<ProductGetDTO> UpdateProductAsync(long id, ProductInputDTO productInputDTO)
         {
             var existingProduct = await _productRepository.GetByIdAsync(id);

@@ -35,13 +35,25 @@ public async Task<List<Product>> GetAllAsync()
         .ToListAsync();
 }
    public async Task<List<Product>> GetProductsByTagTypeAsync(TagType type){
-           return await _context.Products
+    if(type==TagType.BestSeller)
+    {
+        return await _context.Products
+        .Where(p => p.ProductTags.Any(pt => pt.Tag.Type == type))
+        .Include(c=>c.Category)
+        .Include(c => c.Galleries.OrderBy(g => g.Order))
+        .OrderByDescending(p => p.TotalItemsSold)
+        .ToListAsync();
+        }else{
+             return await _context.Products
         .Where(p => p.ProductTags.Any(pt => pt.Tag.Type == type))
         .Include(c=>c.Category)
         .Include(c => c.Galleries.OrderBy(g => g.Order))
         .OrderByDescending(p => p.CreatedAt)
         .ToListAsync();
         }
+        }
+    
+           
         public async Task<Product> GetLastProductByTagTypeAsync(TagType type)
 {
     return await _context.Products
