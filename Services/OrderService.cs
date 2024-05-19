@@ -43,12 +43,12 @@ namespace backend.Services
             var orders = await _orderRepository.GetAllAsync();
             return _mapper.Map<List<OrderGetDTO>>(orders);
         }
-        public async Task<PagedResult<OrderGetDTO>> GetMyOrderAsync(string token,int page, int pageSize)
+        public async Task<PagedResult<OrderGetDTO>> GetMyOrdersAsync(string token,int page, int pageSize)
         {
             var userId = _accountService.ExtractUserIdFromToken(token);
             var existingUser = await _accountService.GetUserByIdAsync(userId);
             var totalItem=await _orderRepository.GetTotalOrderCountAsync(existingUser.Id);
-            var orders = await _orderRepository.GetMyOrderAsync(existingUser.Id,page,pageSize);
+            var orders = await _orderRepository.GetMyOrdersAsync(existingUser.Id,page,pageSize);
             var orderGetDTOs = _mapper.Map<List<OrderGetDTO>>(orders);
 
             return new PagedResult<OrderGetDTO>
@@ -70,19 +70,35 @@ namespace backend.Services
 
             return _mapper.Map<OrderGetDTO>(order);
         }
+        public async Task UpdateStatusAsync(long id,OrderStatus status){
+            var order = await _orderRepository.GetByIdAsync(id);
+            switch (status)
+            {
+                case OrderStatus.PaymentCompleted:{
+                    if(order.PaymentType==PaymentType.OnlinePayment&&order.Status==OrderStatus.Confirmed){
+                        order.Status=OrderStatus.PaymentCompleted;
+                       await _orderRepository.UpdateAsync(order);
+                    }
+                }
+                break;
+                default:
+                break;
+            }
+        }
         public async Task<OrderGetDTO> GetByCodeAsync(string code, string token)
         {
             var userId = _accountService.ExtractUserIdFromToken(token);
             var existingUser = await _accountService.GetUserByIdAsync(userId);
             var order = await _orderRepository.GetByCodeAsync(code);
+             if (order == null)
+            {
+                throw new NotFoundException("Đơn hàng không tồn tại.");
+            }
             if (existingUser.Id != order.UserId)
             {
                 throw new NotFoundException("Bạn không thể xem đơn hàng của người khác");
             }
-            if (order == null)
-            {
-                throw new NotFoundException("Đơn hàng không tồn tại.");
-            }
+           
 
             return _mapper.Map<OrderGetDTO>(order);
         }

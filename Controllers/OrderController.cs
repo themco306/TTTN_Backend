@@ -29,10 +29,10 @@ namespace backend.Controllers
         }
         [HttpGet("myOrder")]
         [Authorize]
-        public async Task<IActionResult> GetMyOrder(int page=1,int pageSize=5)
+        public async Task<IActionResult> GetMyOrders(int page=1,int pageSize=5)
         {
               string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            var orderinfos = await _orderService.GetMyOrderAsync(tokenWithBearer,page,pageSize);
+            var orderinfos = await _orderService.GetMyOrdersAsync(tokenWithBearer,page,pageSize);
             return Ok(orderinfos);
         }
         [HttpGet("{id}")]
@@ -42,7 +42,7 @@ namespace backend.Controllers
                 return Ok(order);
         }
         [HttpGet("code/{code}")]
-        // [Authorize]
+        [Authorize]
         public async Task<IActionResult> GetOrderByCode(string code)
         {
                   string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];

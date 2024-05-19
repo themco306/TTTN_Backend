@@ -23,7 +23,7 @@ namespace backend.Repositories
         public async Task<Order> GetByCodeAsync(string code)
         {
 
-            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product).FirstOrDefaultAsync(c=>c.Code==code);
+            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product).ThenInclude(c=>c.Galleries).FirstOrDefaultAsync(c=>c.Code==code);
         }
         public async Task<List<Order>> GetAllAsync()
         {
@@ -35,7 +35,7 @@ namespace backend.Repositories
     return await _context.Orders.CountAsync(c => c.UserId == userId);
 }
 
-public async Task<List<Order>> GetMyOrderAsync(string userId, int page, int pageSize)
+public async Task<List<Order>> GetMyOrdersAsync(string userId, int page, int pageSize)
 {
     return await _context.Orders
         .Where(c => c.UserId == userId)
@@ -43,6 +43,7 @@ public async Task<List<Order>> GetMyOrderAsync(string userId, int page, int page
         .Include(o => o.OrderInfo)
         .Include(o => o.OrderDetails)
         .ThenInclude(c => c.Product)
+        .ThenInclude(c=>c.Galleries)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .OrderBy(c=>c.UpdatedAt)

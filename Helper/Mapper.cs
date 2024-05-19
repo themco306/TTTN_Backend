@@ -74,7 +74,8 @@ namespace backend.Helper
                             Product= new Product{
                                 Id=od.Product.Id,
                                 Name=od.Product.Name,
-                                Galleries=od.Product.Galleries
+                                Galleries=od.Product.Galleries,
+                                Slug=od.Product.Slug
                             },
                             Price=od.Price,
                             TotalPrice=od.TotalPrice

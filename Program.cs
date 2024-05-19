@@ -3,6 +3,8 @@ using backend.Context;
 using backend.DTOs;
 using backend.Helper;
 using backend.Models;
+using backend.Payment.Momo;
+using backend.Payment.Momo.Config;
 using backend.Repositories;
 using backend.Repositories.IRepositories;
 using backend.Services;
@@ -54,6 +56,9 @@ builder.Services.AddSwaggerGen(option =>
 });
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
+
+
+
 builder.Services.AddIdentity<AppUser,IdentityRole>(options=>{
     options.Password.RequiredLength = 7;
     options.Password.RequireDigit = true;
@@ -87,6 +92,11 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(connecti
 //     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectString") + "Encrypt=True;");
 // });
 // builder.Services.AddHostedService<UpdateDatabaseService>();
+
+builder.Services.Configure<MomoConfig>(
+    builder.Configuration.GetSection("Momo")
+);
+
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<CategoryService>();
@@ -135,6 +145,9 @@ builder.Services.AddScoped<CouponService>();
 builder.Services.AddScoped<ICouponUsageRepository,CouponUsageRepository>();
 
 builder.Services.AddScoped<IProductTagRepository,ProductTagRepository>();
+
+builder.Services.AddScoped<IPaidOrderRepository,PaidOrderRepository>();
+builder.Services.AddScoped<PaymentMomoService>();
 
 
 var app = builder.Build();

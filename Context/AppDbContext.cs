@@ -27,6 +27,9 @@ namespace backend.Context
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Coupon> Coupons { get; set; }
         public DbSet<CouponUsage> CouponUsages { get; set; }
+
+        public DbSet<PaidOrder> PaidOrders { get; set; }
+
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
             OnBeforeSaving();
@@ -209,6 +212,15 @@ namespace backend.Context
                 e.HasOne(fk=>fk.Order)
                 .WithMany()
                 .HasForeignKey(fk=>fk.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+            });
+
+              modelBuilder.Entity<PaidOrder>(e =>
+            {
+
+                e.HasOne(fk => fk.Order)
+                .WithMany()
+                .HasForeignKey(fk => fk.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
             });
 

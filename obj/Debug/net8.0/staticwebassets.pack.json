@@ -17,6 +17,14 @@
       "PackagePath": "staticwebassets\\images\\products\\kkkkkkkkkk_638512875564114444.jpg"
     },
     {
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\naruto_638517506608090258.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\naruto_638517506608090258.jpg"
+    },
+    {
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\naruto_638517506608814980.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\naruto_638517506608814980.jpg"
+    },
+    {
       "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086325495888.jpg",
       "PackagePath": "staticwebassets\\images\\products\\one-piece_638511086325495888.jpg"
     },
@@ -29,6 +37,18 @@
       "PackagePath": "staticwebassets\\images\\products\\one-piece_638511086328167235.jpg"
     },
     {
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638517506152010808.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638517506152010808.jpg"
+    },
+    {
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638517506152785244.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638517506152785244.jpg"
+    },
+    {
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638517506153088599.jpg",
+      "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638517506153088599.jpg"
+    },
+    {
       "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner1_638511057980338628.jpg",
       "PackagePath": "staticwebassets\\images\\sliders\\banner1_638511057980338628.jpg"
     },
@@ -37,8 +57,12 @@
       "PackagePath": "staticwebassets\\images\\sliders\\banner2_638511917526404409.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638511499500584904.jpg",
-      "PackagePath": "staticwebassets\\images\\users\\User_638511499500584904.jpg"
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638516282091786821.jpg",
+      "PackagePath": "staticwebassets\\images\\users\\User_638516282091786821.jpg"
+    },
+    {
+      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638517505388574978.jpg",
+      "PackagePath": "staticwebassets\\images\\users\\User_638517505388574978.jpg"
     },
     {
       "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nam.jpg",

@@ -214,6 +214,26 @@ namespace backend.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Carts",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Carts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -254,6 +274,46 @@ namespace backend.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Coupons",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Code = table.Column<string>(type: "varchar(255)", nullable: false),
+                    Description = table.Column<string>(type: "longtext", nullable: true),
+                    DiscountType = table.Column<int>(type: "int", nullable: false),
+                    DiscountValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UsageLimit = table.Column<int>(type: "int", nullable: false),
+                    UsagePerUser = table.Column<int>(type: "int", nullable: false),
+                    MinimumOrderValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ApplicableProductsJson = table.Column<string>(type: "longtext", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<string>(type: "varchar(255)", nullable: true),
+                    UpdatedById = table.Column<string>(type: "varchar(255)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Coupons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Coupons_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Coupons_AspNetUsers_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "OrderInfos",
                 columns: table => new
                 {
@@ -261,6 +321,9 @@ namespace backend.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false),
                     DeliveryAddress = table.Column<string>(type: "longtext", nullable: false),
+                    DeliveryProvince = table.Column<string>(type: "longtext", nullable: false),
+                    DeliveryDistrict = table.Column<string>(type: "longtext", nullable: false),
+                    DeliveryWard = table.Column<string>(type: "longtext", nullable: false),
                     DeliveryName = table.Column<string>(type: "longtext", nullable: false),
                     DeliveryPhone = table.Column<string>(type: "longtext", nullable: false)
                 },
@@ -364,8 +427,13 @@ namespace backend.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false),
                     Code = table.Column<string>(type: "longtext", nullable: false),
+                    Note = table.Column<string>(type: "longtext", nullable: true),
+                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Token = table.Column<string>(type: "longtext", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     OrderInfoId = table.Column<long>(type: "bigint", nullable: false),
                     UpdatedById = table.Column<string>(type: "varchar(255)", nullable: true),
+                    PaymentType = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
@@ -391,6 +459,34 @@ namespace backend.Migrations
                         principalTable: "OrderInfos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "CartItems",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    CartId = table.Column<long>(type: "bigint", nullable: false),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CartItems_Carts_CartId",
+                        column: x => x.CartId,
+                        principalTable: "Carts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CartItems_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -446,6 +542,41 @@ namespace backend.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "CouponUsages",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false),
+                    CouponId = table.Column<long>(type: "bigint", nullable: false),
+                    UsedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    OrderId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CouponUsages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CouponUsages_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CouponUsages_Coupons_CouponId",
+                        column: x => x.CouponId,
+                        principalTable: "Coupons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CouponUsages_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "OrderDetails",
                 columns: table => new
                 {
@@ -472,6 +603,30 @@ namespace backend.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "PaidOrders",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    OrderId = table.Column<long>(type: "bigint", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethodCode = table.Column<string>(type: "longtext", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaidOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaidOrders_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -513,6 +668,21 @@ namespace backend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_CartItems_CartId",
+                table: "CartItems",
+                column: "CartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartItems_ProductId",
+                table: "CartItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carts_UserId",
+                table: "Carts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Categories_CreatedById",
                 table: "Categories",
                 column: "CreatedById");
@@ -526,6 +696,37 @@ namespace backend.Migrations
                 name: "IX_Categories_UpdatedById",
                 table: "Categories",
                 column: "UpdatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Coupons_Code",
+                table: "Coupons",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Coupons_CreatedById",
+                table: "Coupons",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Coupons_UpdatedById",
+                table: "Coupons",
+                column: "UpdatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CouponUsages_CouponId",
+                table: "CouponUsages",
+                column: "CouponId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CouponUsages_OrderId",
+                table: "CouponUsages",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CouponUsages_UserId",
+                table: "CouponUsages",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Galleries_ProductId",
@@ -561,6 +762,11 @@ namespace backend.Migrations
                 name: "IX_Orders_UserId",
                 table: "Orders",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaidOrders_OrderId",
+                table: "PaidOrders",
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
@@ -612,10 +818,19 @@ namespace backend.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CartItems");
+
+            migrationBuilder.DropTable(
+                name: "CouponUsages");
+
+            migrationBuilder.DropTable(
                 name: "Galleries");
 
             migrationBuilder.DropTable(
                 name: "OrderDetails");
+
+            migrationBuilder.DropTable(
+                name: "PaidOrders");
 
             migrationBuilder.DropTable(
                 name: "ProductTags");
@@ -628,6 +843,12 @@ namespace backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Carts");
+
+            migrationBuilder.DropTable(
+                name: "Coupons");
 
             migrationBuilder.DropTable(
                 name: "Orders");
