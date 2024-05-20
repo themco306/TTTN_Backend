@@ -82,8 +82,17 @@ namespace backend.Helper
                         }).ToList()))
                     ;
 
-            CreateMap<CouponInputDTO, Coupon>();
-            CreateMap<Coupon, CouponGetDTO>();
+            CreateMap<CouponInputDTO, Coupon>()
+            
+            ;
+            CreateMap<Coupon, CouponGetDTO>()
+             .ForMember(dest => dest.CouponUsages, opt => opt.MapFrom(src => src.CouponUsages.Select(od => new CouponUsagesDTO
+                        {
+                          UserName=od.User.UserName,
+                          UsedAt=od.UsedAt,
+                          OrderCode=od.Order.Code
+                        }).ToList()))
+            ;
         }
     }
 }

@@ -30,6 +30,7 @@ namespace backend.Repositories
 public async Task<List<Product>> GetAllAsync()
 {
     return await _context.Products
+    .Include(c=>c.Category)
         .Include(c => c.Galleries.OrderBy(g => g.Order))
         .OrderByDescending(p => p.UpdatedAt)
         .ToListAsync();

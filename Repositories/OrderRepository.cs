@@ -18,7 +18,7 @@ namespace backend.Repositories
         public async Task<Order> GetByIdAsync(long id)
         {
 
-            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product).FirstOrDefaultAsync(c=>c.Id==id);
+            return await _context.Orders.Include(c=>c.PaidOrder).Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product).ThenInclude(c=>c.Galleries).FirstOrDefaultAsync(c=>c.Id==id);
         }
         public async Task<Order> GetByCodeAsync(string code)
         {

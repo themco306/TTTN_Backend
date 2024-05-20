@@ -133,6 +133,11 @@ namespace backend.Context
                        });
             modelBuilder.Entity<Order>(e =>
             {
+                e.HasOne(o => o.PaidOrder)
+                .WithOne(p => p.Order)
+                .HasForeignKey<PaidOrder>(p => p.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
                 e.HasOne(fk => fk.User)
                 .WithMany()
                 .HasForeignKey(fk => fk.UserId)
@@ -187,6 +192,7 @@ namespace backend.Context
                  e.HasIndex(c => c.Code)
                 .IsUnique();
 
+
                 e.HasOne(fk => fk.CreatedBy)
                 .WithMany()
                 .HasForeignKey(fk => fk.CreatedById)
@@ -205,7 +211,7 @@ namespace backend.Context
                 .OnDelete(DeleteBehavior.Cascade);
 
                 e.HasOne(fk=>fk.Coupon)
-                .WithMany()
+                .WithMany(c=>c.CouponUsages)
                 .HasForeignKey(fk=>fk.CouponId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -218,10 +224,10 @@ namespace backend.Context
               modelBuilder.Entity<PaidOrder>(e =>
             {
 
-                e.HasOne(fk => fk.Order)
-                .WithMany()
-                .HasForeignKey(fk => fk.OrderId)
-                .OnDelete(DeleteBehavior.Cascade);
+                // e.HasOne(fk => fk.Order)
+                // .WithMany()
+                // .HasForeignKey(fk => fk.OrderId)
+                // .OnDelete(DeleteBehavior.Cascade);
             });
 
             base.OnModelCreating(modelBuilder);

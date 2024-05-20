@@ -21,7 +21,7 @@ namespace backend.Models
         public DateTime? PaymentDate {get;set;}
 
         public decimal Amount {get;set;}
-
+[JsonConverter(typeof(JsonStringEnumConverter))]
         public PaymentMethod PaymentMethod {get;set;}
 
         public string PaymentMethodCode  {get;set;}

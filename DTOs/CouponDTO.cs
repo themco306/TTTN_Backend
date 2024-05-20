@@ -42,6 +42,11 @@ namespace backend.DTOs
 
         public int Status { get; set; } = 0;
     }
+    public class CouponUsagesDTO {
+        public string  UserName { get; set; }
+        public DateTime UsedAt { get; set; }
+        public string  OrderCode { get; set; } 
+    }
     public class CouponGetDTO {
         
         public long Id {get;set;}
@@ -73,6 +78,9 @@ namespace backend.DTOs
 
         public int Status { get; set; } = 0;
 
+        public List<CouponUsagesDTO> CouponUsages {get;set;}
+
 
     }
+
 }

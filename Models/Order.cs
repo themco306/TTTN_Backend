@@ -45,6 +45,8 @@ namespace backend.Models
         public OrderStatus Status { get; set; } = OrderStatus.PendingUserConfirmation;
         public virtual List<OrderDetail>? OrderDetails {get;set;}
 
+        public virtual  PaidOrder PaidOrder {get;set;}
+
 
     }
 }

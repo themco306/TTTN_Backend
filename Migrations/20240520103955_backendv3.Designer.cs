@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Context;
 
@@ -10,9 +11,11 @@ using backend.Context;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240520103955_backendv3")]
+    partial class backendv3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -594,8 +597,7 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
+                    b.HasIndex("OrderId");
 
                     b.ToTable("PaidOrders");
                 });
@@ -1017,8 +1019,8 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.PaidOrder", b =>
                 {
                     b.HasOne("backend.Models.Order", "Order")
-                        .WithOne("PaidOrder")
-                        .HasForeignKey("backend.Models.PaidOrder", "OrderId")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1099,9 +1101,6 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.Order", b =>
                 {
                     b.Navigation("OrderDetails");
-
-                    b.Navigation("PaidOrder")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("backend.Models.Product", b =>

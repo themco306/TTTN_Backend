@@ -7,6 +7,7 @@ namespace backend.Repositories.IRepositories
     public interface ICouponRepository
     {
         Task<Coupon> GetByIdAsync(long id);
+        Task<Coupon> GetShowAllByIdAsync(long id);
         Task<Coupon> GetByCodeAsync(string code);
         Task<List<Coupon>> GetAllAsync();
         Task AddAsync(Coupon coupon);

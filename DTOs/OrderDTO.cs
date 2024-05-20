@@ -4,6 +4,10 @@ using backend.Models;
 
 namespace backend.DTOs
 {
+    public class OrderUpdateStatusDTO{
+         [JsonConverter(typeof(JsonStringEnumConverter))]
+        public OrderStatus Status { get; set; }
+    }
     public class OrderInputDTO
     { 
         public long OrderInfoId {get;set;}
@@ -35,6 +39,8 @@ namespace backend.DTOs
         public DateTime? CreatedAt {get;set;}
         public DateTime? UpdatedAt {get;set;}
         public virtual List<OrderDetail>? OrderDetails {get;set;}
+
+        public PaidOrder PaidOrder {get;set;}
 
 
     }

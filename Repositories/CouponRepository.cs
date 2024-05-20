@@ -20,14 +20,25 @@ namespace backend.Repositories
         public async Task<Coupon> GetByIdAsync(long id)
         {
             return await _context.Coupons
+             .Include(c => c.CouponUsages)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.UpdatedBy)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
-
+        public async Task<Coupon> GetShowAllByIdAsync(long id)
+        {
+            return await _context.Coupons
+                 .Include(c => c.CouponUsages)
+            .ThenInclude(cu => cu.User)
+        .Include(c => c.CouponUsages)
+            .ThenInclude(cu => cu.Order)
+                .Include(c => c.CreatedBy)
+                .Include(c => c.UpdatedBy)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
         public async Task<Coupon> GetByCodeAsync(string code)
         {
-            return await _context.Coupons.Where(c=>c.Code==code && c.Status==1)
+            return await _context.Coupons.Where(c=>c.Code==code).Include(c => c.CouponUsages)
                 .FirstOrDefaultAsync();
         }
         public async Task<List<Coupon>> GetAllAsync()

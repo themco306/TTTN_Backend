@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Context;
 
@@ -10,9 +11,11 @@ using backend.Context;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240520103420_backendv2")]
+    partial class backendv2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -385,6 +388,9 @@ namespace backend.Migrations
                     b.Property<long>("CouponId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("CouponId1")
+                        .HasColumnType("bigint");
+
                     b.Property<long?>("OrderId")
                         .HasColumnType("bigint");
 
@@ -398,6 +404,8 @@ namespace backend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CouponId");
+
+                    b.HasIndex("CouponId1");
 
                     b.HasIndex("OrderId");
 
@@ -594,8 +602,7 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
+                    b.HasIndex("OrderId");
 
                     b.ToTable("PaidOrders");
                 });
@@ -924,10 +931,14 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.CouponUsage", b =>
                 {
                     b.HasOne("backend.Models.Coupon", "Coupon")
-                        .WithMany("CouponUsages")
+                        .WithMany()
                         .HasForeignKey("CouponId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("backend.Models.Coupon", null)
+                        .WithMany("CouponUsages")
+                        .HasForeignKey("CouponId1");
 
                     b.HasOne("backend.Models.Order", "Order")
                         .WithMany()
@@ -1017,8 +1028,8 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.PaidOrder", b =>
                 {
                     b.HasOne("backend.Models.Order", "Order")
-                        .WithOne("PaidOrder")
-                        .HasForeignKey("backend.Models.PaidOrder", "OrderId")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1099,9 +1110,6 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.Order", b =>
                 {
                     b.Navigation("OrderDetails");
-
-                    b.Navigation("PaidOrder")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("backend.Models.Product", b =>

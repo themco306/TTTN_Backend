@@ -74,10 +74,35 @@ namespace backend.Services
             var order = await _orderRepository.GetByIdAsync(id);
             switch (status)
             {
+                case OrderStatus.Cancelled:{
+                    if(order.Status!=OrderStatus.Received){
+                        order.Status=OrderStatus.Cancelled;
+                       await _orderRepository.UpdateAsync(order);
+                    }
+                }
+                break;
                 case OrderStatus.PaymentCompleted:{
                     if(order.PaymentType==PaymentType.OnlinePayment&&order.Status==OrderStatus.Confirmed){
                         order.Status=OrderStatus.PaymentCompleted;
                        await _orderRepository.UpdateAsync(order);
+                    }
+                }
+                break;
+                case OrderStatus.Shipped:{
+                    if(order.PaymentType==PaymentType.OnlinePayment&&order.Status==OrderStatus.PaymentCompleted){
+                        order.Status=OrderStatus.Shipped;
+                        await _orderRepository.UpdateAsync(order);
+                    }
+                    if(order.PaymentType==PaymentType.CashOnDelivery&&order.Status==OrderStatus.Confirmed){
+                        order.Status=OrderStatus.Shipped;
+                        await _orderRepository.UpdateAsync(order);
+                    }
+                }
+                break;
+                case OrderStatus.Delivered:{
+                    if(order.Status==OrderStatus.Shipped){
+                        order.Status=OrderStatus.Delivered;
+                        await _orderRepository.UpdateAsync(order);
                     }
                 }
                 break;
@@ -247,7 +272,7 @@ namespace backend.Services
                 OrderId=order.Id,
                 UsedAt=expiresAt
             };
-            await _couponService.UpdateCouponUsageLimitAsync(coupon.Id,coupon.UsageLimit-1);
+            // await _couponService.UpdateCouponUsageLimitAsync(coupon.Id,coupon.UsageLimit-1);
             await _couponUsageRepository.AddAsync(couponUsage);
             }
             

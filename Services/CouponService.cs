@@ -31,7 +31,15 @@ namespace backend.Services
             var coupons = await _couponRepository.GetAllAsync();
             return _mapper.Map<List<CouponGetDTO>>(coupons);
         }
-
+        public async Task<CouponGetDTO> GetCouponShowAllByIdAsync(long id)
+        {
+            var coupon = await _couponRepository.GetShowAllByIdAsync(id);
+            if (coupon == null)
+            {
+                throw new NotFoundException("Mã giảm giá không tồn tại.");
+            }
+            return _mapper.Map<CouponGetDTO>(coupon);
+        }
         public async Task<CouponGetDTO> GetCouponByIdAsync(long id)
         {
             var coupon = await _couponRepository.GetByIdAsync(id);
@@ -44,7 +52,7 @@ namespace backend.Services
         public async Task<CouponGetDTO> GetCouponByCodeAsync(string code)
         {
             var coupon = await _couponRepository.GetByCodeAsync(code);
-            if (coupon == null)
+            if (coupon == null || coupon.Status!=1)
             {
                 throw new NotFoundException("Mã giảm giá không tồn tại.");
             }
@@ -61,15 +69,15 @@ namespace backend.Services
             DateTime currentDate = DateTime.Now;
             if (currentDate < coupon.StartDate)
             {
-                throw new Exception("Chưa đến ngày giảm giá.");
+                throw new BadRequestException("Chưa đến ngày giảm giá.");
             }
             if (currentDate > coupon.EndDate)
             {
-                throw new Exception("Mã giảm giá đã hết hạn.");
+                throw new BadRequestException("Mã giảm giá đã hết hạn.");
             }
-            if(coupon.UsageLimit==0)
+            if(coupon.UsageLimit>=coupon.CouponUsages.Count)
             {
-                throw new Exception("Mã giảm giá đã hết số lượt sử dụng.");
+                throw new BadRequestException("Mã giảm giá đã hết số lượt sử dụng.");
             }
 
             return _mapper.Map<CouponGetDTO>(coupon);
@@ -129,7 +137,13 @@ namespace backend.Services
 
             return _mapper.Map<CouponGetDTO>(existingCoupon);
         }
-
+        public async Task DeleteCouponsById(List<long> ids)
+        {
+            foreach (var id in ids)
+            {
+                await DeleteCouponAsync(id);
+            }
+        }
         public async Task DeleteCouponAsync(long id)
         {
             var existingCoupon = await _couponRepository.GetByIdAsync(id);
@@ -140,6 +154,20 @@ namespace backend.Services
             }
 
             await _couponRepository.DeleteAsync(id);
+        }
+         public async Task UpdateStatusAsync(long id)
+        {
+            var existing = await _couponRepository.GetByIdAsync(id);
+
+            if (existing == null)
+            {
+                throw new NotFoundException("Mã giảm giá không tồn tại");
+            }
+
+            // Cập nhật trạng thái mới (nếu hiện tại là 0 thì cập nhật thành 1, và ngược lại)
+            existing.Status = existing.Status == 0 ? 1 : 0;
+
+            await _couponRepository.UpdateAsync(existing);
         }
     }
 }

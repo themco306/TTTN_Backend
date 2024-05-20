@@ -1,4 +1,6 @@
 using backend.DTOs;
+using backend.Helper;
+using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 
@@ -73,22 +75,15 @@ namespace backend.Controllers
                 return Ok(new {message="Đặt hàng thành công",data=createdOrderInfo});
         }
 
-        // [HttpPut("{id}")]
-        // //  [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.OrderInfoClaim}{ClaimValue.Edit}")] 
+        [HttpPut("{id}")]
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Edit}")] 
 
-        // public async Task<IActionResult> UpdateOrderInfo(long id,Order order)
-        // {
-        //         var order=await _orderService.UpdateAsync(id, order);
-        //         return Ok(new {message="Sửa hình ảnh thành công",data=order});
-        // }
+        public async Task<IActionResult> UpdateOrderStatus(long id,OrderUpdateStatusDTO statusDTO)
+        {
+                await _orderService.UpdateStatusAsync(id, statusDTO.Status);
+                return Ok(new {message="Thay đổi trạng thái thành công"});
+        }
 
-        // [HttpDelete("{id}")]
-        // //  [Authorize] 
-        // public async Task<IActionResult> DeleteOrderInfo(long id)
-        // {
-        //         await _orderService.DeleteOrderInfoAsync(id);
-        //         return Ok(new{message="Xóa thành công thông tin."});
-            
-        // }
+ 
     }
 }
