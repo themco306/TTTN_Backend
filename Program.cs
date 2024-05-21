@@ -149,7 +149,11 @@ builder.Services.AddScoped<IProductTagRepository,ProductTagRepository>();
 builder.Services.AddScoped<IPaidOrderRepository,PaidOrderRepository>();
 builder.Services.AddScoped<PaymentMomoService>();
 
+builder.Services.AddScoped<IMenuRepository,MenuRepository>();
+builder.Services.AddScoped<MenuService>();
 
+builder.Services.AddScoped<ITopicRepository,TopicRepository>();
+builder.Services.AddScoped<TopicService>();
 var app = builder.Build();
 app.UseCors(Example07JSDomain);
 // Khởi tạo dữ liệu mẫu

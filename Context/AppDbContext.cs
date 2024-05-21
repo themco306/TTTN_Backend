@@ -27,8 +27,11 @@ namespace backend.Context
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Coupon> Coupons { get; set; }
         public DbSet<CouponUsage> CouponUsages { get; set; }
-
         public DbSet<PaidOrder> PaidOrders { get; set; }
+        public DbSet<Menu> Menus { get; set; }
+        public DbSet<Topic> Topics { get; set; }
+        public DbSet<Post> Posts { get; set; }
+
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
@@ -229,7 +232,57 @@ namespace backend.Context
                 // .HasForeignKey(fk => fk.OrderId)
                 // .OnDelete(DeleteBehavior.Cascade);
             });
+            modelBuilder.Entity<Menu>(e =>
+            {
+                e.HasOne(fk=>fk.Parent)
+                .WithMany()
+                .HasForeignKey(fk=>fk.ParentId)
+                .OnDelete(DeleteBehavior.Cascade);
 
+                e.HasOne(fk => fk.CreatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.CreatedById)
+                .OnDelete(DeleteBehavior.SetNull);
+
+                e.HasOne(fk => fk.UpdatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.UpdatedById)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
+            modelBuilder.Entity<Topic>(e =>
+            {
+                e.HasOne(fk=>fk.Parent)
+                .WithMany()
+                .HasForeignKey(fk=>fk.ParentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(fk => fk.CreatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.CreatedById)
+                .OnDelete(DeleteBehavior.SetNull);
+
+                e.HasOne(fk => fk.UpdatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.UpdatedById)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
+                        modelBuilder.Entity<Post>(e =>
+            {
+                e.HasOne(fk=>fk.Topic)
+                .WithMany()
+                .HasForeignKey(fk=>fk.TopicId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+                e.HasOne(fk => fk.CreatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.CreatedById)
+                .OnDelete(DeleteBehavior.SetNull);
+
+                e.HasOne(fk => fk.UpdatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.UpdatedById)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
             base.OnModelCreating(modelBuilder);
 
         }

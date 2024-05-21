@@ -127,7 +127,7 @@ namespace backend.Payment.Momo
             {
                 exittingPaidOrder.PaymentDate=now;
                 await _paidOrderRepository.UpdateAsync(exittingPaidOrder);
-                await _orderService.UpdateStatusAsync(order.Id,OrderStatus.PaymentCompleted);
+                await _orderService.UpdatePaymentStatusAsync(order.Id,OrderStatus.PaymentCompleted,order.User.Id);
                return true;
             }
             else

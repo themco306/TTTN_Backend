@@ -70,13 +70,16 @@ namespace backend.Services
 
             return _mapper.Map<OrderGetDTO>(order);
         }
-        public async Task UpdateStatusAsync(long id,OrderStatus status){
+        public async Task UpdateStatusAsync(long id,OrderStatus status,string token){
+            var userId = _accountService.ExtractUserIdFromToken(token);
+            var existingUser = await _accountService.GetUserByIdAsync(userId);
             var order = await _orderRepository.GetByIdAsync(id);
             switch (status)
             {
                 case OrderStatus.Cancelled:{
                     if(order.Status!=OrderStatus.Received){
                         order.Status=OrderStatus.Cancelled;
+                        order.UpdatedById=existingUser.Id;
                        await _orderRepository.UpdateAsync(order);
                     }
                 }
@@ -84,6 +87,7 @@ namespace backend.Services
                 case OrderStatus.PaymentCompleted:{
                     if(order.PaymentType==PaymentType.OnlinePayment&&order.Status==OrderStatus.Confirmed){
                         order.Status=OrderStatus.PaymentCompleted;
+                        order.UpdatedById=existingUser.Id;
                        await _orderRepository.UpdateAsync(order);
                     }
                 }
@@ -91,10 +95,12 @@ namespace backend.Services
                 case OrderStatus.Shipped:{
                     if(order.PaymentType==PaymentType.OnlinePayment&&order.Status==OrderStatus.PaymentCompleted){
                         order.Status=OrderStatus.Shipped;
+                        order.UpdatedById=existingUser.Id;
                         await _orderRepository.UpdateAsync(order);
                     }
                     if(order.PaymentType==PaymentType.CashOnDelivery&&order.Status==OrderStatus.Confirmed){
                         order.Status=OrderStatus.Shipped;
+                        order.UpdatedById=existingUser.Id;
                         await _orderRepository.UpdateAsync(order);
                     }
                 }
@@ -102,6 +108,53 @@ namespace backend.Services
                 case OrderStatus.Delivered:{
                     if(order.Status==OrderStatus.Shipped){
                         order.Status=OrderStatus.Delivered;
+                        order.UpdatedById=existingUser.Id;
+                        await _orderRepository.UpdateAsync(order);
+                    }
+                }
+                break;
+                default:
+                break;
+            }
+        }
+        public async Task UpdatePaymentStatusAsync(long id,OrderStatus status,string userId){
+            var existingUser = await _accountService.GetUserByIdAsync(userId);
+            var order = await _orderRepository.GetByIdAsync(id);
+            switch (status)
+            {
+                case OrderStatus.Cancelled:{
+                    if(order.Status!=OrderStatus.Received){
+                        order.Status=OrderStatus.Cancelled;
+                        order.UpdatedById=existingUser.Id;
+                       await _orderRepository.UpdateAsync(order);
+                    }
+                }
+                break;
+                case OrderStatus.PaymentCompleted:{
+                    if(order.PaymentType==PaymentType.OnlinePayment&&order.Status==OrderStatus.Confirmed){
+                        order.Status=OrderStatus.PaymentCompleted;
+                        order.UpdatedById=existingUser.Id;
+                       await _orderRepository.UpdateAsync(order);
+                    }
+                }
+                break;
+                case OrderStatus.Shipped:{
+                    if(order.PaymentType==PaymentType.OnlinePayment&&order.Status==OrderStatus.PaymentCompleted){
+                        order.Status=OrderStatus.Shipped;
+                        order.UpdatedById=existingUser.Id;
+                        await _orderRepository.UpdateAsync(order);
+                    }
+                    if(order.PaymentType==PaymentType.CashOnDelivery&&order.Status==OrderStatus.Confirmed){
+                        order.Status=OrderStatus.Shipped;
+                        order.UpdatedById=existingUser.Id;
+                        await _orderRepository.UpdateAsync(order);
+                    }
+                }
+                break;
+                case OrderStatus.Delivered:{
+                    if(order.Status==OrderStatus.Shipped){
+                        order.Status=OrderStatus.Delivered;
+                        order.UpdatedById=existingUser.Id;
                         await _orderRepository.UpdateAsync(order);
                     }
                 }

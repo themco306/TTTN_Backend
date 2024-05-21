@@ -18,7 +18,7 @@ namespace backend.Repositories
 
         public async Task<Gallery> GetByIdAsync(long id)
         {
-            return await _context.Galleries.FindAsync(id);
+            return await _context.Galleries.FirstOrDefaultAsync(c=>c.Id==id);
         }
 
         public async Task<List<Gallery>> GetAllAsync()

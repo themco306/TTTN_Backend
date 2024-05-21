@@ -9,68 +9,62 @@ using System.Threading.Tasks;
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("api/coupons")]
-    public class CouponController : ControllerBase
+    [Route("api/topics")]
+    public class TopicController : ControllerBase
     {
-        private readonly CouponService _couponService;
+        private readonly TopicService _topicService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CouponController(CouponService couponService, IHttpContextAccessor httpContextAccessor)
+        public TopicController(TopicService topicService, IHttpContextAccessor httpContextAccessor)
         {
-            _couponService = couponService;
+            _topicService = topicService;
             _httpContextAccessor = httpContextAccessor;
             
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCoupons()
+        public async Task<IActionResult> GetTopics()
         {
-            var coupons = await _couponService.GetAllCouponsAsync();
-            return Ok(coupons);
+            var topics = await _topicService.GetAllTopicsAsync();
+            return Ok(topics);
         }
         [HttpGet("showAll/{id}")]
-        public async Task<IActionResult> GetCouponShowAll(long id)
+        public async Task<IActionResult> GetTopicShowAll(long id)
         {
-            var coupon = await _couponService.GetCouponShowAllByIdAsync(id);
-            return Ok(coupon);
+            var topic = await _topicService.GetTopicShowAllByIdAsync(id);
+            return Ok(topic);
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCoupon(long id)
+        public async Task<IActionResult> GetTopic(long id)
         {
-            var coupon = await _couponService.GetCouponByIdAsync(id);
-            return Ok(coupon);
-        }
-        [HttpGet("code/{code}")]
-        public async Task<IActionResult> SubmitCode(string code)
-        {
-            var coupon = await _couponService.GetCouponByCodeAsync(code);
-            return Ok(coupon);
+            var topic = await _topicService.GetTopicByIdAsync(id);
+            return Ok(topic);
         }
 
         [HttpPost]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Add}")]
-        public async Task<IActionResult> PostCoupon(CouponInputDTO couponInputDTO)
+        public async Task<IActionResult> PostTopic(TopicInputDTO topicInputDTO)
         {
             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            var coupon = await _couponService.CreateCouponAsync(couponInputDTO,tokenWithBearer);
-            return Ok(new{message="Thêm mã giảm giá thàng công",data=coupon});
+            var topic = await _topicService.CreateTopicAsync(topicInputDTO,tokenWithBearer);
+            return Ok(new{message="Thêm chủ đề thàng công",data=topic});
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Edit}")]
-        public async Task<IActionResult> PutCoupon(long id, CouponInputDTO couponInputDTO)
+        public async Task<IActionResult> PutTopic(long id, TopicUpdateDTO topicInputDTO)
         {
              string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            var coupon = await _couponService.UpdateCouponAsync(id, couponInputDTO,tokenWithBearer);
-             return Ok(new{message="Cập nhật mã giảm giá "+coupon.Code+" thàng công",data=coupon});
+            var topic = await _topicService.UpdateTopicAsync(id, topicInputDTO,tokenWithBearer);
+             return Ok(new{message="Cập nhật chủ đề  "+topic.Name+" thàng công",data=topic});
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Delete}")]
-        public async Task<IActionResult> DeleteCoupon(long id)
+        public async Task<IActionResult> DeleteTopic(long id)
         {
-            await _couponService.DeleteCouponAsync(id);
-            return Ok(new { message = "Xóa thành công mã giảm giá có STT: " + id });
+            await _topicService.DeleteTopicAsync(id);
+            return Ok(new { message = "Xóa thành công chủ đề có ID: " + id });
         }
         [HttpDelete("delete-multiple")]
         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Delete}")] 
@@ -80,17 +74,17 @@ namespace backend.Controllers
             {
                 return BadRequest(new { error = "Danh sách không được trống." });
             }
-            await _couponService.DeleteCouponsById(iDsModel.ids);
+            await _topicService.DeleteTopicsById(iDsModel.ids);
             string concatenatedIds = string.Join(", ", iDsModel.ids);
-            return Ok(new{message="Xóa thành công mã giảm có STT: "+concatenatedIds});
+            return Ok(new{message="Xóa thành công chủ đề có ID: "+concatenatedIds});
         }
         [HttpPut("{id}/status")]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Edit}")]
-        public async Task<IActionResult> UpdateCouponStatus(long id)
+        public async Task<IActionResult> UpdateTopicStatus(long id)
         {
             try
             {
-                await _couponService.UpdateStatusAsync(id);
+                await _topicService.UpdateStatusAsync(id);
                 return Ok();
             }
             catch (NotFoundException ex)

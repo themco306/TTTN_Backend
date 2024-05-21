@@ -80,7 +80,8 @@ namespace backend.Controllers
 
         public async Task<IActionResult> UpdateOrderStatus(long id,OrderUpdateStatusDTO statusDTO)
         {
-                await _orderService.UpdateStatusAsync(id, statusDTO.Status);
+             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+                await _orderService.UpdateStatusAsync(id, statusDTO.Status,tokenWithBearer);
                 return Ok(new {message="Thay đổi trạng thái thành công"});
         }
 

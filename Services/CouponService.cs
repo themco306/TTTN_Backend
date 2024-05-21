@@ -119,8 +119,10 @@ namespace backend.Services
             existingCoupon.UsageLimit=limit;
             await _couponRepository.UpdateAsync(existingCoupon);
         }
-        public async Task<CouponGetDTO> UpdateCouponAsync(long id, CouponInputDTO couponInputDTO)
+        public async Task<CouponGetDTO> UpdateCouponAsync(long id, CouponInputDTO couponInputDTO,string token)
         {
+            var userId = _accountService.ExtractUserIdFromToken(token);
+            var existingUser = await _accountService.GetUserByIdAsync(userId);
             var existingCoupon = await _couponRepository.GetByIdAsync(id);
 
             if (existingCoupon == null)
@@ -131,6 +133,7 @@ namespace backend.Services
 
             // Map CouponInputDTO to existingCoupon
             _mapper.Map(couponInputDTO, existingCoupon);
+             existingCoupon.UpdatedById=existingUser.Id;
 
             // Update coupon in the database
             await _couponRepository.UpdateAsync(existingCoupon);

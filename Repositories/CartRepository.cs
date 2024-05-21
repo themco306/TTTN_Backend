@@ -41,7 +41,7 @@ namespace backend.Repositories
 
         public async Task<Cart> GetByIdAsync(long id)
         {
-            return await _context.Carts.FindAsync(id);
+            return await _context.Carts.FirstOrDefaultAsync(c=>c.Id==id);
         }
         public async Task<Cart> GetByUserIdAsync(string id)
         {
