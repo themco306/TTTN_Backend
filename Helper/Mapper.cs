@@ -93,6 +93,18 @@ namespace backend.Helper
                           OrderCode=od.Order.Code
                         }).ToList()))
             ;
+
+            CreateMap<Post, PostGetDTO>();
+            CreateMap<Topic, TopicGetDTO>()
+            .ForMember(dest=>dest.UpdatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                UserName=src.UpdatedBy.UserName,
+                Id=src.UpdatedBy.Id
+            }))
+            .ForMember(dest=>dest.CreatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                UserName=src.CreatedBy.UserName,
+                Id=src.CreatedBy.Id
+            }))
+            ;
         }
     }
 }

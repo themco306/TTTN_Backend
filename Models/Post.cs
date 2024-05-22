@@ -5,6 +5,10 @@ using System.Text.Json.Serialization;
 
 namespace backend.Models
 {
+    public enum PostType{
+        page,
+        post
+    }
     public class Post :DateTimeInfo 
     {
         [Key]
@@ -16,8 +20,9 @@ namespace backend.Models
         public  string Name { get; set; }
         public string Slug {get;set;}
         public string Detail {get;set;}
-        public string ImagePath { get; set; }
-        public string Type {get;set;}
+        public string? ImagePath { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public PostType Type {get;set;}
         public int Status {get;set;}=0;
         public string? CreatedById {get;set;}
         [JsonIgnore]

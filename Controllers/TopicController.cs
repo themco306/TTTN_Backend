@@ -19,7 +19,7 @@ namespace backend.Controllers
         {
             _topicService = topicService;
             _httpContextAccessor = httpContextAccessor;
-            
+
         }
 
         [HttpGet]
@@ -28,6 +28,12 @@ namespace backend.Controllers
             var topics = await _topicService.GetAllTopicsAsync();
             return Ok(topics);
         }
+        [HttpGet("parent/{id}")]
+                public async Task<IActionResult> GetParentCategories(long id)
+                {
+                        var categories = await _topicService.GetParentCategoriesAsync(id);
+                        return Ok(categories);
+                }
         [HttpGet("showAll/{id}")]
         public async Task<IActionResult> GetTopicShowAll(long id)
         {
@@ -40,23 +46,28 @@ namespace backend.Controllers
             var topic = await _topicService.GetTopicByIdAsync(id);
             return Ok(topic);
         }
-
+        [HttpGet("child/{id}")]
+        public async Task<IActionResult> GetChildByParentId(long id)
+        {
+            var topic = await _topicService.GetChildByParentIdAsync(id);
+            return Ok(topic);
+        }
         [HttpPost]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Add}")]
         public async Task<IActionResult> PostTopic(TopicInputDTO topicInputDTO)
         {
             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            var topic = await _topicService.CreateTopicAsync(topicInputDTO,tokenWithBearer);
-            return Ok(new{message="Thêm chủ đề thàng công",data=topic});
+            var topic = await _topicService.CreateTopicAsync(topicInputDTO, tokenWithBearer);
+            return Ok(new { message = "Thêm chủ đề thàng công", data = topic });
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Edit}")]
         public async Task<IActionResult> PutTopic(long id, TopicUpdateDTO topicInputDTO)
         {
-             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            var topic = await _topicService.UpdateTopicAsync(id, topicInputDTO,tokenWithBearer);
-             return Ok(new{message="Cập nhật chủ đề  "+topic.Name+" thàng công",data=topic});
+            string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var topic = await _topicService.UpdateTopicAsync(id, topicInputDTO, tokenWithBearer);
+            return Ok(new { message = "Cập nhật chủ đề  " + topic.Name + " thàng công", data = topic });
         }
 
         [HttpDelete("{id}")]
@@ -67,7 +78,7 @@ namespace backend.Controllers
             return Ok(new { message = "Xóa thành công chủ đề có ID: " + id });
         }
         [HttpDelete("delete-multiple")]
-        [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Delete}")] 
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Delete}")]
         public async Task<IActionResult> DeleteMultipleUsers(LongIDsModel iDsModel)
         {
             if (iDsModel.ids == null || iDsModel.ids.Count == 0)
@@ -76,7 +87,7 @@ namespace backend.Controllers
             }
             await _topicService.DeleteTopicsById(iDsModel.ids);
             string concatenatedIds = string.Join(", ", iDsModel.ids);
-            return Ok(new{message="Xóa thành công chủ đề có ID: "+concatenatedIds});
+            return Ok(new { message = "Xóa thành công chủ đề có ID: " + concatenatedIds });
         }
         [HttpPut("{id}/status")]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Edit}")]

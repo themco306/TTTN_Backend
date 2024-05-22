@@ -40,16 +40,58 @@ namespace backend.Services
             }
             return topic;
         }
-        public async Task<Topic> GetTopicByIdAsync(long id)
+        public async Task<TopicGetDTO> GetTopicByIdAsync(long id)
         {
             var topic = await _topicRepository.GetByIdAsync(id);
             if (topic == null)
             {
                 throw new NotFoundException("Chủ đề không tồn tại.");
             }
-            return topic;
+            return _mapper.Map<TopicGetDTO>(topic);
         }
-    
+          public async Task<List<Topic>> GetParentCategoriesAsync(long id)
+        {
+            var currentCategory = await _topicRepository.GetByIdAsync(id);
+            if (currentCategory == null)
+            {
+                throw new NotFoundException("Chủ đề không tồn tại.");
+            }
+
+            List<Topic> parentCategories;
+            // Nếu danh mục hiện tại là một danh mục gốc
+            parentCategories = await _topicRepository.GetAllAsync(); // Lấy tất cả danh mục
+
+
+
+            // Loại bỏ danh mục hiện tại và tất cả các danh mục con của nó khỏi danh sách danh mục cha
+            parentCategories = parentCategories.Where(c => c.Id != id && !IsDescendant(currentCategory, c)).ToList();
+
+            return parentCategories;
+        }
+
+        private bool IsDescendant(Topic parent, Topic child)
+        {
+            // Kiểm tra xem child có phải là một con của parent không
+            if (child.ParentId == null)
+            {
+                return false;
+            }
+            if (child.ParentId == parent.Id)
+            {
+                return true;
+            }
+            return IsDescendant(parent, child.Parent); // Đệ quy kiểm tra các danh mục cha của child
+        }
+                public async Task<List<Topic>> GetChildByParentIdAsync(long id)
+        {
+            var existingParent = await _topicRepository.GetByIdAsync(id);
+            if (existingParent == null)
+            {
+                throw new NotFoundException("Chủ đề Cha không tồn tại.");
+            }
+            var topics = await _topicRepository.GetChildCategoriesAsync(id);
+            return topics;
+        }
         public async Task<Topic> CreateTopicAsync(TopicInputDTO topicInputDTO, string token)
         {
             var userId = _accountService.ExtractUserIdFromToken(token);
