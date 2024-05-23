@@ -28,6 +28,12 @@ namespace backend.Controllers
             var posts = await _postService.GetPostsAsync();
             return Ok(posts);
         }
+                [HttpGet("page")]
+        public async Task<IActionResult> GetPostsPage()
+        {
+            var posts = await _postService.GetPostsPageAsync();
+            return Ok(posts);
+        }
       [HttpGet("active")]
         public async Task<IActionResult> GetPostsActive()
         {

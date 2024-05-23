@@ -14,6 +14,7 @@ namespace backend.Context
         {
         }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Brand> Brands { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ProductTag> ProductTags { get; set; }
@@ -78,7 +79,18 @@ namespace backend.Context
                 .HasForeignKey(fk => fk.UpdatedById)
                 .OnDelete(DeleteBehavior.SetNull);
             });
+            modelBuilder.Entity<Brand>(e =>
+            {
+                e.HasOne(fk => fk.CreatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.CreatedById)
+                .OnDelete(DeleteBehavior.SetNull);
 
+                e.HasOne(fk => fk.UpdatedBy)
+                .WithMany()
+                .HasForeignKey(fk => fk.UpdatedById)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
             modelBuilder.Entity<Slider>(e =>
             {
                 e.HasOne(fk => fk.CreatedBy)
@@ -98,7 +110,10 @@ namespace backend.Context
                 //    .WithMany()
                 //    .HasForeignKey(c => c.CategoryId)
                 //    .OnDelete(DeleteBehavior.Restrict);
-
+                    e.HasOne(c => c.Brand)
+                   .WithMany()
+                   .HasForeignKey(c => c.BrandId)
+                   .OnDelete(DeleteBehavior.SetNull);
 
                 e.HasOne(fk => fk.CreatedBy)
                   .WithMany()

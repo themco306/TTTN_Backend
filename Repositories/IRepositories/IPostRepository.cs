@@ -8,6 +8,7 @@ namespace backend.Repositories.IRepositories
     {
         Task<Post> GetByIdAsync(long id);
         Task<List<Post>> GetAllAsync(bool active=false);
+        Task<List<Post>> GetAllPageAsync(bool active=false);
         Task AddAsync(Post post);
         Task UpdateAsync(Post post);
         Task DeleteAsync(Post post);

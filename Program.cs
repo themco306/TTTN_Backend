@@ -101,6 +101,9 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<CategoryService>();
 
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<BrandService>();
+
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<EmailService>();
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
@@ -154,6 +157,9 @@ builder.Services.AddScoped<MenuService>();
 
 builder.Services.AddScoped<ITopicRepository,TopicRepository>();
 builder.Services.AddScoped<TopicService>();
+
+builder.Services.AddScoped<IPostRepository,PostRepository>();
+builder.Services.AddScoped<PostService>();
 var app = builder.Build();
 app.UseCors(Example07JSDomain);
 // Khởi tạo dữ liệu mẫu

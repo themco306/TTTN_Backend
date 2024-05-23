@@ -19,6 +19,7 @@ namespace backend.Repositories
         public async Task<Post> GetByIdAsync(long id)
         {
             return await _context.Posts
+            .Include(c=>c.Topic)
             .Include(c=>c.CreatedBy)
             .Include(c=>c.UpdatedBy)
             .FirstAsync(p => p.Id == id);
@@ -28,17 +29,35 @@ namespace backend.Repositories
         {
             if(active==true){ 
                  return await _context.Posts
-            .Where(c=>c.Status==1)
+            .Where(c=>c.Status==1&&c.Type==PostType.post)
+            .Include(c=>c.Topic)
             .OrderByDescending(c=>c.UpdatedAt)
             .ToListAsync();
             }else{
                   return await _context.Posts
+            .Where(c=>c.Type==PostType.post)
+            .Include(c=>c.Topic)
             .OrderByDescending(c=>c.UpdatedAt)
             .ToListAsync();
             }
           
         }
+        public async Task<List<Post>> GetAllPageAsync(bool active=false)
+        {
+            if(active==true){ 
+                 return await _context.Posts
+            .Where(c=>c.Status==1&&c.Type==PostType.page)
+            .OrderByDescending(c=>c.UpdatedAt)
+            .ToListAsync();
+            }else{
+                  return await _context.Posts
+            .Where(c=>c.Type==PostType.page)
 
+            .OrderByDescending(c=>c.UpdatedAt)
+            .ToListAsync();
+            }
+          
+        }
         public async Task AddAsync(Post post)
         {
             _context.Posts.Add(post);

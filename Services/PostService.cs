@@ -33,12 +33,18 @@ namespace backend.Services
 
             return _mapper.Map<List<PostGetDTO>>(posts);
         }
+                public async Task<List<PostGetDTO>> GetPostsPageAsync()
+        {
+            var posts = await _postRepository.GetAllPageAsync();
+
+            return _mapper.Map<List<PostGetDTO>>(posts);
+        }
         public async Task<List<PostGetDTO>> GetPostsActiveAsync()
         {
             var posts = await _postRepository.GetAllAsync(true);
             return _mapper.Map<List<PostGetDTO>>(posts);
         }
-        public async Task<PostGetDTO> GetPostByIdAsync(long postId)
+        public async Task<PostGetShowDTO> GetPostByIdAsync(long postId)
         {
             var post = await _postRepository.GetByIdAsync(postId);
             if (post == null)
@@ -46,9 +52,9 @@ namespace backend.Services
                 throw new NotFoundException("Bài viết không tồn tại");
             }
 
-            return _mapper.Map<PostGetDTO>(post);
+            return _mapper.Map<PostGetShowDTO>(post);
         }
-        public async Task<Post> GetPostShowByIdAsync(long postId)
+        public async Task<PostGetShowDTO> GetPostShowByIdAsync(long postId)
         {
             var post = await _postRepository.GetByIdAsync(postId);
             if (post == null)
@@ -56,7 +62,8 @@ namespace backend.Services
                 throw new NotFoundException("Hình ảnh không tồn tại");
             }
 
-            return post;
+                        return _mapper.Map<PostGetShowDTO>(post);
+
         }
 
         public async Task<PostGetDTO> CreateTypePostAsync(PostInputDTO postDTO, string token)
@@ -100,7 +107,7 @@ namespace backend.Services
                 Slug=slugName,
                 Detail = postDTO.Detail,
                 Type = PostType.page,
-                TopicId=0,
+                TopicId=null,
                 ImagePath = null,
                 Status = postDTO.Status,
                 CreatedById = existingUser.Id,
@@ -109,14 +116,14 @@ namespace backend.Services
             await _postRepository.AddAsync(post);
             return _mapper.Map<PostGetDTO>(post);
         }
-        public async Task<PostGetDTO> UpdatePostAsync(long postId, PostInputDTO postDTO, string token)
+        public async Task<PostGetShowDTO> UpdatePostAsync(long postId, PostInputDTO postDTO, string token)
         {
             var userId = _accountService.ExtractUserIdFromToken(token);
             var existingUser = await _accountService.GetUserByIdAsync(userId);
             var existingPost = await _postRepository.GetByIdAsync(postId);
             if (existingPost == null)
             {
-                throw new NotFoundException("Bài viết không tồn tại");
+                throw new NotFoundException("Không tồn tại");
             }
              var slugName = _generate.GenerateSlug(postDTO.Name);
             if(existingPost.Type==PostType.post){
@@ -141,7 +148,7 @@ namespace backend.Services
            
             await _postRepository.UpdateAsync(existingPost);
 
-            return _mapper.Map<PostGetDTO>(existingPost);
+            return _mapper.Map<PostGetShowDTO>(existingPost);
 
         }
 
@@ -150,7 +157,7 @@ namespace backend.Services
             var existingPost = await _postRepository.GetByIdAsync(postId);
             if (existingPost == null)
             {
-                throw new NotFoundException("Hình ảnh không tồn tại");
+                throw new NotFoundException("Không tồn tại");
             }
             await _galleryService.DeleteImageAsync(existingPost.ImagePath, "posts");
             await _postRepository.DeleteAsync(existingPost);
@@ -173,7 +180,7 @@ namespace backend.Services
 
             if (existing == null)
             {
-                throw new NotFoundException("Danh mục không tồn tại");
+                throw new NotFoundException("Không tồn tại");
             }
             existing.Status = existing.Status == 0 ? 1 : 0;
 

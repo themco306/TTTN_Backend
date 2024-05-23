@@ -14,6 +14,9 @@ namespace backend.Models
         public long CategoryId {get;set;}
         public virtual Category Category { get; set; }
 
+        public long BrandId {get;set;}
+        public virtual Brand Brand { get; set; }
+
         [Required]
         public string Name { get; set; }
 

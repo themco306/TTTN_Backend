@@ -31,6 +31,11 @@ namespace backend.Services
             var topics = await _topicRepository.GetAllAsync();
             return topics;
         }
+                public async Task<List<Topic>> GetAllTopicsActiveAsync()
+        {
+            var topics = await _topicRepository.GetAllActiceAsync();
+            return topics;
+        }
         public async Task<Topic> GetTopicShowAllByIdAsync(long id)
         {
             var topic = await _topicRepository.GetShowAllByIdAsync(id);

@@ -71,31 +71,31 @@ namespace backend.Controllers
                 return Ok(new {message="Sửa Menu thành công",data=menu});
         }
 
-        // [HttpDelete("{sliderId}")]
-        //  [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.SliderClaim}{ClaimValue.Delete}")] 
+        [HttpDelete("{sliderId}")]
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.SliderClaim}{ClaimValue.Delete}")] 
 
-        // public async Task<IActionResult> DeleteSlider(long sliderId)
-        // {
-        //         await _sliderService.DeleteSliderAsync(sliderId);
-        //         return Ok(new{message="Xóa thành công hình ảnh có ID: " + sliderId});
+        public async Task<IActionResult> DeleteSlider(long sliderId)
+        {
+                await _menuService.DeleteMenuAsync(sliderId);
+                return Ok(new{message="Xóa thành công menu có ID: " + sliderId});
             
-        // }
-        //  [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.SliderClaim}{ClaimValue.Delete}")] 
+        }
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.SliderClaim}{ClaimValue.Delete}")] 
 
-        // [HttpDelete("delete-multiple")]
-        //         public async Task<IActionResult> DeleteMultipleCategories(LongIDsModel model)
-        //         {
-        //                 if (model.ids == null || model.ids.Count == 0)
-        //                 {
-        //                         return BadRequest(new{error="Danh sách các ID không được trống."});
-        //                 }
+        [HttpDelete("delete-multiple")]
+                public async Task<IActionResult> DeleteMultipleCategories(LongIDsModel model)
+                {
+                        if (model.ids == null || model.ids.Count == 0)
+                        {
+                                return BadRequest(new{error="Danh sách các ID không được trống."});
+                        }
 
-        //                 await _sliderService.DeleteSlidersAsync(model.ids);
-        //                 string concatenatedIds = string.Join(", ", model.ids);
-        //                 return Ok(new{message="Xóa thành công hình ảnh có ID: "+concatenatedIds});
+                        await _menuService.DeleteMenusAsync(model.ids);
+                        string concatenatedIds = string.Join(", ", model.ids);
+                        return Ok(new{message="Xóa thành công menu có ID: "+concatenatedIds});
 
 
-        //         }
+                }
                 [HttpPut("{id}/status")]
          [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.SliderClaim}{ClaimValue.Edit}")] 
 

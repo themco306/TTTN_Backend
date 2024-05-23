@@ -28,6 +28,12 @@ namespace backend.Controllers
             var topics = await _topicService.GetAllTopicsAsync();
             return Ok(topics);
         }
+        [HttpGet("active")]
+        public async Task<IActionResult> GetTopicsActive()
+        {
+            var topics = await _topicService.GetAllTopicsActiveAsync();
+            return Ok(topics);
+        }
         [HttpGet("parent/{id}")]
                 public async Task<IActionResult> GetParentCategories(long id)
                 {

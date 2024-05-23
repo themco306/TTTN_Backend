@@ -23,6 +23,7 @@ namespace backend.Repositories
                 .Include(c=>c.CreatedBy)
         .Include(c=>c.UpdatedBy)
         .Include(p => p.Category)
+        .Include(p=>p.Brand)
         .Include(p => p.Galleries)
         .FirstOrDefaultAsync(p => p.Id == id);
         }

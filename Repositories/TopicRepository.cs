@@ -37,7 +37,13 @@ namespace backend.Repositories
                 .OrderByDescending(c => c.UpdatedAt)
                 .ToListAsync();
         }
-
+        public async Task<List<Topic>> GetAllActiceAsync()
+        {
+            return await _context.Topics
+            .Where(c=>c.Status==1)
+                .OrderByDescending(c => c.UpdatedAt)
+                .ToListAsync();
+        }
         public async Task AddAsync(Topic topic)
         {
             _context.Topics.Add(topic);

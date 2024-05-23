@@ -9,6 +9,7 @@ namespace backend.Repositories.IRepositories
         Task<Topic> GetByIdAsync(long id);
         Task<Topic> GetShowAllByIdAsync(long id);
         Task<List<Topic>> GetAllAsync();
+        Task<List<Topic>> GetAllActiceAsync();
         Task AddAsync(Topic topic);
         Task UpdateAsync(Topic topic);
         Task DeleteAsync(long id);

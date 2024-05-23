@@ -15,14 +15,18 @@ namespace backend.Services
         private readonly Generate _generate;
         private readonly IMapper _mapper;
         private readonly CategoryService _categoryService;
+        private readonly BrandService _brandService;
+        private readonly PostService _postService;
 
-        public MenuService(IMenuRepository menuRepository, AccountService accountService, Generate generate,IMapper mapper,CategoryService categoryService)
+        public MenuService(IMenuRepository menuRepository, AccountService accountService, Generate generate, IMapper mapper, CategoryService categoryService, BrandService brandService, PostService postService)
         {
             _menuRepository = menuRepository;
             _accountService = accountService;
             _generate = generate;
-            _mapper=mapper;
-            _categoryService=categoryService;
+            _mapper = mapper;
+            _categoryService = categoryService;
+            _brandService = brandService;
+            _postService = postService;
         }
 
         public async Task<List<Menu>> GetMenusAsync()
@@ -57,7 +61,7 @@ namespace backend.Services
         //     return menu;
         // }
 
-        public async Task<Menu> CreateCustomMenuAsync(MenuCustomInputDTO menuDTO,string token)
+        public async Task<Menu> CreateCustomMenuAsync(MenuCustomInputDTO menuDTO, string token)
         {
             var userId = _accountService.ExtractUserIdFromToken(token);
             if (userId == null)
@@ -65,18 +69,19 @@ namespace backend.Services
                 throw new NotFoundException("Có lỗi xãy ra vui lòng đăng nhập lại");
             }
             var user = await _accountService.GetUserByIdAsync(userId);
-            var menu=new Menu{
-                Name=menuDTO.Name,
-                Link=menuDTO.Link,
-                Position=menuDTO.Position
+            var menu = new Menu
+            {
+                Name = menuDTO.Name,
+                Link = menuDTO.Link,
+                Position = menuDTO.Position
             };
-            menu.Type="custom";
-            menu.CreatedById=user.Id;
-            menu.UpdatedById=user.Id;
+            menu.Type = "custom";
+            menu.CreatedById = user.Id;
+            menu.UpdatedById = user.Id;
             await _menuRepository.AddAsync(menu);
             return menu;
         }
-        public async Task<Menu> CreateMenuAsync(MenuInputDTO menuDTO,string token)
+        public async Task<Menu> CreateMenuAsync(MenuInputDTO menuDTO, string token)
         {
             var userId = _accountService.ExtractUserIdFromToken(token);
             if (userId == null)
@@ -84,32 +89,56 @@ namespace backend.Services
                 throw new NotFoundException("Có lỗi xãy ra vui lòng đăng nhập lại");
             }
             var user = await _accountService.GetUserByIdAsync(userId);
-            var existingMenu =await _menuRepository.GetByTableIdAsync(menuDTO.TableId,menuDTO.Type);
-            if (existingMenu != null){
+            var existingMenu = await _menuRepository.GetByTableIdAsync(menuDTO.TableId, menuDTO.Type);
+            if (existingMenu != null)
+            {
                 throw new BadRequestException("Menu đã tồn tại vui lòng sửa thay vì thêm mới");
             }
-            var menu=new Menu{
-                Position=menuDTO.Position,
-                Type=menuDTO.Type,
-                TableId=menuDTO.TableId
+            var menu = new Menu
+            {
+                Position = menuDTO.Position,
+                Type = menuDTO.Type,
+                TableId = menuDTO.TableId
             };
             switch (menuDTO.Type)
             {
-                case "category":{
-                    var category = await _categoryService.GetCategoryByIdAsync(menuDTO.TableId);
-                    menu.Name=category.Name;
-                    menu.Link=category.Slug;
-                }
-                break;
+                case "category":
+                    {
+                        var category = await _categoryService.GetCategoryByIdAsync(menuDTO.TableId);
+                        menu.Name = category.Name;
+                        menu.Link = category.Slug;
+                    }
+                    break;
+                case "brand":
+                    {
+                        var category = await _brandService.GetBrandByIdAsync(menuDTO.TableId);
+                        menu.Name = category.Name;
+                        menu.Link = category.Slug;
+                    }
+                    break;
+                case "post":
+                    {
+                        var category = await _postService.GetPostByIdAsync(menuDTO.TableId);
+                        menu.Name = category.Name;
+                        menu.Link = category.Slug;
+                    }
+                    break;
+                case "page":
+                    {
+                        var category = await _postService.GetPostByIdAsync(menuDTO.TableId);
+                        menu.Name = category.Name;
+                        menu.Link = category.Slug;
+                    }
+                    break;
                 default:
                     throw new NotFoundException("Không tồn tại");
             }
-            menu.CreatedById=user.Id;
-            menu.UpdatedById=user.Id;
+            menu.CreatedById = user.Id;
+            menu.UpdatedById = user.Id;
             await _menuRepository.AddAsync(menu);
             return menu;
         }
-        public async Task<Menu> UpdateMenuAsync(long id, MenuInputUpdateDTO menuDTO,string token)
+        public async Task<Menu> UpdateMenuAsync(long id, MenuInputUpdateDTO menuDTO, string token)
         {
             var userId = _accountService.ExtractUserIdFromToken(token);
             var existingUser = await _accountService.GetUserByIdAsync(userId);
@@ -118,23 +147,26 @@ namespace backend.Services
             {
                 throw new NotFoundException("Menu không tồn tại");
             }
-            if(menuDTO.ParentId!=0&&menuDTO.ParentId!=existingMenu.Id){
-                var existingParent=await _menuRepository.GetByIdAsync(menuDTO.ParentId);
-            if (existingParent == null){
-                throw new NotFoundException("Menu cha không tồn tại");
+            if (menuDTO.ParentId != 0 && menuDTO.ParentId != existingMenu.Id)
+            {
+                var existingParent = await _menuRepository.GetByIdAsync(menuDTO.ParentId);
+                if (existingParent == null)
+                {
+                    throw new NotFoundException("Menu cha không tồn tại");
+                }
+                existingMenu.ParentId = menuDTO.ParentId;
             }
-             existingMenu.ParentId=menuDTO.ParentId;
+
+            if (existingMenu.TableId == 0)
+            {
+                existingMenu.Name = menuDTO.Name;
+                existingMenu.Link = menuDTO.Link;
             }
-           
-            if (existingMenu.TableId==0){
-                existingMenu.Name=menuDTO.Name;
-                existingMenu.Link=menuDTO.Link;
-            }
-            existingMenu.Position=menuDTO.Position;
-            existingMenu.SortOrder=menuDTO.SortOrder;
-           
-            existingMenu.Status=menuDTO.Status;
-            existingMenu.UpdatedById=existingUser.Id;
+            existingMenu.Position = menuDTO.Position;
+            existingMenu.SortOrder = menuDTO.SortOrder;
+
+            existingMenu.Status = menuDTO.Status;
+            existingMenu.UpdatedById = existingUser.Id;
             await _menuRepository.UpdateAsync(existingMenu);
 
             return existingMenu;

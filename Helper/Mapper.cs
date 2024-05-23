@@ -95,8 +95,28 @@ namespace backend.Helper
             ;
 
             CreateMap<Post, PostGetDTO>();
+            CreateMap<Post, PostGetShowDTO>()
+             .ForMember(dest=>dest.UpdatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                UserName=src.UpdatedBy.UserName,
+                Id=src.UpdatedBy.Id
+            }))
+            .ForMember(dest=>dest.CreatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                UserName=src.CreatedBy.UserName,
+                Id=src.CreatedBy.Id
+            }))
+            ;
             CreateMap<Topic, TopicGetDTO>()
             .ForMember(dest=>dest.UpdatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                UserName=src.UpdatedBy.UserName,
+                Id=src.UpdatedBy.Id
+            }))
+            .ForMember(dest=>dest.CreatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                UserName=src.CreatedBy.UserName,
+                Id=src.CreatedBy.Id
+            }))
+            ;
+                        CreateMap<Brand, BrandGetDTO>()
+             .ForMember(dest=>dest.UpdatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
                 UserName=src.UpdatedBy.UserName,
                 Id=src.UpdatedBy.Id
             }))

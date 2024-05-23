@@ -8,6 +8,8 @@ namespace backend.DTOs
     {
         [Required(ErrorMessage = "Vui lòng chọn danh mục.")]
         public long CategoryId {get;set;}
+                [Required(ErrorMessage = "Vui lòng chọn thương hiệu.")]
+        public long BrandId {get;set;}
         [Required(ErrorMessage = "Vui lòng nhập tên.")]
         [StringLength(50, ErrorMessage = "Tên không được vượt quá 50 ký tự.")]
         public string Name { get; set; }
@@ -47,6 +49,7 @@ namespace backend.DTOs
         public long Id { get; set; }
 
         public Category Category {get;set;}
+        public Brand Brand {get;set;}
         public string Name { get; set; }
         public string Slug { get; set; }
 
