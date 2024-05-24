@@ -754,7 +754,7 @@ namespace backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<long>("BrandId")
+                    b.Property<long?>("BrandId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("BuyingPrice")
@@ -1294,8 +1294,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.Brand", "Brand")
                         .WithMany()
                         .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("backend.Models.Category", "Category")
                         .WithMany()

@@ -4,6 +4,17 @@ using backend.Models;
 
 namespace backend.DTOs
 {
+    public class ProductFilterDTO
+{
+    public long? CategoryId { get; set; }
+    public long? BrandId { get; set; }
+    public decimal? MinPrice { get; set; }
+    public decimal? MaxPrice { get; set; }
+    public string? SortBy { get; set; } = "updatedAt"; // default sorting field
+    public string? SortOrder { get; set; } = "desc"; // default sorting order
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
+}
     public class ProductInputDTO
     {
         [Required(ErrorMessage = "Vui lòng chọn danh mục.")]
@@ -11,13 +22,13 @@ namespace backend.DTOs
                 [Required(ErrorMessage = "Vui lòng chọn thương hiệu.")]
         public long BrandId {get;set;}
         [Required(ErrorMessage = "Vui lòng nhập tên.")]
-        [StringLength(50, ErrorMessage = "Tên không được vượt quá 50 ký tự.")]
+        // [StringLength(200, ErrorMessage = "Tên không được vượt quá 200 ký tự.")]
         public string Name { get; set; }
 
-        [StringLength(255, ErrorMessage = "Mô tả không được vượt quá 255 ký tự.")]
+        // [StringLength(255, ErrorMessage = "Mô tả không được vượt quá 255 ký tự.")]
         public string Description { get; set; }
 
-        [StringLength(255, ErrorMessage = "Chi tiết không được vượt quá 255 ký tự.")]
+        // [StringLength(255, ErrorMessage = "Chi tiết không được vượt quá 255 ký tự.")]
         public string Detail { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập giá bán.")]

@@ -29,27 +29,38 @@ namespace backend.Services
             _postService = postService;
         }
 
-        public async Task<List<Menu>> GetMenusAsync()
+        public async Task<List<MenuGetDTO>> GetMenusAsync()
         {
             var menus = await _menuRepository.GetAllAsync();
 
-            return menus;
+            return _mapper.Map<List<MenuGetDTO>>(menus);
+
+        }
+        public async Task<List<MenuGetShortDTO>> GetMenusHeaderAsync()
+        {
+            var menus = await _menuRepository.GetMenuHeaderAsync();
+            return _mapper.Map<List<MenuGetShortDTO>>(menus);
+        }
+                public async Task<List<MenuGetShortDTO>> GetSubMenusAsync(long id)
+        {
+            var menus = await _menuRepository.GetSubMenusAsync(id);
+            return _mapper.Map<List<MenuGetShortDTO>>(menus);
         }
         // public async Task<List<MenuGetDTO>> GetMenusActiveAsync()
         // {
         //     var menus = await _menuRepository.GetAllAsync(true);
         //     return _mapper.Map<List<MenuGetDTO>>(menus);
         // }
-        // public async Task<MenuGetDTO> GetMenuByIdAsync(long menuId)
-        // {
-        //     var menu = await _menuRepository.GetByIdAsync(menuId);
-        //     if (menu == null)
-        //     {
-        //         throw new NotFoundException("Hình ảnh không tồn tại");
-        //     }
+        public async Task<MenuGetDTO> GetMenuByIdAsync(long menuId)
+        {
+            var menu = await _menuRepository.GetByIdAsync(menuId);
+            if (menu == null)
+            {
+                throw new NotFoundException("Menu không tồn tại");
+            }
 
-        //     return _mapper.Map<MenuGetDTO>(menu);
-        // }
+            return _mapper.Map<MenuGetDTO>(menu);
+        }
         //         public async Task<Menu> GetMenuShowByIdAsync(long menuId)
         // {
         //     var menu = await _menuRepository.GetByIdAsync(menuId);
@@ -60,7 +71,39 @@ namespace backend.Services
 
         //     return menu;
         // }
+        public async Task<List<MenuGetDTO>> GetParentsAsync(long id)
+        {
+            var currentCategory = await _menuRepository.GetByIdAsync(id);
+            if (currentCategory == null)
+            {
+                throw new NotFoundException("Menu không tồn tại.");
+            }
 
+            List<Menu> parentCategories;
+            // Nếu danh mục hiện tại là một danh mục gốc
+            parentCategories = await _menuRepository.GetAllAsync(); // Lấy tất cả danh mục
+
+
+
+            // Loại bỏ danh mục hiện tại và tất cả các danh mục con của nó khỏi danh sách danh mục cha
+            parentCategories = parentCategories.Where(c => c.Id != id && !IsDescendant(currentCategory, c)).ToList();
+
+            return _mapper.Map<List<MenuGetDTO>>(parentCategories);
+        }
+
+        private bool IsDescendant(Menu parent, Menu child)
+        {
+            // Kiểm tra xem child có phải là một con của parent không
+            if (child.ParentId == null)
+            {
+                return false;
+            }
+            if (child.ParentId == parent.Id)
+            {
+                return true;
+            }
+            return IsDescendant(parent, child.Parent); // Đệ quy kiểm tra các danh mục cha của child
+        }
         public async Task<Menu> CreateCustomMenuAsync(MenuCustomInputDTO menuDTO, string token)
         {
             var userId = _accountService.ExtractUserIdFromToken(token);

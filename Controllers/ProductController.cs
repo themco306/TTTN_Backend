@@ -29,6 +29,12 @@ namespace backend.Controllers
             var products = await _productService.GetAllProductsAsync();
             return Ok(products);
         }
+        [HttpGet("filter")]
+public async Task<IActionResult> GetFilteredProducts([FromQuery] ProductFilterDTO filter)
+{
+    var pagedResult = await _productService.GetFilteredProductsAsync(filter);
+    return Ok(pagedResult);
+}
         [HttpGet("tag/{id}")]
         public async Task<IActionResult> GetProductsByTag(long id)
         {
@@ -41,7 +47,18 @@ namespace backend.Controllers
             var product = await _productService.GetProductByIdAsync(id);
             return Ok(product);
         }
-
+        [HttpGet("slug/{slug}")]
+        public async Task<IActionResult> GetProduct(string slug)
+        {
+            var product = await _productService.GetProductBySlugAsync(slug);
+            return Ok(product);
+        }
+        [HttpGet("same/{slug}")]
+        public async Task<IActionResult> GetSameProduct(string slug)
+        {
+            var products = await _productService.GetSameProductsAsync(slug);
+            return Ok(products);
+        }
         [HttpPost]
          [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Add}")] 
         public async Task<IActionResult> PostProduct(ProductInputDTO productInputDTO)

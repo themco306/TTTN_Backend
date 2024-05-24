@@ -27,18 +27,30 @@ namespace backend.Controllers
             var sliders = await _menuService.GetMenusAsync();
             return Ok(sliders);
         }
-//       [HttpGet("active")]
-//         public async Task<IActionResult> GetSlidersActive()
-//         {
-//             var sliders = await _sliderService.GetSlidersActiveAsync();
-//             return Ok(sliders);
-//         }
-//         [HttpGet("{sliderId}")]
-//         public async Task<IActionResult> GetSliderById(long sliderId)
-//         {
-//                 var slider = await _sliderService.GetSliderByIdAsync(sliderId);
-//                 return Ok(slider);
-//         }
+      [HttpGet("header")]
+        public async Task<IActionResult> GetMenuHeader()
+        {
+            var sliders = await _menuService.GetMenusHeaderAsync();
+            return Ok(sliders);
+        }
+              [HttpGet("sub/{id}")]
+        public async Task<IActionResult> GetSubMenu(long id)
+        {
+            var sliders = await _menuService.GetSubMenusAsync(id);
+            return Ok(sliders);
+        }
+        [HttpGet("{sliderId}")]
+        public async Task<IActionResult> GetById(long sliderId)
+        {
+                var slider = await _menuService.GetMenuByIdAsync(sliderId);
+                return Ok(slider);
+        }
+                        [HttpGet("parent/{id}")]
+                public async Task<IActionResult> GetParents(long id)
+                {
+                        var categories = await _menuService.GetParentsAsync(id);
+                        return Ok(categories);
+                }
 //         [HttpGet("{sliderId}/show")]
 //         public async Task<IActionResult> GetSliderShowById(long sliderId)
 //         {

@@ -70,6 +70,18 @@ namespace backend.Services
             var products = await _productRepository.GetProductsByTagTypeAsync(tag.Type);
             return _mapper.Map<List<ProductGetDTO>>(products);
         }
+        public async Task<PagedResult<ProductGetDTO>> GetFilteredProductsAsync(ProductFilterDTO filter)
+{
+    var pagedResult = await _productRepository.GetFilteredProductsAsync(filter);
+    var productDTOs = _mapper.Map<List<ProductGetDTO>>(pagedResult.Items);
+    return new PagedResult<ProductGetDTO>
+    {
+        Items = productDTOs,
+        TotalCount = pagedResult.TotalCount,
+        PageSize = pagedResult.PageSize,
+        CurrentPage = pagedResult.CurrentPage
+    };
+}
         public async Task<ProductGetDTO> GetProductByIdAsync(long id)
         {
             var product = await _productRepository.GetByIdAsync(id);
@@ -79,7 +91,20 @@ namespace backend.Services
             }
             return _mapper.Map<ProductGetDTO>(product);
         }
-
+        public async Task<ProductGetDTO> GetProductBySlugAsync(string slug)
+        {
+            var product = await _productRepository.GetBySlugAsync(slug);
+            if (product == null)
+            {
+                throw new NotFoundException("Sản phẩm không tồn tại.");
+            }
+            return _mapper.Map<ProductGetDTO>(product);
+        }
+        public async Task<List<ProductGetDTO>> GetSameProductsAsync(string slug)
+        {   var product=await GetProductBySlugAsync(slug);
+        var products = await _productRepository.GetSameProductsAsync(product.Id,product.Category.Id,product.Brand.Id);
+            return _mapper.Map<List<ProductGetDTO>>(products);
+        }
         public async Task<Product> CreateProductAsync(ProductInputDTO productInputDTO)
         {
             await _accountService.CUExistingUser(productInputDTO.CreatedById, productInputDTO.UpdatedById);

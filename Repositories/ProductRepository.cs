@@ -1,4 +1,5 @@
 using backend.Context;
+using backend.DTOs;
 using backend.Models;
 using backend.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,16 @@ namespace backend.Repositories
         .Include(p => p.Galleries)
         .FirstOrDefaultAsync(p => p.Id == id);
         }
-
+        public async Task<Product> GetBySlugAsync(string slug)
+        {
+            return await _context.Products
+                .Include(c=>c.CreatedBy)
+        .Include(c=>c.UpdatedBy)
+        .Include(p => p.Category)
+        .Include(p=>p.Brand)
+        .Include(p => p.Galleries)
+        .FirstOrDefaultAsync(p => p.Slug == slug);
+        }
 public async Task<List<Product>> GetAllAsync()
 {
     return await _context.Products
@@ -36,18 +46,115 @@ public async Task<List<Product>> GetAllAsync()
         .OrderByDescending(p => p.UpdatedAt)
         .ToListAsync();
 }
+public async Task<List<Product>> GetSameProductsAsync(long productId, long categoryId, long brandId)
+{
+    // Get 4 products by category
+    var categoryProducts = await _context.Products
+        .Where(c => c.CategoryId == categoryId && c.Id != productId&&c.Status==1)
+        .Include(c => c.Category)
+        .Include(c => c.Brand)
+        .Include(c => c.Galleries.OrderBy(g => g.Order))
+        .OrderByDescending(p => p.UpdatedAt)
+        .Take(4)
+        .ToListAsync();
+
+    // Get 4 products by brand
+    var brandProducts = await _context.Products
+        .Where(c => c.BrandId == brandId && c.Id != productId&&c.Status==1)
+        .Include(c => c.Category)
+        .Include(c => c.Brand)
+        .Include(c => c.Galleries.OrderBy(g => g.Order))
+        .OrderByDescending(p => p.UpdatedAt)
+        .Take(4)
+        .ToListAsync();
+
+    // Combine the two lists without duplicates
+    var combinedProducts = new HashSet<Product>(categoryProducts);
+    combinedProducts.UnionWith(brandProducts);
+
+    return combinedProducts.ToList();
+}
+public async Task<PagedResult<Product>> GetFilteredProductsAsync(ProductFilterDTO filter)
+{
+    var query = _context.Products
+        .Include(c => c.Category)
+        .Include(c => c.Brand)
+        .Include(c => c.Galleries.OrderBy(g => g.Order))
+        .AsQueryable();
+
+    if (filter.CategoryId.HasValue)
+    {
+        query = query.Where(p => p.CategoryId == filter.CategoryId.Value);
+    }
+
+    if (filter.BrandId.HasValue)
+    {
+        query = query.Where(p => p.BrandId == filter.BrandId.Value);
+    }
+
+    if (filter.MinPrice.HasValue)
+    {
+        query = query.Where(p => p.SalePrice >= filter.MinPrice.Value);
+    }
+
+    if (filter.MaxPrice.HasValue)
+    {
+        query = query.Where(p => p.SalePrice <= filter.MaxPrice.Value);
+    }
+
+    if (!string.IsNullOrEmpty(filter.SortBy))
+    {
+        switch (filter.SortBy.ToLower())
+        {
+            case "name":
+                query = filter.SortOrder == "asc" ? query.OrderBy(p => p.Name) : query.OrderByDescending(p => p.Name);
+                break;
+            case "price":
+                query = filter.SortOrder == "asc" ? query.OrderBy(p => p.SalePrice) : query.OrderByDescending(p => p.SalePrice);
+                break;
+            case "rating":
+                query = filter.SortOrder == "asc" ? query.OrderByDescending(p => p.TotalItemsSold) : query.OrderBy(p => p.TotalItemsSold);
+                break;
+            case "date":
+                query = filter.SortOrder == "asc" ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt);
+                break;
+            default:
+                query = query.OrderByDescending(p => p.UpdatedAt);
+                break;
+        }
+    }
+    else
+    {
+        query = query.OrderByDescending(p => p.UpdatedAt);
+    }
+
+    var totalItems = await query.CountAsync();
+
+    var items = await query
+        .Skip((filter.PageNumber - 1) * filter.PageSize)
+        .Take(filter.PageSize)
+        .ToListAsync();
+
+    return new PagedResult<Product>
+    {
+        Items = items,
+        TotalCount = totalItems,
+        PageSize = filter.PageSize,
+        CurrentPage = filter.PageNumber
+    };
+}
    public async Task<List<Product>> GetProductsByTagTypeAsync(TagType type){
     if(type==TagType.BestSeller)
     {
         return await _context.Products
-        .Where(p => p.ProductTags.Any(pt => pt.Tag.Type == type))
+        .Where(p => p.ProductTags.Any(pt => pt.Tag.Type == type)&&p.Status==1)
         .Include(c=>c.Category)
         .Include(c => c.Galleries.OrderBy(g => g.Order))
         .OrderByDescending(p => p.TotalItemsSold)
         .ToListAsync();
         }else{
              return await _context.Products
-        .Where(p => p.ProductTags.Any(pt => pt.Tag.Type == type))
+        .Where(p => p.ProductTags.Any(pt => pt.Tag.Type == type)&&p.Status==1)
         .Include(c=>c.Category)
         .Include(c => c.Galleries.OrderBy(g => g.Order))
         .OrderByDescending(p => p.CreatedAt)

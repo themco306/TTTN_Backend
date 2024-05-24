@@ -125,6 +125,18 @@ namespace backend.Helper
                 Id=src.CreatedBy.Id
             }))
             ;
+            CreateMap<Menu, MenuGetShortDTO>();
+
+            CreateMap<Menu, MenuGetDTO>()
+             .ForMember(dest=>dest.UpdatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                UserName=src.UpdatedBy.UserName,
+                Id=src.UpdatedBy.Id
+            }))
+            .ForMember(dest=>dest.CreatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                UserName=src.CreatedBy.UserName,
+                Id=src.CreatedBy.Id
+            }))
+            ;
         }
     }
 }
