@@ -6,53 +6,52 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories
 {
-    public class BrandRepository : IBrandRepository
+    public class ContactRepository : IContactRepository
     {
         private readonly AppDbContext _context;
 
-        public BrandRepository(AppDbContext context)
+        public ContactRepository(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task<Brand> GetByIdAsync(long id)
+        public async Task<Contact> GetByIdAsync(long id)
         {
-            return await _context.Brands
-                .Include(c => c.CreatedBy)
+            return await _context.Contacts
                 .Include(c => c.UpdatedBy)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<List<Brand>> GetAllAsync()
+        public async Task<List<Contact>> GetAllAsync()
         {
-            return await _context.Brands
+            return await _context.Contacts
             .OrderByDescending(c=>c.UpdatedAt)
             .ToListAsync();
         }
-        public async Task<List<Brand>> GetAllActiveAsync()
+        public async Task<List<Contact>> GetAllActiveAsync()
         {
-            return await _context.Brands.Where(c=>c.Status==1).Include(c=>c.Products)
+            return await _context.Contacts.Where(c=>c.Status==1)
             .OrderByDescending(c=>c.UpdatedAt)
             .ToListAsync();
         }
-        public async Task AddAsync(Brand brand)
+        public async Task AddAsync(Contact contact)
         {
-            _context.Brands.Add(brand);
+            _context.Contacts.Add(contact);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Brand brand)
+        public async Task UpdateAsync(Contact contact)
         {
-            _context.Entry(brand).State = EntityState.Modified;
+            _context.Entry(contact).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(long id)
         {
-            var brand = await _context.Brands.FindAsync(id);
-            if (brand != null)
+            var contact = await _context.Contacts.FindAsync(id);
+            if (contact != null)
             {
-                _context.Brands.Remove(brand);
+                _context.Contacts.Remove(contact);
                 await _context.SaveChangesAsync();
             }
         }

@@ -7,6 +7,7 @@ namespace backend.Repositories.IRepositories
     {
         Task<Category> GetByIdAsync(long id);
         Task<List<Category>> GetAllAsync();
+        Task<List<Category>> GetAllActiveAsync();
         Task AddAsync(Category category);
         Task UpdateAsync(Category category);
         Task DeleteAsync(long id);

@@ -49,6 +49,8 @@ namespace backend.DTOs
     }
     public class UserGetShortDTO
     {
+        public string Avatar { get; set; }
+
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string UserName {get;set;}

@@ -33,7 +33,7 @@ namespace backend.Services
 
             return _mapper.Map<List<PostGetDTO>>(posts);
         }
-                public async Task<List<PostGetDTO>> GetPostsPageAsync()
+        public async Task<List<PostGetDTO>> GetPostsPageAsync()
         {
             var posts = await _postRepository.GetAllPageAsync();
 
@@ -54,6 +54,35 @@ namespace backend.Services
 
             return _mapper.Map<PostGetShowDTO>(post);
         }
+        public async Task<PostGetShowDTO> GetPostBySlugAsync(string slug)
+        {
+            var post = await _postRepository.GetBySlugAsync(slug);
+            if (post == null)
+            {
+                throw new NotFoundException("Bài viết không tồn tại");
+            }
+
+            return _mapper.Map<PostGetShowDTO>(post);
+        }
+        public async Task<PagedResult<PostGetDTO>> GetFilteredPostsAsync(PostFilterDTO filter)
+        {
+            
+            var pagedResult = await _postRepository.GetFilteredPostsAsync(filter);
+            var productDTOs = _mapper.Map<List<PostGetDTO>>(pagedResult.Items);
+            return new PagedResult<PostGetDTO>
+            {
+                Items = productDTOs,
+                TotalCount = pagedResult.TotalCount,
+                PageSize = pagedResult.PageSize,
+                CurrentPage = pagedResult.CurrentPage
+            };
+        }
+        public async Task<List<PostGetDTO>> GetPostSameAsync(string slug)
+        {
+            var post = await GetPostBySlugAsync(slug);
+            var posts = await _postRepository.GetPostSameAsync(post.Id, post.Topic.Id);
+            return _mapper.Map<List<PostGetDTO>>(posts);
+        }
         public async Task<PostGetShowDTO> GetPostShowByIdAsync(long postId)
         {
             var post = await _postRepository.GetByIdAsync(postId);
@@ -62,7 +91,7 @@ namespace backend.Services
                 throw new NotFoundException("Hình ảnh không tồn tại");
             }
 
-                        return _mapper.Map<PostGetShowDTO>(post);
+            return _mapper.Map<PostGetShowDTO>(post);
 
         }
 
@@ -76,7 +105,7 @@ namespace backend.Services
             {
                 Name = postDTO.Name,
                 Detail = postDTO.Detail,
-                Slug=slugName,
+                Slug = slugName,
                 Type = PostType.post,
                 ImagePath = await _galleryService.UploadImage(slugName, postDTO.Image, "posts"),
                 Status = postDTO.Status,
@@ -104,10 +133,10 @@ namespace backend.Services
             var post = new Post
             {
                 Name = postDTO.Name,
-                Slug=slugName,
+                Slug = slugName,
                 Detail = postDTO.Detail,
                 Type = PostType.page,
-                TopicId=null,
+                TopicId = null,
                 ImagePath = null,
                 Status = postDTO.Status,
                 CreatedById = existingUser.Id,
@@ -125,27 +154,28 @@ namespace backend.Services
             {
                 throw new NotFoundException("Không tồn tại");
             }
-             var slugName = _generate.GenerateSlug(postDTO.Name);
-            if(existingPost.Type==PostType.post){
+            var slugName = _generate.GenerateSlug(postDTO.Name);
+            if (existingPost.Type == PostType.post)
+            {
                 var topic = await _topicService.GetTopicByIdAsync(postDTO.TopicId);
                 if (topic == null)
                 {
                     throw new NotFoundException("Chủ đề không tồn tại");
                 }
-                existingPost.TopicId=postDTO.TopicId;
-                 if (postDTO.Image != null)
-            {
-               
-                await _galleryService.DeleteImageAsync(existingPost.ImagePath, "posts");
-                existingPost.ImagePath = await _galleryService.UploadImage(slugName, postDTO.Image, "posts");
+                existingPost.TopicId = postDTO.TopicId;
+                if (postDTO.Image != null)
+                {
+
+                    await _galleryService.DeleteImageAsync(existingPost.ImagePath, "posts");
+                    existingPost.ImagePath = await _galleryService.UploadImage(slugName, postDTO.Image, "posts");
+                }
             }
-            }
-            
+
             existingPost.Name = postDTO.Name;
             existingPost.UpdatedById = existingUser.Id;
-            existingPost.Slug=slugName;
+            existingPost.Slug = slugName;
             existingPost.Detail = postDTO.Detail;
-           
+
             await _postRepository.UpdateAsync(existingPost);
 
             return _mapper.Map<PostGetShowDTO>(existingPost);

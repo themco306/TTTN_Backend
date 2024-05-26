@@ -26,6 +26,12 @@ namespace backend.Controllers
                         var brands = await _brandService.GetAllBrandsAsync();
                         return Ok(brands);
                 }
+                                [HttpGet("active")]
+                public async Task<IActionResult> GetBrandsActive()
+                {
+                        var brands = await _brandService.GetAllBrandsActiveAsync();
+                        return Ok(brands);
+                }
                 [HttpGet("{id}")]
                 public async Task<IActionResult> GetBrand(long id)
                 {

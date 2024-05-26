@@ -32,8 +32,8 @@ namespace backend.Models
         public virtual AppUser? UpdatedBy {get;set;}
         
         public virtual Category? Parent {get;set;}
-    //    [JsonIgnore]
-        // public virtual List<Product> Products {get;set;}=new List<Product>();
+       [JsonIgnore]
+        public virtual List<Product> Products {get;set;}=new List<Product>();
 
     }
 }

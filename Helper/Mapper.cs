@@ -19,7 +19,9 @@ namespace backend.Helper
                        .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore()); // Bỏ qua mapping cho trường UpdatedAt
 
             // CreateMap<Category, CategoryInputDTO>();
-            CreateMap<Category, CategoryGetDTO>();
+            CreateMap<Category, CategoryGetDTO>()
+            .ForMember(d=>d.TotalProduct,opt=>opt.MapFrom(c=>c.Products.Count))
+            ;
 
 
 
@@ -94,13 +96,20 @@ namespace backend.Helper
                         }).ToList()))
             ;
 
-            CreateMap<Post, PostGetDTO>();
+            CreateMap<Post, PostGetDTO>()
+    .ForMember(d => d.Detail, opt => opt.MapFrom(c => c.Detail.Length > 100 ? c.Detail.Substring(0, 100) : c.Detail));
+
             CreateMap<Post, PostGetShowDTO>()
              .ForMember(dest=>dest.UpdatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                FirstName=src.UpdatedBy.FirstName,
+                LastName=src.UpdatedBy.LastName,
                 UserName=src.UpdatedBy.UserName,
                 Id=src.UpdatedBy.Id
             }))
             .ForMember(dest=>dest.CreatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                FirstName=src.CreatedBy.FirstName,
+                Avatar=src.CreatedBy.Avatar,
+                LastName=src.CreatedBy.LastName,
                 UserName=src.CreatedBy.UserName,
                 Id=src.CreatedBy.Id
             }))
@@ -116,6 +125,7 @@ namespace backend.Helper
             }))
             ;
                         CreateMap<Brand, BrandGetDTO>()
+                        .ForMember(d=>d.TotalProduct,opt=>opt.MapFrom(c=>c.Products.Count))
              .ForMember(dest=>dest.UpdatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
                 UserName=src.UpdatedBy.UserName,
                 Id=src.UpdatedBy.Id

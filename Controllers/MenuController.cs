@@ -33,6 +33,12 @@ namespace backend.Controllers
             var sliders = await _menuService.GetMenusHeaderAsync();
             return Ok(sliders);
         }
+              [HttpGet("footer")]
+        public async Task<IActionResult> GetMenuFooter()
+        {
+            var sliders = await _menuService.GetMenusFooterAsync();
+            return Ok(sliders);
+        }
               [HttpGet("sub/{id}")]
         public async Task<IActionResult> GetSubMenu(long id)
         {

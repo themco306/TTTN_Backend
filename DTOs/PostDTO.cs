@@ -4,6 +4,14 @@ using backend.Models;
 
 namespace backend.DTOs
 {
+        public class PostFilterDTO
+{
+    public string? TopicId { get; set; }
+    public string? SortBy { get; set; } = "updatedAt"; // default sorting field
+    public string? SortOrder { get; set; } = "desc"; // default sorting order
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
+}
     public class PostInputDTO
     {
         public string Name { get; set; } 
@@ -36,6 +44,7 @@ namespace backend.DTOs
          public long Id { get; set; }
         public string Name { get; set; }
         public string ImagePath { get; set; }
+        public string Detail {get;set;}
         public Topic? Topic {get;set;}
 
         public string Slug {get;set;}

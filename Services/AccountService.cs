@@ -73,7 +73,7 @@ namespace backend.Services
             {
                 throw new ForbiddenAccessException("Bạn không có quyền truy cập vào hệ thống");
             }
-            var token = await _accountRepository.GenerateJwtToken(user);
+            var token = await _accountRepository.GenerateJwtToken(user,signIn.RememberMe);
             var claims = await _accountRepository.GetUserClaimsAsync(user.Id);
 
             var signInResult = new SignInResultDTO
@@ -111,7 +111,7 @@ namespace backend.Services
                 throw new BadRequestException("Mật khẩu không chính sát");
             }
             var roles = await _accountRepository.GetUserRolesAsync(user.Id);
-            var token = await _accountRepository.GenerateJwtToken(user);
+            var token = await _accountRepository.GenerateJwtToken(user,signIn.RememberMe);
             var claims = await _accountRepository.GetUserClaimsAsync(user.Id);
 
             var signInResult = new SignInResultDTO

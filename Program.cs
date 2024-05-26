@@ -160,6 +160,9 @@ builder.Services.AddScoped<TopicService>();
 
 builder.Services.AddScoped<IPostRepository,PostRepository>();
 builder.Services.AddScoped<PostService>();
+
+builder.Services.AddScoped<IContactRepository,ContactRepository>();
+builder.Services.AddScoped<ContactService>();
 var app = builder.Build();
 app.UseCors(Example07JSDomain);
 // Khởi tạo dữ liệu mẫu

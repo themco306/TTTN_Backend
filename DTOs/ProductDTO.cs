@@ -6,8 +6,8 @@ namespace backend.DTOs
 {
     public class ProductFilterDTO
 {
-    public long? CategoryId { get; set; }
-    public long? BrandId { get; set; }
+    public string? CategoryId { get; set; }
+    public string? BrandId { get; set; }
     public decimal? MinPrice { get; set; }
     public decimal? MaxPrice { get; set; }
     public string? SortBy { get; set; } = "updatedAt"; // default sorting field

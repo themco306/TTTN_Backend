@@ -32,6 +32,7 @@ namespace backend.Context
         public DbSet<Menu> Menus { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
 
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
@@ -106,12 +107,12 @@ namespace backend.Context
 
             modelBuilder.Entity<Product>(e =>
             {
-                //     e.HasOne(c => c.Category)
-                //    .WithMany()
-                //    .HasForeignKey(c => c.CategoryId)
-                //    .OnDelete(DeleteBehavior.Restrict);
+                    e.HasOne(c => c.Category)
+                   .WithMany(c=>c.Products)
+                   .HasForeignKey(c => c.CategoryId)
+                   .OnDelete(DeleteBehavior.Restrict);
                     e.HasOne(c => c.Brand)
-                   .WithMany()
+                   .WithMany(c=>c.Products)
                    .HasForeignKey(c => c.BrandId)
                    .OnDelete(DeleteBehavior.SetNull);
 

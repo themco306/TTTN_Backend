@@ -77,20 +77,22 @@ public async Task<List<Product>> GetSameProductsAsync(long productId, long categ
 public async Task<PagedResult<Product>> GetFilteredProductsAsync(ProductFilterDTO filter)
 {
     var query = _context.Products
+    .Where(c=>c.Status==1)
         .Include(c => c.Category)
         .Include(c => c.Brand)
         .Include(c => c.Galleries.OrderBy(g => g.Order))
         .AsQueryable();
 
-    if (filter.CategoryId.HasValue)
-    {
-        query = query.Where(p => p.CategoryId == filter.CategoryId.Value);
-    }
+if (filter.CategoryId!=null)
+{
+    query = query.Where(p => p.Category.Slug == filter.CategoryId);
+}
 
-    if (filter.BrandId.HasValue)
-    {
-        query = query.Where(p => p.BrandId == filter.BrandId.Value);
-    }
+if (filter.BrandId!=null)
+{
+    query = query.Where(p => p.Brand.Slug == filter.BrandId);
+}
+
 
     if (filter.MinPrice.HasValue)
     {

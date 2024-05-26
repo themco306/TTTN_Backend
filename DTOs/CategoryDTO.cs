@@ -41,6 +41,7 @@ namespace backend.DTOs
         public DateTimeOffset? CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }
 
+        public int TotalProduct {get;set;}
 
     }
 

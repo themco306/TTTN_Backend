@@ -28,6 +28,11 @@ namespace backend.Services
             var categories = await _categoryRepository.GetAllAsync();
             return _mapper.Map<List<CategoryGetDTO>>(categories);
         }
+        public async Task<List<CategoryGetDTO>> GetAllCategoriesActiveAsync()
+        {
+            var categories = await _categoryRepository.GetAllActiveAsync();
+            return _mapper.Map<List<CategoryGetDTO>>(categories);
+        }
         public async Task<List<CategoryGetDTO>> GetParentCategoriesAsync(long id)
         {
             var currentCategory = await _categoryRepository.GetByIdAsync(id);

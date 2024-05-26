@@ -17,8 +17,9 @@ namespace backend.Services
         private readonly CategoryService _categoryService;
         private readonly BrandService _brandService;
         private readonly PostService _postService;
+        private readonly TopicService _topicService;
 
-        public MenuService(IMenuRepository menuRepository, AccountService accountService, Generate generate, IMapper mapper, CategoryService categoryService, BrandService brandService, PostService postService)
+        public MenuService(IMenuRepository menuRepository, AccountService accountService, Generate generate, IMapper mapper, CategoryService categoryService, BrandService brandService, PostService postService,TopicService topicService)
         {
             _menuRepository = menuRepository;
             _accountService = accountService;
@@ -27,6 +28,7 @@ namespace backend.Services
             _categoryService = categoryService;
             _brandService = brandService;
             _postService = postService;
+            _topicService=topicService;
         }
 
         public async Task<List<MenuGetDTO>> GetMenusAsync()
@@ -39,6 +41,11 @@ namespace backend.Services
         public async Task<List<MenuGetShortDTO>> GetMenusHeaderAsync()
         {
             var menus = await _menuRepository.GetMenuHeaderAsync();
+            return _mapper.Map<List<MenuGetShortDTO>>(menus);
+        }
+                public async Task<List<MenuGetShortDTO>> GetMenusFooterAsync()
+        {
+            var menus = await _menuRepository.GetMenuFooterAsync();
             return _mapper.Map<List<MenuGetShortDTO>>(menus);
         }
                 public async Task<List<MenuGetShortDTO>> GetSubMenusAsync(long id)
@@ -159,9 +166,9 @@ namespace backend.Services
                         menu.Link = category.Slug;
                     }
                     break;
-                case "post":
+                case "topic":
                     {
-                        var category = await _postService.GetPostByIdAsync(menuDTO.TableId);
+                        var category = await _topicService.GetTopicByIdAsync(menuDTO.TableId);
                         menu.Name = category.Name;
                         menu.Link = category.Slug;
                     }

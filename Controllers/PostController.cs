@@ -34,6 +34,12 @@ namespace backend.Controllers
             var posts = await _postService.GetPostsPageAsync();
             return Ok(posts);
         }
+                [HttpGet("filter")]
+public async Task<IActionResult> GetFilteredProducts([FromQuery] PostFilterDTO filter)
+{
+    var pagedResult = await _postService.GetFilteredPostsAsync(filter);
+    return Ok(pagedResult);
+}
       [HttpGet("active")]
         public async Task<IActionResult> GetPostsActive()
         {
@@ -44,6 +50,18 @@ namespace backend.Controllers
         public async Task<IActionResult> GetPostById(long postId)
         {
                 var post = await _postService.GetPostByIdAsync(postId);
+                return Ok(post);
+        }
+        [HttpGet("slug/{slug}")]
+        public async Task<IActionResult> GetPostBySlug(string slug)
+        {
+                var post = await _postService.GetPostBySlugAsync(slug);
+                return Ok(post);
+        }
+                [HttpGet("same/{slug}")]
+        public async Task<IActionResult> GetPostSame(string slug)
+        {
+                var post = await _postService.GetPostSameAsync(slug);
                 return Ok(post);
         }
         [HttpGet("{postId}/show")]

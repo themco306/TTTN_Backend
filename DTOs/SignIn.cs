@@ -9,5 +9,8 @@ namespace backend.DTOs
 
         [Required(ErrorMessage = "Vui lòng nhập mật khẩu.")]
         public string Password { get; set; } = null!;
+
+         public bool RememberMe { get; set; }=false;
+
     }
 }

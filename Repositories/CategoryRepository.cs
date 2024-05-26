@@ -29,7 +29,12 @@ namespace backend.Repositories
             .OrderByDescending(c=>c.UpdatedAt)
             .ToListAsync();
         }
-
+        public async Task<List<Category>> GetAllActiveAsync()
+        {
+            return await _context.Categories.Where(c=>c.Status==1).Include(c=>c.Products)
+            .OrderByDescending(c=>c.UpdatedAt)
+            .ToListAsync();
+        }
         public async Task AddAsync(Category category)
         {
             _context.Categories.Add(category);

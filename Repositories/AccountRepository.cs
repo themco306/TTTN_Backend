@@ -51,7 +51,7 @@ namespace backend.Repositories
             return await _signInManager.PasswordSignInAsync(email, password, false, false);
         }
 
-        public async Task<string> GenerateJwtToken(AppUser user)
+        public async Task<string> GenerateJwtToken(AppUser user,bool rememberMe)
         {
             var authClaim = new List<Claim>{
         new Claim(Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Email, user.Email),
@@ -69,11 +69,22 @@ namespace backend.Repositories
                 authClaim.Add(new Claim(claim.Type, claim.Value));
             }
             var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
+            DateTime expires;
+    if (rememberMe)
+    {
+        // Nếu người dùng chọn "Nhớ tôi", token sẽ hết hạn sau một khoảng thời gian dài (ví dụ: 30 ngày)
+        expires = DateTime.UtcNow.AddDays(30);
+    }
+    else
+    {
+        // Nếu không, token sẽ hết hạn sau một khoảng thời gian ngắn (ví dụ: 1 ngày)
+        expires = DateTime.UtcNow.AddDays(1);
+    }
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:ValidIssuer"],
                 audience: _configuration["Jwt:ValidAudience"],
                 claims: authClaim,
-                expires: DateTime.UtcNow.AddDays(1),
+                expires: expires,
                 signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256Signature)
             );
             return new JwtSecurityTokenHandler().WriteToken(token);

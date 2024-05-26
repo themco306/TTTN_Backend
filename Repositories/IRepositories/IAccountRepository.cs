@@ -21,7 +21,7 @@ Task<bool> DeleteClaimsAsync(string userId);
     Task<AppUser> GetUserByUserNameAsync(string userName);
     Task<bool> CheckPasswordAsync(AppUser user, string password);
     Task<SignInResult> PasswordSignInAsync(string email, string password);
-    Task<string> GenerateJwtToken(AppUser user);
+    Task<string> GenerateJwtToken(AppUser user,bool rememberMe);
     Task<string> GenerateEmailConfirmationTokenAsync(AppUser user);
 
 

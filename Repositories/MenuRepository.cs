@@ -31,6 +31,13 @@ namespace backend.Repositories
             .OrderBy(c=>c.SortOrder)
             .ToListAsync();
         }
+                        public async Task<List<Menu>> GetMenuFooterAsync()
+        {
+            return await _context.Menus
+            .Where(c=>c.Position=="footermenu"&&c.Status==1)
+            .OrderBy(c=>c.SortOrder)
+            .ToListAsync();
+        }
                         public async Task<List<Menu>> GetSubMenusAsync(long id)
         {
             return await _context.Menus

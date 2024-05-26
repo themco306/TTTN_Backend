@@ -10,6 +10,7 @@ namespace backend.Repositories.IRepositories
         Task<Menu> GetByTableIdAsync(long id,string type);
         Task<List<Menu>> GetAllAsync(bool active = false, bool noParent = false);
         Task<List<Menu>> GetMenuHeaderAsync();
+        Task<List<Menu>> GetMenuFooterAsync();
         Task<List<Menu>> GetSubMenusAsync(long id);
         Task AddAsync(Menu menu);
         Task UpdateAsync(Menu menu);

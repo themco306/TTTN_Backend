@@ -7,6 +7,7 @@ namespace backend.Repositories.IRepositories
     {
         Task<Brand> GetByIdAsync(long id);
         Task<List<Brand>> GetAllAsync();
+        Task<List<Brand>> GetAllActiveAsync();
         Task AddAsync(Brand brand);
         Task UpdateAsync(Brand brand);
         Task DeleteAsync(long id);

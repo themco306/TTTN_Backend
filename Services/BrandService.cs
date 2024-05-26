@@ -28,7 +28,11 @@ namespace backend.Services
             var brands = await _brandRepository.GetAllAsync();
             return _mapper.Map<List<BrandGetDTO>>(brands);
         }
-
+       public async Task<List<BrandGetDTO>> GetAllBrandsActiveAsync()
+        {
+            var brands = await _brandRepository.GetAllActiveAsync();
+            return _mapper.Map<List<BrandGetDTO>>(brands);
+        }
         public async Task<BrandGetDTO> GetBrandByIdAsync(long id)
         {
             var brand = await _brandRepository.GetByIdAsync(id);

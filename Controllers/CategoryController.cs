@@ -25,6 +25,12 @@ namespace backend.Controllers
                         var categories = await _categoryService.GetAllCategoriesAsync();
                         return Ok(categories);
                 }
+                [HttpGet("active")]
+                public async Task<IActionResult> GetCategoriesActive()
+                {
+                        var categories = await _categoryService.GetAllCategoriesActiveAsync();
+                        return Ok(categories);
+                }
                 [HttpGet("parent/{id}")]
                 public async Task<IActionResult> GetParentCategories(long id)
                 {
