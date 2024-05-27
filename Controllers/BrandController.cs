@@ -21,18 +21,20 @@ namespace backend.Controllers
                         _httpContextAccessor=httpContextAccessor;
                 }
                 [HttpGet]
+                [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.BrandClaim}{ClaimValue.Show}")] 
                 public async Task<IActionResult> GetBrands()
                 {
                         var brands = await _brandService.GetAllBrandsAsync();
                         return Ok(brands);
                 }
-                                [HttpGet("active")]
+                [HttpGet("active")]
                 public async Task<IActionResult> GetBrandsActive()
                 {
                         var brands = await _brandService.GetAllBrandsActiveAsync();
                         return Ok(brands);
                 }
                 [HttpGet("{id}")]
+                [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.BrandClaim}{ClaimValue.Show}")]
                 public async Task<IActionResult> GetBrand(long id)
                 {
                         var brand = await _brandService.GetBrandByIdAsync(id);
@@ -40,7 +42,6 @@ namespace backend.Controllers
                 }
 
                 [HttpPost]
-
                  [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.BrandClaim}{ClaimValue.Add}")] 
                 public async Task<IActionResult> PostBrand(BrandInputDTO brandInputDTO)
                 {       
@@ -51,7 +52,6 @@ namespace backend.Controllers
 
                 [HttpPut("{id}")]
                 [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.BrandClaim}{ClaimValue.Edit}")] 
-
                 public async Task<IActionResult> PutBrand(long id, BrandInputDTO brandInputDTO)
                 {
                           string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];

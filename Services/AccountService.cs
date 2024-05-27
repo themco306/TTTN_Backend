@@ -73,7 +73,7 @@ namespace backend.Services
             {
                 throw new ForbiddenAccessException("Bạn không có quyền truy cập vào hệ thống");
             }
-            var token = await _accountRepository.GenerateJwtToken(user,signIn.RememberMe);
+            var token = await _accountRepository.GenerateJwtToken(user, signIn.RememberMe);
             var claims = await _accountRepository.GetUserClaimsAsync(user.Id);
 
             var signInResult = new SignInResultDTO
@@ -111,7 +111,7 @@ namespace backend.Services
                 throw new BadRequestException("Mật khẩu không chính sát");
             }
             var roles = await _accountRepository.GetUserRolesAsync(user.Id);
-            var token = await _accountRepository.GenerateJwtToken(user,signIn.RememberMe);
+            var token = await _accountRepository.GenerateJwtToken(user, signIn.RememberMe);
             var claims = await _accountRepository.GetUserClaimsAsync(user.Id);
 
             var signInResult = new SignInResultDTO
@@ -170,7 +170,7 @@ namespace backend.Services
             var confirmationLink = $"{url}/{id}/{encodedToken}";
             await _emailService.SendEmailAsync(user.Email, "Xác nhận email của bạn", $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href=\"{confirmationLink}\">liên kết này</a>");
         }
-                public async Task SendRestPasswordConfirm(ResetPasswordInputDTO inputDTO)
+        public async Task SendRestPasswordConfirm(ResetPasswordInputDTO inputDTO)
         {
             var isEmail = inputDTO.EmailOrUsername.Contains("@");
             var user = new AppUser();
@@ -231,7 +231,7 @@ namespace backend.Services
             {
                 throw new NotFoundException("Email sai hoặc không tông tại. Vui lòng tự nhận liên kết mới.");
             }
-            var confirmed = await _accountRepository.ResetPasswordAsync(user,inputDTO.Token,inputDTO.Password);
+            var confirmed = await _accountRepository.ResetPasswordAsync(user, inputDTO.Token, inputDTO.Password);
             if (!confirmed)
             {
                 throw new BadRequestException("Đường dẫn hết hạn hoặc có lỗi xảy ra!");
@@ -260,6 +260,40 @@ namespace backend.Services
             foreach (var user in users)
             {
                 var roles = await _accountRepository.GetUserRolesAsync(user.Id);
+                if (!roles.Contains(AppRole.Admin) && !roles.Contains(AppRole.SuperAdmin))
+                {
+                   continue;
+                }
+                var claims = await _accountRepository.GetUserClaimsAsync(user.Id);
+
+                usersDTO.Add(new UserGetDTO
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Avatar = user.Avatar,
+                    EmailConfirmed = user.EmailConfirmed,
+                    Roles = roles,
+                    Claims = claims
+                });
+            }
+            return usersDTO;
+        }
+        public async Task<IEnumerable<UserGetDTO>> GetCusomerAsync(int pageIndex, int pageSize,string email)
+        {
+            var users = await _accountRepository.GetUsersAsync(pageIndex, pageSize,email);
+            var usersDTO = new List<UserGetDTO>();
+
+            foreach (var user in users)
+            {
+                var roles = await _accountRepository.GetUserRolesAsync(user.Id);
+                if (roles.Contains(AppRole.Admin) || roles.Contains(AppRole.SuperAdmin))
+                {
+                   continue;
+                }
                 var claims = await _accountRepository.GetUserClaimsAsync(user.Id);
 
                 usersDTO.Add(new UserGetDTO
@@ -304,6 +338,24 @@ namespace backend.Services
             userDTO.Claims = await _accountRepository.GetUserClaimsAsync(userDTO.Id);
             return userDTO;
         }
+        public async Task<UserGetDTO> GetMyUserAsync(string token)
+        {
+            var userId = ExtractUserIdFromToken(token);
+            if (userId == null)
+            {
+                throw new NotFoundException("Có lỗi xãy ra vui lòng đăng nhập lại");
+            }
+            var user = await _accountRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new NotFoundException("Người dùng không tồn tại");
+            }
+
+            var userDTO = _mapper.Map<UserGetDTO>(user);
+            userDTO.Roles = await _accountRepository.GetUserRolesAsync(userDTO.Id);
+            userDTO.Claims = await _accountRepository.GetUserClaimsAsync(userDTO.Id);
+            return userDTO;
+        }
         public async Task<bool> CheckUserIdMatchesEmail(string id, string email)
         {
             var user = await _accountRepository.GetUserByEmailAsync(email);
@@ -320,6 +372,11 @@ namespace backend.Services
             {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
+             IEnumerable<string> roles ;
+             roles = await _accountRepository.GetUserRolesAsync(user.Id);
+             if(roles.Contains(AppRole.SuperAdmin)){
+                throw new BadRequestException("Bạn không có quyền làm đều này");
+             }
             user.EmailConfirmed = user.EmailConfirmed == true ? false : true;
             var updated = await _accountRepository.UpdateUserAsync(id, user);
             if (!updated)
@@ -335,6 +392,11 @@ namespace backend.Services
             {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
+             IEnumerable<string> roles ;
+             roles = await _accountRepository.GetUserRolesAsync(user.Id);
+             if(roles.Contains(AppRole.SuperAdmin)){
+                throw new BadRequestException("Bạn không có quyền làm đều này");
+             }
             if (user.UserName != userUpdateDto.UserName)
             {
                 var existingUsername = await _accountRepository.GetUserByUserNameAsync(userUpdateDto.UserName);
@@ -424,7 +486,7 @@ namespace backend.Services
             {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
-            if (user.UserName != userUpdateDto.UserName&&userUpdateDto.UserName!=null)
+            if (user.UserName != userUpdateDto.UserName && userUpdateDto.UserName != null)
             {
                 var existingUsername = await _accountRepository.GetUserByUserNameAsync(userUpdateDto.UserName);
                 if (existingUsername != null)
@@ -446,8 +508,9 @@ namespace backend.Services
             }
             if (userUpdateDto.OldPassword != null)
             {
-                var checkPassword=await _accountRepository.CheckPasswordAsync(user,userUpdateDto.OldPassword);
-                if(!checkPassword){
+                var checkPassword = await _accountRepository.CheckPasswordAsync(user, userUpdateDto.OldPassword);
+                if (!checkPassword)
+                {
                     throw new NotFoundException("Mật khẩu cũ không khớp");
                 }
                 if (userUpdateDto.Password != null)
@@ -463,8 +526,9 @@ namespace backend.Services
 
             user.FirstName = userUpdateDto.FirstName;
             user.LastName = userUpdateDto.LastName;
-            if(userUpdateDto.UserName!=null){
-                 user.UserName = userUpdateDto.UserName;
+            if (userUpdateDto.UserName != null)
+            {
+                user.UserName = userUpdateDto.UserName;
             }
             user.Email = userUpdateDto.Email;
             user.PhoneNumber = userUpdateDto.PhoneNumber;
@@ -525,8 +589,14 @@ namespace backend.Services
         {
 
             var user = await _accountRepository.GetUserByIdAsync(id);
+
             if (user != null)
             {
+                 IEnumerable<string> roles ;
+             roles = await _accountRepository.GetUserRolesAsync(user.Id);
+             if(roles.Contains(AppRole.SuperAdmin)){
+                throw new BadRequestException("Bạn không có quyền làm đều này");
+             }
                 if (user.Avatar != "avatar-nam.jpg" && user.Avatar != "avatar-nu.jpg")
                 {
                     await _galleryService.DeleteImageAsync(user.Avatar, "users");
@@ -565,6 +635,9 @@ namespace backend.Services
             {
                 throw new Exception("Email này đã được đăng ký");
             }
+            if(userCreateDto.Roles.Contains(AppRole.SuperAdmin)){
+                throw new BadRequestException("Bạn không có quyền làm đều này");
+             }
             var userCreated = await _accountRepository.CreateUserAsync(userCreateDto);
             if (userCreated == null)
             {

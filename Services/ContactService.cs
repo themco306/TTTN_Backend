@@ -15,13 +15,15 @@ namespace backend.Services
         private readonly IMapper _mapper;
         private readonly Generate _generate;
         private readonly AccountService _accountService;
+        private readonly EmailService _emailService;
 
-        public ContactService(IContactRepository contactRepository, IMapper mapper, Generate generate, AccountService accountService)
+        public ContactService(IContactRepository contactRepository, IMapper mapper, Generate generate, AccountService accountService,EmailService emailService)
         {
             _contactRepository = contactRepository;
             _mapper = mapper;
             _generate = generate;
             _accountService = accountService;
+            _emailService=emailService;
         }
         public async Task<List<ContactGetDTO>> GetAllContactsAsync()
         {
@@ -53,29 +55,31 @@ namespace backend.Services
             };
             await _contactRepository.AddAsync(contact);
         }
-        // public async Task<ContactGetDTO> UpdateContactAsync(long id, ContactInputDTO contactInputDTO,string token)
-        // {
-        //      var userId = _accountService.ExtractUserIdFromToken(token);
-        //     if (userId == null)
-        //     {
-        //         throw new NotFoundException("Có lỗi xãy ra vui lòng đăng nhập lại");
-        //     }
-        //     var user = await _accountService.GetUserByIdAsync(userId);
-        //     var existingContact = await _contactRepository.GetByIdAsync(id);
+        public async Task UpdateContactAsync(long id, ContactReplayDTO contactReplayDTO,string token)
+        {
+             var userId = _accountService.ExtractUserIdFromToken(token);
+            if (userId == null)
+            {
+                throw new NotFoundException("Có lỗi xãy ra vui lòng đăng nhập lại");
+            }
+            var user = await _accountService.GetUserByIdAsync(userId);
+            var existingContact = await _contactRepository.GetByIdAsync(id);
 
-        //     if (existingContact == null)
-        //     {
-        //         throw new NotFoundException("Thương hiệu không tồn tại");
-        //     }
-        //     string slug = _generate.GenerateSlug(contactInputDTO.Name);
-        //     existingContact.Name=contactInputDTO.Name;
-        //     existingContact.Slug=slug;
-        //     existingContact.Status=contactInputDTO.Status;
-        //     existingContact.UpdatedById=user.Id;
-        //     await _contactRepository.UpdateAsync(existingContact);
-        //                 return _mapper.Map<ContactGetDTO>(existingContact);
+            if (existingContact == null)
+            {
+                throw new NotFoundException("Liên hệ không tồn tại");
+            }
+            existingContact.ReplayContent=contactReplayDTO.ReplayContent;
+            existingContact.Status=1;
+            existingContact.UpdatedById=user.Id;
+            await _contactRepository.UpdateAsync(existingContact);
 
-        // }
+
+        }
+         public async Task SendReplayEmail(string email, ContactReplayDTO contactReplayDTO )
+        {
+            await _emailService.SendEmailAsync(email, "Trả lời Liên hệ", contactReplayDTO.ReplayContent);
+        }
         public async Task DeleteContactAsync(long id)
         {
             var existingContact = await _contactRepository.GetByIdAsync(id);
@@ -98,20 +102,6 @@ namespace backend.Services
                 }
             }
         }
-public async Task UpdateContactStatusAsync(long id)
-{
-    var existingContact = await _contactRepository.GetByIdAsync(id);
-
-    if (existingContact == null)
-    {
-        throw new NotFoundException("Thương hiệu không tồn tại");
-    }
-
-    // Cập nhật trạng thái mới (nếu hiện tại là 0 thì cập nhật thành 1, và ngược lại)
-    existingContact.Status = existingContact.Status == 0 ? 1 : 0;
-
-    await _contactRepository.UpdateAsync(existingContact);
-}
 
 
     }

@@ -23,6 +23,8 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+                [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.TopicClaim}{ClaimValue.Show}")] 
+
         public async Task<IActionResult> GetTopics()
         {
             var topics = await _topicService.GetAllTopicsAsync();
@@ -47,6 +49,8 @@ namespace backend.Controllers
             return Ok(topic);
         }
         [HttpGet("{id}")]
+                [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.TopicClaim}{ClaimValue.Show}")] 
+
         public async Task<IActionResult> GetTopic(long id)
         {
             var topic = await _topicService.GetTopicByIdAsync(id);
@@ -59,7 +63,7 @@ namespace backend.Controllers
             return Ok(topic);
         }
         [HttpPost]
-        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Add}")]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.TopicClaim}{ClaimValue.Add}")]
         public async Task<IActionResult> PostTopic(TopicInputDTO topicInputDTO)
         {
             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
@@ -68,7 +72,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Edit}")]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.TopicClaim}{ClaimValue.Edit}")]
         public async Task<IActionResult> PutTopic(long id, TopicUpdateDTO topicInputDTO)
         {
             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
@@ -77,14 +81,14 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Delete}")]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.TopicClaim}{ClaimValue.Delete}")]
         public async Task<IActionResult> DeleteTopic(long id)
         {
             await _topicService.DeleteTopicAsync(id);
             return Ok(new { message = "Xóa thành công chủ đề có ID: " + id });
         }
         [HttpDelete("delete-multiple")]
-        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Delete}")]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.TopicClaim}{ClaimValue.Delete}")]
         public async Task<IActionResult> DeleteMultipleUsers(LongIDsModel iDsModel)
         {
             if (iDsModel.ids == null || iDsModel.ids.Count == 0)
@@ -96,7 +100,7 @@ namespace backend.Controllers
             return Ok(new { message = "Xóa thành công chủ đề có ID: " + concatenatedIds });
         }
         [HttpPut("{id}/status")]
-        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Edit}")]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.TopicClaim}{ClaimValue.Edit}")]
         public async Task<IActionResult> UpdateTopicStatus(long id)
         {
             try

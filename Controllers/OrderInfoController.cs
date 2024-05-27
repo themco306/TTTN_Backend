@@ -32,6 +32,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("{id}")]
+         [Authorize]
         public async Task<IActionResult> GetOrderInfoById(long id)
         {
                 var orderinfo = await _orderinfoService.GetByIdAsync(id);

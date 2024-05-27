@@ -27,6 +27,8 @@ namespace backend.Controllers
             return Ok(webinfos);
         }
         [HttpPut("{webinfoId}")]
+                        [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.WebInfoClaim}{ClaimValue.Edit}")] 
+
         public async Task<IActionResult> UpdateWebInfo(long webinfoId, [FromForm] WebInfoInputDTO webinfoInputDTO)
         {
                 var webinfo=await _webinfoService.UpdateWebInfoAsync(webinfoId, webinfoInputDTO);

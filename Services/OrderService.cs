@@ -117,6 +117,36 @@ namespace backend.Services
                 break;
             }
         }
+         public async Task UpdateMyOrderStatusAsync(long id,OrderStatus status,string token){
+            var userId = _accountService.ExtractUserIdFromToken(token);
+            var existingUser = await _accountService.GetUserByIdAsync(userId);
+            var order = await _orderRepository.GetByIdAsync(id);
+            if(userId!=order.UserId){
+                throw new BadRequestException("Đơn hàng này không phải của bạn");
+            }
+            switch (status)
+            {
+                case OrderStatus.Cancelled:{
+                    if(order.Status!=OrderStatus.Received){
+                        order.Status=OrderStatus.Cancelled;
+                        order.UpdatedById=existingUser.Id;
+                       await _orderRepository.UpdateAsync(order);
+                    }
+                }
+                break;
+               
+                case OrderStatus.Received:{
+                    if(order.Status==OrderStatus.Delivered){
+                        order.Status=OrderStatus.Received;
+                        order.UpdatedById=existingUser.Id;
+                        await _orderRepository.UpdateAsync(order);
+                    }
+                }
+                break;
+                default:
+                break;
+            }
+        }
         public async Task UpdatePaymentStatusAsync(long id,OrderStatus status,string userId){
             var existingUser = await _accountService.GetUserByIdAsync(userId);
             var order = await _orderRepository.GetByIdAsync(id);

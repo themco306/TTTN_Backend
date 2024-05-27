@@ -16,6 +16,11 @@ namespace backend.DTOs
         public string Content {get;set;}
 
     }
+        public class ContactReplayDTO
+    {
+        public string ReplayContent {get;set;}
+
+    }
 
     public class ContactGetDTO
     {

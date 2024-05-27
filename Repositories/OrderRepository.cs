@@ -23,7 +23,7 @@ namespace backend.Repositories
         public async Task<Order> GetByCodeAsync(string code)
         {
 
-            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product).ThenInclude(c=>c.Galleries).FirstOrDefaultAsync(c=>c.Code==code);
+            return await _context.Orders.Include(c=>c.PaidOrder).Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product).ThenInclude(c=>c.Galleries).FirstOrDefaultAsync(c=>c.Code==code);
         }
         public async Task<List<Order>> GetAllAsync()
         {
@@ -39,6 +39,7 @@ public async Task<List<Order>> GetMyOrdersAsync(string userId, int page, int pag
 {
     return await _context.Orders
         .Where(c => c.UserId == userId)
+        // .Include(c=>c.PaidOrder)
         .Include(o => o.User)
         .Include(o => o.OrderInfo)
         .Include(o => o.OrderDetails)

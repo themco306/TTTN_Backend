@@ -13,21 +13,15 @@ namespace backend.Helper
             yield return AppRole.SuperAdmin;
             yield return AppRole.Admin;
             yield return AppRole.Customer;
-            yield return AppRole.Manager;
-            yield return AppRole.Accountant;
-            yield return AppRole.HR;
-            yield return AppRole.Warehouse;
         }
         private static string GetDescriptionForTag(TagType tagType)
         {
-            // Xác định mô tả cho mỗi loại tag dựa trên enum TagType
             switch (tagType)
             {
                 case TagType.NewModel:
                     return "Những sản phẩm mới sẽ được hiển thị";
                 case TagType.BestSeller:
                     return "Những sản phẩm có nhiều lượt mua sẽ được hiển thị";
-                // Xác định mô tả cho các loại tag khác nếu cần
                 default:
                     return "Mô tả mặc định cho tag";
             }
@@ -39,10 +33,8 @@ namespace backend.Helper
             int sort = 0;
             foreach (TagType tagType in Enum.GetValues(typeof(TagType)))
             {
-                string tagName = tagType.ToString(); // Sử dụng tên enum làm tên của tag
+                string tagName = tagType.ToString(); 
                 string description = GetDescriptionForTag(tagType);
-
-                // Tạo một tag nếu chưa tồn tại
                 if (!dbContext.Tags.Any(t => t.Type == tagType))
                 {
                     var tag = new Tag
@@ -56,13 +48,11 @@ namespace backend.Helper
                     dbContext.Tags.Add(tag);
                 }
             }
-            // thêm webinfo 
              if (!dbContext.WebInfos.Any())
     {
-        // Nếu không có, tạo mới một WebInfo
         var webInfo = new WebInfo
         {
-            Icon = "default_icon.png", // Thay bằng đường dẫn đến icon mặc định của trang web
+            Icon = "default_icon.png", 
             ShopName = "Tên Cửa hàng",
             Description="Đam mê không chỉ có trên màn ảnh",
             PhoneNumber = "Số điện thoại",
@@ -78,12 +68,10 @@ namespace backend.Helper
         dbContext.WebInfos.Add(webInfo);
     }
 
-            // Lưu thay đổi vào cơ sở dữ liệu
             await dbContext.SaveChangesAsync();
 
             foreach (var roleName in GetRoles())
             {
-                // Kiểm tra xem vai trò đã tồn tại chưa
                 if (!await roleManager.RoleExistsAsync(roleName))
                 {
                     // Nếu không tồn tại, tạo mới vai trò

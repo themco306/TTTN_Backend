@@ -39,6 +39,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("momo/ipn")]
+        [Authorize]
         public async Task<IActionResult> MomoIpn([FromBody] MoMoSuccessDTO response)
         {
            var success= await _paymentMomoService.PaymentSuccess(response);

@@ -22,6 +22,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.MenuClaim}{ClaimValue.Show}")] 
         public async Task<IActionResult> GetMenus()
         {
             var sliders = await _menuService.GetMenusAsync();
@@ -57,14 +58,8 @@ namespace backend.Controllers
                         var categories = await _menuService.GetParentsAsync(id);
                         return Ok(categories);
                 }
-//         [HttpGet("{sliderId}/show")]
-//         public async Task<IActionResult> GetSliderShowById(long sliderId)
-//         {
-//                 var slider = await _sliderService.GetSliderShowByIdAsync(sliderId);
-//                 return Ok(slider);
-//         }
         [HttpPost("custom")]
-         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.SliderClaim}{ClaimValue.Add}")] 
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.MenuClaim}{ClaimValue.Add}")] 
         public async Task<IActionResult> CreateMenuCustom(MenuCustomInputDTO menuCustom)
         {
                 string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
@@ -72,7 +67,7 @@ namespace backend.Controllers
                 return Ok(new {message="Thêm Menu thành công",data=menu});
         }       
         [HttpPost]
-         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.SliderClaim}{ClaimValue.Add}")] 
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.MenuClaim}{ClaimValue.Add}")] 
         public async Task<IActionResult> CreateMenu(MenuInputDTO menuDTO)
         {
                 string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
@@ -80,7 +75,7 @@ namespace backend.Controllers
                 return Ok(new {message="Thêm Menu thành công",data=menu});
         }     
         [HttpPut("{id}")]
-         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.SliderClaim}{ClaimValue.Edit}")] 
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.MenuClaim}{ClaimValue.Edit}")] 
 
         public async Task<IActionResult> UpdateSlider(long id, MenuInputUpdateDTO menuInputUpdate)
         {
@@ -90,7 +85,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{sliderId}")]
-         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.SliderClaim}{ClaimValue.Delete}")] 
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.MenuClaim}{ClaimValue.Delete}")] 
 
         public async Task<IActionResult> DeleteSlider(long sliderId)
         {
@@ -98,7 +93,7 @@ namespace backend.Controllers
                 return Ok(new{message="Xóa thành công menu có ID: " + sliderId});
             
         }
-         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.SliderClaim}{ClaimValue.Delete}")] 
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.MenuClaim}{ClaimValue.Delete}")] 
 
         [HttpDelete("delete-multiple")]
                 public async Task<IActionResult> DeleteMultipleCategories(LongIDsModel model)
@@ -115,7 +110,7 @@ namespace backend.Controllers
 
                 }
                 [HttpPut("{id}/status")]
-         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.SliderClaim}{ClaimValue.Edit}")] 
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.MenuClaim}{ClaimValue.Edit}")] 
 
         public async Task<IActionResult> UpdateMenuStatus(long id)
         {

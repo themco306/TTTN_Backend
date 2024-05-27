@@ -32,7 +32,7 @@ namespace backend.Controllers
             {
                 throw new BadRequestException("Có lỗi xảy ra, bạn nên thử lại.");
             }
-            return Ok(new { message ="Đăng ký thành công"});
+            return Ok(new { message = "Đăng ký thành công" });
         }
 
         [HttpPost("signin")]
@@ -46,7 +46,7 @@ namespace backend.Controllers
 
             return Ok(new { User = signInResult.User, Token = signInResult.Token });
         }
-                [HttpPost("signinAdmin")]
+        [HttpPost("signinAdmin")]
         public async Task<IActionResult> SignAdminIn(SignIn signIn)
         {
             var signInResult = await _accountService.SignInAdminAsync(signIn);
@@ -58,49 +58,73 @@ namespace backend.Controllers
             return Ok(new { User = signInResult.User, Token = signInResult.Token });
         }
         [HttpPost("sendEmailConfirm/{id}")]
-        public async Task<IActionResult> SendEmailConfirm(string id,[FromBody] string url  )
+        public async Task<IActionResult> SendEmailConfirm(string id, [FromBody] string url)
         {
-           await _accountService.SendEmailConfirm(id,url);
-           return Ok(new{message="Gửi liên kết thành công vui lòng vào Email để xác nhận"});
+            await _accountService.SendEmailConfirm(id, url);
+            return Ok(new { message = "Gửi liên kết thành công vui lòng vào Email để xác nhận" });
         }
         [HttpPost("sendResetPasswordConfirm")]
-        public async Task<IActionResult> SendResetPasswordConfirm([FromBody]ResetPasswordInputDTO inputDTO)
+        public async Task<IActionResult> SendResetPasswordConfirm([FromBody] ResetPasswordInputDTO inputDTO)
         {
-           await _accountService.SendRestPasswordConfirm(inputDTO);
-           return Ok(new{message="Gửi liên kết thành công vui lòng vào Email để xác nhận"});
+            await _accountService.SendRestPasswordConfirm(inputDTO);
+            return Ok(new { message = "Gửi liên kết thành công vui lòng vào Email để xác nhận" });
         }
         [HttpPost("confirmEmail/{id}")]
-        public async Task<IActionResult> ConfirmEmail(string id,[FromBody] string confirmEmailToken)
+        public async Task<IActionResult> ConfirmEmail(string id, [FromBody] string confirmEmailToken)
         {
             await _accountService.ConfirmEmailAsync(id, confirmEmailToken);
-            return Ok(new{message="Xác nhận email thành công"});
+            return Ok(new { message = "Xác nhận email thành công" });
         }
-                [HttpPost("confirmSetPassword")]
+        [HttpPost("confirmSetPassword")]
         public async Task<IActionResult> ConfirmSetPassword([FromBody] SetPasswordInputDTO inputDTO)
         {
             await _accountService.ConfirmSetPasswordAsync(inputDTO);
-            return Ok(new{message="Tạo mật khẩu mới thành công"});
+            return Ok(new { message = "Tạo mật khẩu mới thành công" });
         }
         [HttpGet]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Show}")]
         public async Task<IActionResult> GetUsers(int pageIndex = 1, int pageSize = 5)
         {
-             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
             if (userEmail == null)
             {
-                return Unauthorized(new { error ="Có lỗi xãy ra vui lòng đăng nhập lại"});
+                return Unauthorized(new { error = "Có lỗi xãy ra vui lòng đăng nhập lại" });
             }
-            var users = await _accountService.GetUsersAsync(pageIndex, pageSize,userEmail);
+            var users = await _accountService.GetUsersAsync(pageIndex, pageSize, userEmail);
             return Ok(users);
         }
-                [HttpGet("roles")]
+        [HttpGet("customer")]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Show}")]
+        public async Task<IActionResult> GetCustomes(int pageIndex = 1, int pageSize = 5)
+        {
+            string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
+            if (userEmail == null)
+            {
+                return Unauthorized(new { error = "Có lỗi xãy ra vui lòng đăng nhập lại" });
+            }
+            var users = await _accountService.GetCusomerAsync(pageIndex, pageSize, userEmail);
+            return Ok(users);
+        }
+        [HttpGet("roles")]
+        [Authorize]
         public async Task<IActionResult> GetRoles()
         {
             var roles = await _accountService.GetRolesWithTempIdsAsync();
             return Ok(roles);
         }
+        [HttpGet("myEdit")]
+        [Authorize]
+        public async Task<IActionResult> GetMyUser()
+        {
+            string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var user = await _accountService.GetMyUserAsync(tokenWithBearer);
+            return Ok(user);
 
+        }
         [HttpGet("{id}")]
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Show}")]
         public async Task<IActionResult> GetUserById(string id)
         {
             var user = await _accountService.GetUserByIdAsync(id);
@@ -120,32 +144,32 @@ namespace backend.Controllers
         }
         [HttpPut("{id}")]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Edit}")]
-        public async Task<IActionResult> UpdateUser(string id,[FromForm] UserUpdateByAdminDTO updateByAdminDTO,IFormFile? avatar)
+        public async Task<IActionResult> UpdateUser(string id, [FromForm] UserUpdateByAdminDTO updateByAdminDTO, IFormFile? avatar)
         {
 
-            await _accountService.UpdateUserByAdminAsync(id, updateByAdminDTO,avatar);
-            return Ok(new { message ="Cập nhật thành công"});
+            await _accountService.UpdateUserByAdminAsync(id, updateByAdminDTO, avatar);
+            return Ok(new { message = "Cập nhật thành công" });
         }
-[HttpPut("my/{id}")]
-[Authorize]
+        [HttpPut("my/{id}")]
+        [Authorize]
 
 
-        public async Task<IActionResult> UpdateMyUser(string id,[FromForm] MyUserUpdateDTO userUpdateDTO,IFormFile? avatar)
+        public async Task<IActionResult> UpdateMyUser(string id, [FromForm] MyUserUpdateDTO userUpdateDTO, IFormFile? avatar)
         {
-                        string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
             if (userEmail == null)
             {
-                return Unauthorized(new { error ="Có lỗi xãy ra vui lòng đăng nhập lại"});
+                return Unauthorized(new { error = "Có lỗi xãy ra vui lòng đăng nhập lại" });
             }
             var checkMatches = await _accountService.CheckUserIdMatchesEmail(id, userEmail);
             if (!checkMatches)
             {
-                return BadRequest(new { error ="Bạn không thể sửa người khác"});
+                return BadRequest(new { error = "Bạn không thể sửa người khác" });
             }
 
-            var user =await _accountService.UpdateMyUserAsync(id, userUpdateDTO,avatar);
-            return Ok(new { message ="Cập nhật thành công",data=user});
+            var user = await _accountService.UpdateMyUserAsync(id, userUpdateDTO, avatar);
+            return Ok(new { message = "Cập nhật thành công", data = user });
 
         }
         [HttpPut("statusEmail/{id}")]
@@ -164,36 +188,36 @@ namespace backend.Controllers
             var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
             if (userEmail == null)
             {
-                return Unauthorized(new { error ="Có lỗi xãy ra vui lòng đăng nhập lại"});
+                return Unauthorized(new { error = "Có lỗi xãy ra vui lòng đăng nhập lại" });
             }
             var checkMatches = await _accountService.CheckUserIdMatchesEmail(id, userEmail);
             if (checkMatches)
             {
-                return BadRequest(new { error ="Bạn không thể xóa chính mình"});
+                return BadRequest(new { error = "Bạn không thể xóa chính mình" });
             }
             await _accountService.DeleteUserById(id);
-            return Ok(new { message ="Xóa thành công"});
+            return Ok(new { message = "Xóa thành công" });
         }
         [HttpDelete("delete-multiple")]
-        [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Delete}")] 
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Delete}")]
         public async Task<IActionResult> DeleteMultipleUsers(StringIDsModel iDsModel)
         {
             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
             if (userEmail == null)
             {
-                return Unauthorized(new { error ="Có lỗi xãy ra vui lòng đăng nhập lại"});
+                return Unauthorized(new { error = "Có lỗi xãy ra vui lòng đăng nhập lại" });
             }
             foreach (var id in iDsModel.ids)
             {
-            var checkMatches = await _accountService.CheckUserIdMatchesEmail(id, userEmail);
-            if (checkMatches)
-            {
-                return BadRequest(new { error ="Bạn không thể xóa chính mình"});
-            }
+                var checkMatches = await _accountService.CheckUserIdMatchesEmail(id, userEmail);
+                if (checkMatches)
+                {
+                    return BadRequest(new { error = "Bạn không thể xóa chính mình" });
+                }
             }
             await _accountService.DeleteUsersById(iDsModel.ids);
-            return Ok(new { message ="Xóa thành công"});
+            return Ok(new { message = "Xóa thành công" });
         }
     }
 }

@@ -27,6 +27,7 @@ Task<bool> DeleteClaimsAsync(string userId);
 
     Task<IEnumerable<AppUser>> GetUsersAsync(int pageIndex, int pageSize,string email);
 
+
     Task<AppUser> GetUserByIdAsync(string id);
 
     Task<IEnumerable<string>> GetUserRolesAsync(string userId);

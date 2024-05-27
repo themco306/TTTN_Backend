@@ -1,4 +1,5 @@
 // File: AuthorizationPolicyBuilder.cs
+using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Helper
@@ -14,7 +15,11 @@ namespace backend.Helper
 
             var claimValues = new[] { ClaimValue.Add, ClaimValue.Edit, ClaimValue.Show, ClaimValue.Delete };
 
-            var claimTypes = new[] { ClaimType.ProductClaim, ClaimType.CategoryClaim, ClaimType.UserClaim, ClaimType.SliderClaim ,ClaimType.CouponClaim,ClaimType.BrandClaim};
+             var claimTypes = typeof(backend.Helper.ClaimType)
+            .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+            .Where(fi => fi.IsLiteral && !fi.IsInitOnly)
+            .Select(fi => fi.GetRawConstantValue().ToString())
+            .ToArray();
             foreach (var claimType in claimTypes)
             {
                 foreach (var claimValue in claimValues)

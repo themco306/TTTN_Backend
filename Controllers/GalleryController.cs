@@ -1,6 +1,8 @@
 using backend.DTOs;
 using backend.Exceptions;
+using backend.Helper;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -24,6 +26,8 @@ namespace backend.Controllers
             return Ok(galleries);
         }
         [HttpPost("{productId}")]
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Add}")] 
+
         public async Task<IActionResult> AddImagesToProduct(long productId, [FromForm] List<IFormFile> images)
         {
             try
@@ -42,6 +46,8 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Edit}")] 
+
         public async Task<IActionResult> PutGallery(long id,[FromForm] LongIDsModel model,[FromForm] List<IFormFile> images)
         {
             List<long> ids = model.ids ?? new List<long>();
@@ -50,6 +56,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{id}")]
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Delete}")] 
         public async Task<IActionResult> DeleteGallery(long id)
         {
             await _galleryService.DeleteGalleryAsync(id);

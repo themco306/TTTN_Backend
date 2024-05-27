@@ -19,10 +19,11 @@ namespace backend.Controllers
         {
             _couponService = couponService;
             _httpContextAccessor = httpContextAccessor;
-            
+
         }
 
         [HttpGet]
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Show}")] 
         public async Task<IActionResult> GetCoupons()
         {
             var coupons = await _couponService.GetAllCouponsAsync();
@@ -35,6 +36,7 @@ namespace backend.Controllers
             return Ok(coupon);
         }
         [HttpGet("{id}")]
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Show}")] 
         public async Task<IActionResult> GetCoupon(long id)
         {
             var coupon = await _couponService.GetCouponByIdAsync(id);
@@ -52,17 +54,17 @@ namespace backend.Controllers
         public async Task<IActionResult> PostCoupon(CouponInputDTO couponInputDTO)
         {
             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            var coupon = await _couponService.CreateCouponAsync(couponInputDTO,tokenWithBearer);
-            return Ok(new{message="Thêm mã giảm giá thàng công",data=coupon});
+            var coupon = await _couponService.CreateCouponAsync(couponInputDTO, tokenWithBearer);
+            return Ok(new { message = "Thêm mã giảm giá thàng công", data = coupon });
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Edit}")]
         public async Task<IActionResult> PutCoupon(long id, CouponInputDTO couponInputDTO)
         {
-             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            var coupon = await _couponService.UpdateCouponAsync(id, couponInputDTO,tokenWithBearer);
-             return Ok(new{message="Cập nhật mã giảm giá "+coupon.Code+" thàng công",data=coupon});
+            string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            var coupon = await _couponService.UpdateCouponAsync(id, couponInputDTO, tokenWithBearer);
+            return Ok(new { message = "Cập nhật mã giảm giá " + coupon.Code + " thàng công", data = coupon });
         }
 
         [HttpDelete("{id}")]
@@ -73,7 +75,7 @@ namespace backend.Controllers
             return Ok(new { message = "Xóa thành công mã giảm giá có STT: " + id });
         }
         [HttpDelete("delete-multiple")]
-        [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Delete}")] 
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Delete}")]
         public async Task<IActionResult> DeleteMultipleUsers(LongIDsModel iDsModel)
         {
             if (iDsModel.ids == null || iDsModel.ids.Count == 0)
@@ -82,7 +84,7 @@ namespace backend.Controllers
             }
             await _couponService.DeleteCouponsById(iDsModel.ids);
             string concatenatedIds = string.Join(", ", iDsModel.ids);
-            return Ok(new{message="Xóa thành công mã giảm có STT: "+concatenatedIds});
+            return Ok(new { message = "Xóa thành công mã giảm có STT: " + concatenatedIds });
         }
         [HttpPut("{id}/status")]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.CouponClaim}{ClaimValue.Edit}")]

@@ -24,17 +24,19 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+                [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Show}")] 
+
         public async Task<IActionResult> GetProducts()
         {
             var products = await _productService.GetAllProductsAsync();
             return Ok(products);
         }
         [HttpGet("filter")]
-public async Task<IActionResult> GetFilteredProducts([FromQuery] ProductFilterDTO filter)
-{
-    var pagedResult = await _productService.GetFilteredProductsAsync(filter);
-    return Ok(pagedResult);
-}
+        public async Task<IActionResult> GetFilteredProducts([FromQuery] ProductFilterDTO filter)
+        {
+            var pagedResult = await _productService.GetFilteredProductsAsync(filter);
+            return Ok(pagedResult);
+        }
         [HttpGet("tag/{id}")]
         public async Task<IActionResult> GetProductsByTag(long id)
         {
@@ -42,6 +44,8 @@ public async Task<IActionResult> GetFilteredProducts([FromQuery] ProductFilterDT
             return Ok(products);
         }
         [HttpGet("{id}")]
+                [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Show}")] 
+
         public async Task<IActionResult> GetProduct(long id)
         {
             var product = await _productService.GetProductByIdAsync(id);
@@ -60,7 +64,7 @@ public async Task<IActionResult> GetFilteredProducts([FromQuery] ProductFilterDT
             return Ok(products);
         }
         [HttpPost]
-         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Add}")] 
+        [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Add}")]
         public async Task<IActionResult> PostProduct(ProductInputDTO productInputDTO)
         {
             var product = await _productService.CreateProductAsync(productInputDTO);

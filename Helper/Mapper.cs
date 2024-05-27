@@ -147,6 +147,12 @@ namespace backend.Helper
                 Id=src.CreatedBy.Id
             }))
             ;
+                        CreateMap<Contact, ContactGetDTO>()
+             .ForMember(dest=>dest.UpdatedBy,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                UserName=src.UpdatedBy.UserName,
+                Id=src.UpdatedBy.Id
+            }))
+            ;
         }
     }
 }

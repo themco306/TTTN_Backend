@@ -262,12 +262,11 @@ namespace backend.Repositories
         public async Task<IEnumerable<AppUser>> GetUsersAsync(int pageIndex, int pageSize,string email)
         {
             return await _userManager.Users
-                .Where(u => u.Email != email)
+                .Where(u =>u.Email != email)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
         }
-
         public async Task<AppUser> GetUserByIdAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -322,7 +321,7 @@ namespace backend.Repositories
         }
         public async Task<List<string?>> GetAllRolesAsync()
         {
-            return await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+            return await _roleManager.Roles.Where(c=>c.Name!=AppRole.SuperAdmin).Select(r => r.Name).ToListAsync();
         }
 
 

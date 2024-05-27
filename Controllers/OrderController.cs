@@ -24,6 +24,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.OrderClaim}{ClaimValue.Show}")] 
         public async Task<IActionResult> GetOrderInfos()
         {
             var orderinfos = await _orderService.GetAllAsync();
@@ -38,6 +39,7 @@ namespace backend.Controllers
             return Ok(orderinfos);
         }
         [HttpGet("{id}")]
+        [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.OrderClaim}{ClaimValue.Show}")] 
         public async Task<IActionResult> GetOrderInfoById(long id)
         {
                 var order = await _orderService.GetByIdAsync(id);
@@ -76,7 +78,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Edit}")] 
+         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.OrderClaim}{ClaimValue.Edit}")] 
 
         public async Task<IActionResult> UpdateOrderStatus(long id,OrderUpdateStatusDTO statusDTO)
         {
@@ -84,7 +86,15 @@ namespace backend.Controllers
                 await _orderService.UpdateStatusAsync(id, statusDTO.Status,tokenWithBearer);
                 return Ok(new {message="Thay đổi trạng thái thành công"});
         }
+        [HttpPut("myStatus/{id}")]
+         [Authorize] 
 
+        public async Task<IActionResult> UpdateMyOrderStatus(long id,OrderUpdateStatusDTO statusDTO)
+        {
+             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+                await _orderService.UpdateMyOrderStatusAsync(id, statusDTO.Status,tokenWithBearer);
+                return Ok(new {message="Thay đổi trạng thái thành công"});
+        }
  
     }
 }
