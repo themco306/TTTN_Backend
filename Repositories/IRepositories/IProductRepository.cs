@@ -10,6 +10,7 @@ namespace backend.Repositories.IRepositories
         Task<Product> GetByIdAsync(long id);
         Task<Product> GetBySlugAsync(string slug);
         Task<PagedResult<Product>> GetFilteredProductsAsync(ProductFilterDTO filter);
+        Task<PagedResult<Product>> GetSearchProductsAsync(ProductSearchDTO searchDTO);
         Task<List<Product>> GetAllAsync();
         Task<List<Product>> GetSameProductsAsync(long productId,long categoryId,long brandId);
         

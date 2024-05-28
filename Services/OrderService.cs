@@ -24,7 +24,7 @@ namespace backend.Services
         private readonly ICartItemRepository _cartItemRepository;
         private readonly ICouponUsageRepository _couponUsageRepository;
 
-        public OrderService(IOrderRepository orderRepository, IMapper mapper, Generate generate, AccountService accountService, OrderInfoService orderInfoService, ProductService productService, IOrderDetailRepository orderDetailRepository, CouponService couponService, EmailService emailService,ICartItemRepository cartItemRepository,ICouponUsageRepository couponUsageRepository)
+        public OrderService(IOrderRepository orderRepository, IMapper mapper, Generate generate, AccountService accountService, OrderInfoService orderInfoService, ProductService productService, IOrderDetailRepository orderDetailRepository, CouponService couponService, EmailService emailService, ICartItemRepository cartItemRepository, ICouponUsageRepository couponUsageRepository)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
@@ -35,20 +35,25 @@ namespace backend.Services
             _orderDetailRepository = orderDetailRepository;
             _couponService = couponService;
             _emailService = emailService;
-            _cartItemRepository=cartItemRepository;
-            _couponUsageRepository=couponUsageRepository;
+            _cartItemRepository = cartItemRepository;
+            _couponUsageRepository = couponUsageRepository;
         }
         public async Task<List<OrderGetDTO>> GetAllAsync()
         {
             var orders = await _orderRepository.GetAllAsync();
             return _mapper.Map<List<OrderGetDTO>>(orders);
         }
-        public async Task<PagedResult<OrderGetDTO>> GetMyOrdersAsync(string token,int page, int pageSize)
+        public async Task<List<OrderGetReceivedDTO>> GetReceivedOrderByUserIdAsync(string userId)
+        {
+            var orders = await _orderRepository.GetReceivedOrderByUserIdAsync(userId);
+            return _mapper.Map<List<OrderGetReceivedDTO>>(orders);
+        }
+        public async Task<PagedResult<OrderGetDTO>> GetMyOrdersAsync(string token, int page, int pageSize)
         {
             var userId = _accountService.ExtractUserIdFromToken(token);
             var existingUser = await _accountService.GetUserByIdAsync(userId);
-            var totalItem=await _orderRepository.GetTotalOrderCountAsync(existingUser.Id);
-            var orders = await _orderRepository.GetMyOrdersAsync(existingUser.Id,page,pageSize);
+            var totalItem = await _orderRepository.GetTotalOrderCountAsync(existingUser.Id);
+            var orders = await _orderRepository.GetMyOrdersAsync(existingUser.Id, page, pageSize);
             var orderGetDTOs = _mapper.Map<List<OrderGetDTO>>(orders);
 
             return new PagedResult<OrderGetDTO>
@@ -57,11 +62,11 @@ namespace backend.Services
                 TotalCount = totalItem,
                 PageSize = pageSize,
                 CurrentPage = page
-        };
+            };
         }
         public async Task<OrderGetDTO> GetByIdAsync(long id)
         {
-            
+
             var order = await _orderRepository.GetByIdAsync(id);
             if (order == null)
             {
@@ -70,135 +75,179 @@ namespace backend.Services
 
             return _mapper.Map<OrderGetDTO>(order);
         }
-        public async Task UpdateStatusAsync(long id,OrderStatus status,string token){
+        public async Task<OrderWithCouponDTO> GetByIdSAsync(long id)
+        {
+
+            var order = await _orderRepository.GetByIdAsync(id);
+            if (order == null)
+            {
+                throw new NotFoundException("Đơn hàng không tồn tại.");
+            }
+            var couponU = await _couponUsageRepository.GetByOrderIdAsync(id);
+
+
+            var orderGet = _mapper.Map<OrderGetDTO>(order);
+            return new OrderWithCouponDTO
+            {
+                CouponUsage = couponU != null ? couponU.Coupon.Description : null,
+                Order = orderGet
+            };
+        }
+        public async Task UpdateStatusAsync(long id, OrderStatus status, string token)
+        {
             var userId = _accountService.ExtractUserIdFromToken(token);
             var existingUser = await _accountService.GetUserByIdAsync(userId);
             var order = await _orderRepository.GetByIdAsync(id);
             switch (status)
             {
-                case OrderStatus.Cancelled:{
-                    if(order.Status!=OrderStatus.Received){
-                        order.Status=OrderStatus.Cancelled;
-                        order.UpdatedById=existingUser.Id;
-                       await _orderRepository.UpdateAsync(order);
+                case OrderStatus.Cancelled:
+                    {
+                        if (order.Status != OrderStatus.Received)
+                        {
+                            order.Status = OrderStatus.Cancelled;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
                     }
-                }
-                break;
-                case OrderStatus.PaymentCompleted:{
-                    if(order.PaymentType==PaymentType.OnlinePayment&&order.Status==OrderStatus.Confirmed){
-                        order.Status=OrderStatus.PaymentCompleted;
-                        order.UpdatedById=existingUser.Id;
-                       await _orderRepository.UpdateAsync(order);
+                    break;
+                case OrderStatus.PaymentCompleted:
+                    {
+                        if (order.PaymentType == PaymentType.OnlinePayment && order.Status == OrderStatus.Confirmed)
+                        {
+                            order.Status = OrderStatus.PaymentCompleted;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
                     }
-                }
-                break;
-                case OrderStatus.Shipped:{
-                    if(order.PaymentType==PaymentType.OnlinePayment&&order.Status==OrderStatus.PaymentCompleted){
-                        order.Status=OrderStatus.Shipped;
-                        order.UpdatedById=existingUser.Id;
-                        await _orderRepository.UpdateAsync(order);
+                    break;
+                case OrderStatus.Shipped:
+                    {
+                        if (order.PaymentType == PaymentType.OnlinePayment && order.Status == OrderStatus.PaymentCompleted)
+                        {
+                            order.Status = OrderStatus.Shipped;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
+                        if (order.PaymentType == PaymentType.CashOnDelivery && order.Status == OrderStatus.Confirmed)
+                        {
+                            order.Status = OrderStatus.Shipped;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
                     }
-                    if(order.PaymentType==PaymentType.CashOnDelivery&&order.Status==OrderStatus.Confirmed){
-                        order.Status=OrderStatus.Shipped;
-                        order.UpdatedById=existingUser.Id;
-                        await _orderRepository.UpdateAsync(order);
+                    break;
+                case OrderStatus.Delivered:
+                    {
+                        if (order.Status == OrderStatus.Shipped)
+                        {
+                            order.Status = OrderStatus.Delivered;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
                     }
-                }
-                break;
-                case OrderStatus.Delivered:{
-                    if(order.Status==OrderStatus.Shipped){
-                        order.Status=OrderStatus.Delivered;
-                        order.UpdatedById=existingUser.Id;
-                        await _orderRepository.UpdateAsync(order);
-                    }
-                }
-                break;
+                    break;
                 default:
-                break;
+                    break;
             }
         }
-         public async Task UpdateMyOrderStatusAsync(long id,OrderStatus status,string token){
+        public async Task UpdateMyOrderStatusAsync(long id, OrderStatus status, string token)
+        {
             var userId = _accountService.ExtractUserIdFromToken(token);
             var existingUser = await _accountService.GetUserByIdAsync(userId);
             var order = await _orderRepository.GetByIdAsync(id);
-            if(userId!=order.UserId){
+            if (userId != order.UserId)
+            {
                 throw new BadRequestException("Đơn hàng này không phải của bạn");
             }
             switch (status)
             {
-                case OrderStatus.Cancelled:{
-                    if(order.Status!=OrderStatus.Received){
-                        order.Status=OrderStatus.Cancelled;
-                        order.UpdatedById=existingUser.Id;
-                       await _orderRepository.UpdateAsync(order);
+                case OrderStatus.Cancelled:
+                    {
+                        if (order.Status != OrderStatus.Received)
+                        {
+                            order.Status = OrderStatus.Cancelled;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
                     }
-                }
-                break;
-               
-                case OrderStatus.Received:{
-                    if(order.Status==OrderStatus.Delivered){
-                        order.Status=OrderStatus.Received;
-                        order.UpdatedById=existingUser.Id;
-                        await _orderRepository.UpdateAsync(order);
+                    break;
+
+                case OrderStatus.Received:
+                    {
+                        if (order.Status == OrderStatus.Delivered)
+                        {
+                            order.Status = OrderStatus.Received;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
                     }
-                }
-                break;
+                    break;
                 default:
-                break;
+                    break;
             }
         }
-        public async Task UpdatePaymentStatusAsync(long id,OrderStatus status,string userId){
+        public async Task UpdatePaymentStatusAsync(long id, OrderStatus status, string userId)
+        {
             var existingUser = await _accountService.GetUserByIdAsync(userId);
             var order = await _orderRepository.GetByIdAsync(id);
             switch (status)
             {
-                case OrderStatus.Cancelled:{
-                    if(order.Status!=OrderStatus.Received){
-                        order.Status=OrderStatus.Cancelled;
-                        order.UpdatedById=existingUser.Id;
-                       await _orderRepository.UpdateAsync(order);
+                case OrderStatus.Cancelled:
+                    {
+                        if (order.Status != OrderStatus.Received)
+                        {
+                            order.Status = OrderStatus.Cancelled;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
                     }
-                }
-                break;
-                case OrderStatus.PaymentCompleted:{
-                    if(order.PaymentType==PaymentType.OnlinePayment&&order.Status==OrderStatus.Confirmed){
-                        order.Status=OrderStatus.PaymentCompleted;
-                        order.UpdatedById=existingUser.Id;
-                       await _orderRepository.UpdateAsync(order);
+                    break;
+                case OrderStatus.PaymentCompleted:
+                    {
+                        if (order.PaymentType == PaymentType.OnlinePayment && order.Status == OrderStatus.Confirmed)
+                        {
+                            order.Status = OrderStatus.PaymentCompleted;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
                     }
-                }
-                break;
-                case OrderStatus.Shipped:{
-                    if(order.PaymentType==PaymentType.OnlinePayment&&order.Status==OrderStatus.PaymentCompleted){
-                        order.Status=OrderStatus.Shipped;
-                        order.UpdatedById=existingUser.Id;
-                        await _orderRepository.UpdateAsync(order);
+                    break;
+                case OrderStatus.Shipped:
+                    {
+                        if (order.PaymentType == PaymentType.OnlinePayment && order.Status == OrderStatus.PaymentCompleted)
+                        {
+                            order.Status = OrderStatus.Shipped;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
+                        if (order.PaymentType == PaymentType.CashOnDelivery && order.Status == OrderStatus.Confirmed)
+                        {
+                            order.Status = OrderStatus.Shipped;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
                     }
-                    if(order.PaymentType==PaymentType.CashOnDelivery&&order.Status==OrderStatus.Confirmed){
-                        order.Status=OrderStatus.Shipped;
-                        order.UpdatedById=existingUser.Id;
-                        await _orderRepository.UpdateAsync(order);
+                    break;
+                case OrderStatus.Delivered:
+                    {
+                        if (order.Status == OrderStatus.Shipped)
+                        {
+                            order.Status = OrderStatus.Delivered;
+                            order.UpdatedById = existingUser.Id;
+                            await _orderRepository.UpdateAsync(order);
+                        }
                     }
-                }
-                break;
-                case OrderStatus.Delivered:{
-                    if(order.Status==OrderStatus.Shipped){
-                        order.Status=OrderStatus.Delivered;
-                        order.UpdatedById=existingUser.Id;
-                        await _orderRepository.UpdateAsync(order);
-                    }
-                }
-                break;
+                    break;
                 default:
-                break;
+                    break;
             }
         }
-        public async Task<OrderGetDTO> GetByCodeAsync(string code, string token)
+        public async Task<OrderWithCouponDTO> GetByCodeAsync(string code, string token)
         {
             var userId = _accountService.ExtractUserIdFromToken(token);
             var existingUser = await _accountService.GetUserByIdAsync(userId);
             var order = await _orderRepository.GetByCodeAsync(code);
-             if (order == null)
+            if (order == null)
             {
                 throw new NotFoundException("Đơn hàng không tồn tại.");
             }
@@ -206,9 +255,16 @@ namespace backend.Services
             {
                 throw new NotFoundException("Bạn không thể xem đơn hàng của người khác");
             }
-           
+            var couponU = await _couponUsageRepository.GetByOrderIdAsync(order.Id);
 
-            return _mapper.Map<OrderGetDTO>(order);
+
+            var orderGet = _mapper.Map<OrderGetDTO>(order);
+            return new OrderWithCouponDTO
+            {
+                CouponUsage = couponU != null ? couponU.Coupon.Description : null,
+
+                Order = orderGet
+            };
         }
         public async Task SendEmailConfirm(long id, string url, string token)
         {
@@ -261,8 +317,9 @@ namespace backend.Services
             if (!string.IsNullOrEmpty(dataInput.Code))
             {
                 coupon = await _couponService.SubmitCodeAsync(dataInput.Code);
-                var couponUsage =await _couponUsageRepository.GetByIdAsync(existingUser.Id,coupon.Id);
-                if(couponUsage.Count>=coupon.UsagePerUser){
+                var couponUsage = await _couponUsageRepository.GetByIdAsync(existingUser.Id, coupon.Id);
+                if (couponUsage.Count >= coupon.UsagePerUser)
+                {
                     throw new BadRequestException($"Số lần bạn dùng Mã này đã là {couponUsage.Count}/{coupon.UsagePerUser}");
                 }
             }
@@ -344,21 +401,23 @@ namespace backend.Services
                     Quantity = detail.Quantity,
                     TotalPrice = product.SalePrice * detail.Quantity,
                 };
-                await _productService.UpdateProductQuantityAsync(product.Id,detail.Quantity);
+                await _productService.UpdateProductQuantityAsync(product.Id, detail.Quantity);
                 await _orderDetailRepository.AddAsync(orderDetail);
                 await _cartItemRepository.DeleteAsync(detail.CartId);
             }
-            if(coupon!=null){
-                var couponUsage = new CouponUsage{
-                UserId=existingUser.Id,
-                CouponId=coupon.Id,
-                OrderId=order.Id,
-                UsedAt=expiresAt
-            };
-            // await _couponService.UpdateCouponUsageLimitAsync(coupon.Id,coupon.UsageLimit-1);
-            await _couponUsageRepository.AddAsync(couponUsage);
+            if (coupon != null)
+            {
+                var couponUsage = new CouponUsage
+                {
+                    UserId = existingUser.Id,
+                    CouponId = coupon.Id,
+                    OrderId = order.Id,
+                    UsedAt = expiresAt
+                };
+                // await _couponService.UpdateCouponUsageLimitAsync(coupon.Id,coupon.UsageLimit-1);
+                await _couponUsageRepository.AddAsync(couponUsage);
             }
-            
+
             await _productService.UpdateTagProductAsync();
 
             return _mapper.Map<OrderGetDTO>(order);

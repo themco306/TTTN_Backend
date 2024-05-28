@@ -1,5 +1,6 @@
 using backend.Context;
 using backend.DTOs;
+using backend.Helper;
 using backend.Models;
 using backend.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,12 @@ namespace backend.Repositories
     public class ProductRepository : IProductRepository
     {
         private readonly AppDbContext _context;
+        private readonly Generate _generate;
 
-        public ProductRepository(AppDbContext context)
+        public ProductRepository(AppDbContext context,Generate generate)
         {
             _context = context;
+            _generate=generate;
         }
 
         public async Task<Product> GetByIdAsync(long id)
@@ -145,6 +148,92 @@ if (filter.BrandId!=null)
         CurrentPage = filter.PageNumber
     };
 }
+public async Task<PagedResult<Product>> GetSearchProductsAsync(ProductSearchDTO searchDTO)
+{
+    if (string.IsNullOrEmpty(searchDTO.Query))
+    {
+        return new PagedResult<Product>
+        {
+            Items = new List<Product>(),
+            TotalCount = 0,
+            PageSize = searchDTO.PageSize,
+            CurrentPage = searchDTO.PageNumber
+        };
+    }
+
+    var query = _context.Products
+        .Where(c => c.Status == 1)
+        .Include(c => c.Category)
+        .Include(c => c.Brand)
+        .Include(c => c.Galleries.OrderBy(g => g.Order))
+        .AsQueryable();
+
+//   query = query.Where(delegate(Product p)
+// {
+//     // var productNameWithoutDiacritics = _generate.ConvertToUnSign(p.Name);
+//     var searchQueryWithoutDiacritics = _generate.ConvertToUnSign(searchDTO.Query);
+//     // return productNameWithoutDiacritics.Contains(searchQueryWithoutDiacritics, StringComparison.CurrentCultureIgnoreCase);
+//     if (_generate.ConvertToUnSign(p.Name).IndexOf(searchQueryWithoutDiacritics, StringComparison.CurrentCultureIgnoreCase) >= 0)
+//                         return true;
+//                     else
+//                         return false;
+// }).AsQueryable();
+// query = query.Where(p => _generate.ConvertToUnSign(p.Name).Contains(_generate.ConvertToUnSign(searchDTO.Query), StringComparison.CurrentCultureIgnoreCase));
+query = query.Where(p => p.Name.Contains(searchDTO.Query, StringComparison.CurrentCultureIgnoreCase));
+
+
+    if (searchDTO.MinPrice.HasValue)
+    {
+        query = query.Where(p => p.SalePrice >= searchDTO.MinPrice.Value);
+    }
+
+    if (searchDTO.MaxPrice.HasValue)
+    {
+        query = query.Where(p => p.SalePrice <= searchDTO.MaxPrice.Value);
+    }
+
+    if (!string.IsNullOrEmpty(searchDTO.SortBy))
+    {
+        switch (searchDTO.SortBy.ToLower())
+        {
+            case "name":
+                query = searchDTO.SortOrder == "asc" ? query.OrderBy(p => p.Name) : query.OrderByDescending(p => p.Name);
+                break;
+            case "price":
+                query = searchDTO.SortOrder == "asc" ? query.OrderBy(p => p.SalePrice) : query.OrderByDescending(p => p.SalePrice);
+                break;
+            case "rating":
+                query = searchDTO.SortOrder == "asc" ? query.OrderByDescending(p => p.TotalItemsSold) : query.OrderBy(p => p.TotalItemsSold);
+                break;
+            case "date":
+                query = searchDTO.SortOrder == "asc" ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt);
+                break;
+            default:
+                query = query.OrderByDescending(p => p.UpdatedAt);
+                break;
+        }
+    }
+    else
+    {
+        query = query.OrderByDescending(p => p.UpdatedAt);
+    }
+
+    var totalItems = await query.CountAsync();
+
+    var items = await query
+        .Skip((searchDTO.PageNumber - 1) * searchDTO.PageSize)
+        .Take(searchDTO.PageSize)
+        .ToListAsync();
+
+    return new PagedResult<Product>
+    {
+        Items = items,
+        TotalCount = totalItems,
+        PageSize = searchDTO.PageSize,
+        CurrentPage = searchDTO.PageNumber
+    };
+}
+
    public async Task<List<Product>> GetProductsByTagTypeAsync(TagType type){
     if(type==TagType.BestSeller)
     {

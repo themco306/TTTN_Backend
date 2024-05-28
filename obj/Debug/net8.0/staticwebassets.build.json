@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "uKpns6jXqOh+IK0WsRnaE+2FF9yQ37Mdg6IrxSISQoE=",
+  "Hash": "uVi1f0g2UlJiHc32KKMIiUsviSMd01k7SB3SCR3E+sg=",
   "Source": "backend",
   "BasePath": "_content/backend",
   "Mode": "Default",
@@ -739,12 +739,12 @@
       "OriginalItemSpec": "wwwroot\\images\\users\\ne_638517633740954837.jpg"
     },
     {
-      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne_638523622681998678.jpg",
+      "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne_638525354191246938.jpg",
       "SourceId": "backend",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\",
       "BasePath": "_content/backend",
-      "RelativePath": "images/users/ne_638523622681998678.jpg",
+      "RelativePath": "images/users/ne_638525354191246938.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -755,7 +755,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\users\\ne_638523622681998678.jpg"
+      "OriginalItemSpec": "wwwroot\\images\\users\\ne_638525354191246938.jpg"
     },
     {
       "Identity": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne1_638513252674556994.jpg",

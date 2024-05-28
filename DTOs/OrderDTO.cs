@@ -20,6 +20,15 @@ namespace backend.DTOs
 
     }
 
+public class OrderGetReceivedDTO{
+         public long Id {get;set;}
+        public  List<OrderDetail>? OrderDetails {get;set;}
+    }
+    public class OrderWithCouponDTO
+{
+    public OrderGetDTO Order { get; set; }
+    public string CouponUsage { get; set; }
+}
 
     public class OrderGetDTO{
          public long Id {get;set;}

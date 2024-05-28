@@ -82,6 +82,18 @@ namespace backend.Services
         CurrentPage = pagedResult.CurrentPage
     };
 }
+        public async Task<PagedResult<ProductGetDTO>> GetSearchProductsAsync(ProductSearchDTO searchDTO)
+{
+    var pagedResult = await _productRepository.GetSearchProductsAsync(searchDTO);
+    var productDTOs = _mapper.Map<List<ProductGetDTO>>(pagedResult.Items);
+    return new PagedResult<ProductGetDTO>
+    {
+        Items = productDTOs,
+        TotalCount = pagedResult.TotalCount,
+        PageSize = pagedResult.PageSize,
+        CurrentPage = pagedResult.CurrentPage
+    };
+}
         public async Task<ProductGetDTO> GetProductByIdAsync(long id)
         {
             var product = await _productRepository.GetByIdAsync(id);

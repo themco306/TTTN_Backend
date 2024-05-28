@@ -24,12 +24,18 @@ namespace backend.Controllers
         }
 
         [HttpGet]
-                [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Show}")] 
+        [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Show}")] 
 
         public async Task<IActionResult> GetProducts()
         {
             var products = await _productService.GetAllProductsAsync();
             return Ok(products);
+        }
+        [HttpGet("search")]
+        public async Task<IActionResult> GetSearchProducts([FromQuery] ProductSearchDTO searchDTO)
+        {
+            var pagedResult = await _productService.GetSearchProductsAsync(searchDTO);
+            return Ok(pagedResult);
         }
         [HttpGet("filter")]
         public async Task<IActionResult> GetFilteredProducts([FromQuery] ProductFilterDTO filter)

@@ -163,6 +163,11 @@ builder.Services.AddScoped<PostService>();
 
 builder.Services.AddScoped<IContactRepository,ContactRepository>();
 builder.Services.AddScoped<ContactService>();
+
+builder.Services.AddScoped<IRateLikeRepository,RateLikeRepository>();
+
+builder.Services.AddScoped<IRateRepository,RateRepository>();
+builder.Services.AddScoped<RateService>();
 var app = builder.Build();
 app.UseCors(Example07JSDomain);
 // Khởi tạo dữ liệu mẫu

@@ -33,6 +33,8 @@ namespace backend.Context
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Rate> Rates { get; set; }
+        public DbSet<RateLike> RateLikes { get; set; }
 
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
@@ -107,6 +109,10 @@ namespace backend.Context
 
             modelBuilder.Entity<Product>(e =>
             {
+                e.Property(p => p.Name)
+                   .HasColumnType("varchar(255)")      
+                   .UseCollation("utf8mb4_general_ci");
+
                     e.HasOne(c => c.Category)
                    .WithMany(c=>c.Products)
                    .HasForeignKey(c => c.CategoryId)
@@ -152,6 +158,7 @@ namespace backend.Context
                        });
             modelBuilder.Entity<Order>(e =>
             {
+
                 e.HasOne(o => o.PaidOrder)
                 .WithOne(p => p.Order)
                 .HasForeignKey<PaidOrder>(p => p.OrderId)
@@ -299,6 +306,31 @@ namespace backend.Context
                 .HasForeignKey(fk => fk.UpdatedById)
                 .OnDelete(DeleteBehavior.SetNull);
             });
+                        modelBuilder.Entity<Rate>(e =>
+            {
+                e.HasOne(c => c.Product)
+                .WithMany()
+                .HasForeignKey(c => c.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(fk => fk.User)
+                .WithMany()
+                .HasForeignKey(fk => fk.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
+                                    modelBuilder.Entity<RateLike>(e =>
+            {
+                e.HasOne(c => c.Rate)
+                .WithMany()
+                .HasForeignKey(c => c.RateId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(fk => fk.User)
+                .WithMany()
+                .HasForeignKey(fk => fk.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
+
             base.OnModelCreating(modelBuilder);
 
         }

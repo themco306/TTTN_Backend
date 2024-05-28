@@ -38,6 +38,7 @@ namespace backend.Repositories
                  return await _context.Posts
             .Where(c=>c.Status==1&&c.Type==PostType.post&&c.TopicId==topicId&&c.Id!=id)
             .Include(c=>c.Topic)
+            .Take(8)
             .OrderByDescending(c=>c.UpdatedAt)
             .ToListAsync();
         }

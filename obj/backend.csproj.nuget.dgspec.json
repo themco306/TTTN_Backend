@@ -108,6 +108,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.5.0, )"
+            },
+            "UnidecodeSharpFork": {
+              "target": "Package",
+              "version": "[1.0.0, )"
             }
           },
           "imports": [

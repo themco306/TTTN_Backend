@@ -24,6 +24,7 @@ namespace backend.Models
         public DateTime UsedAt { get; set; }
 
         public long? OrderId { get; set; } 
+        [JsonIgnore]
         public virtual Order? Order { get; set; } 
     }
 }

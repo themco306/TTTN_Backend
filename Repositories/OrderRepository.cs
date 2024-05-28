@@ -27,7 +27,12 @@ namespace backend.Repositories
         }
         public async Task<List<Order>> GetAllAsync()
         {
-            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product)
+            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderInfo).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product).OrderByDescending(c=>c.CreatedAt)
+            .ToListAsync();
+        }
+                public async Task<List<Order>> GetReceivedOrderByUserIdAsync(string userId)
+        {
+            return await _context.Orders.Where(c=>c.UserId==userId&&c.Status==OrderStatus.Received).Include(o=>o.OrderDetails).ThenInclude(c=>c.Product)
             .ToListAsync();
         }
         public async Task<int> GetTotalOrderCountAsync(string userId)
@@ -45,9 +50,10 @@ public async Task<List<Order>> GetMyOrdersAsync(string userId, int page, int pag
         .Include(o => o.OrderDetails)
         .ThenInclude(c => c.Product)
         .ThenInclude(c=>c.Galleries)
+        .OrderByDescending(c=>c.CreatedAt)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
-        .OrderBy(c=>c.UpdatedAt)
+        
         .ToListAsync();
 }
 

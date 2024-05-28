@@ -175,3 +175,4 @@ D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\Syst
 D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\backend.staticwebassets.runtime.json
 D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\SixLabors.ImageSharp.dll
 D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\Cronos.dll
+D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\UnidecodeSharpFork.dll

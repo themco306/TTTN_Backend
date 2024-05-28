@@ -22,6 +22,12 @@ namespace backend.Repositories
             return await _context.CouponUsages
                 .Where(c => c.UserId == userId&&c.CouponId==couponId).ToListAsync();
         }
+        
+        public async Task<CouponUsage> GetByOrderIdAsync(long orderId )
+        {
+            return await _context.CouponUsages.Include(c=>c.Coupon)
+                .FirstOrDefaultAsync(c => c.OrderId == orderId);
+        }
 
         public async Task<List<CouponUsage>> GetAllAsync()
         {

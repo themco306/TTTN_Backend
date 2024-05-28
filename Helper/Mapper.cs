@@ -83,6 +83,13 @@ namespace backend.Helper
                             TotalPrice=od.TotalPrice
                         }).ToList()))
                     ;
+                    CreateMap<Order, OrderGetReceivedDTO>()
+                        .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails.Select(od => new OrderDetail
+                        {
+                            Id = od.Id,
+                            ProductId=od.ProductId,
+                        }).ToList()))
+                    ;
 
             CreateMap<CouponInputDTO, Coupon>()
             
@@ -152,6 +159,15 @@ namespace backend.Helper
                 UserName=src.UpdatedBy.UserName,
                 Id=src.UpdatedBy.Id
             }))
+            ;
+             CreateMap<Rate, RateGetDTO>()
+             .ForMember(dest=>dest.User,opt=>opt.MapFrom(src=> new UserGetShortDTO{
+                FirstName=src.User.FirstName,
+                LastName=src.User.LastName,
+                Avatar=src.User.Avatar,
+                Id=src.User.Id
+            }))
+        
             ;
         }
     }

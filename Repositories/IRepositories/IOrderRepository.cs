@@ -8,6 +8,7 @@ namespace backend.Repositories.IRepositories
         Task<Order> GetByIdAsync(long id);
         Task<Order> GetByCodeAsync(string code);
         Task<List<Order>> GetAllAsync();
+        Task<List<Order>> GetReceivedOrderByUserIdAsync(string userId);
         Task<int> GetTotalOrderCountAsync(string userId);
         Task<List<Order>> GetMyOrdersAsync(string userId,int page=1, int pageSize=5);
         Task AddAsync(Order order);

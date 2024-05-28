@@ -4,6 +4,16 @@ using backend.Models;
 
 namespace backend.DTOs
 {
+        public class ProductSearchDTO
+{
+    public string? Query { get; set; }
+    public decimal? MinPrice { get; set; }
+    public decimal? MaxPrice { get; set; }
+    public string? SortBy { get; set; } = "updatedAt"; // default sorting field
+    public string? SortOrder { get; set; } = "desc"; // default sorting order
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
+}
     public class ProductFilterDTO
 {
     public string? CategoryId { get; set; }

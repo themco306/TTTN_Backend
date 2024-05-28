@@ -42,7 +42,7 @@ namespace backend.Controllers
         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.OrderClaim}{ClaimValue.Show}")] 
         public async Task<IActionResult> GetOrderInfoById(long id)
         {
-                var order = await _orderService.GetByIdAsync(id);
+                var order = await _orderService.GetByIdSAsync(id);
                 return Ok(order);
         }
         [HttpGet("code/{code}")]

@@ -43,18 +43,18 @@ namespace backend.Payment.Momo
         {
 
             var order = await _orderService.GetByCodeAsync(moMoPaymentDTO.OrderCode, token);
-            if(order.PaymentType!=PaymentType.OnlinePayment){
+            if(order.Order.PaymentType!=PaymentType.OnlinePayment){
                 throw new Exception("Đơn hàng này không được thanh toán trực tuyến");
             }
-            var exittingPaidOrder= await _paidOrderRepository.GetByOrderCodeAsync(order.Code);
+            var exittingPaidOrder= await _paidOrderRepository.GetByOrderCodeAsync(order.Order.Code);
             Guid myuuid = Guid.NewGuid();
             string myuuidAsString = myuuid.ToString();
             if (exittingPaidOrder == null){
                 var paidOrder=new PaidOrder{
-                    OrderId=order.Id,
+                    OrderId=order.Order.Id,
                     PaymentMethodCode=myuuidAsString,
                     PaymentMethod=PaymentMethod.MomoPayment,
-                    Amount=order.Total,
+                    Amount=order.Order.Total,
                 };
                 await _paidOrderRepository.AddAsync(paidOrder);
             }else{
@@ -73,11 +73,11 @@ namespace backend.Payment.Momo
             
 
             MoMoPaymentRequest request = new MoMoPaymentRequest();
-            request.orderInfo ="Mã Tk Shop: " +order.Code;
+            request.orderInfo ="Mã Tk Shop: " +order.Order.Code;
             request.partnerCode = partnerCode;
             request.ipnUrl = ipnUrl;
             request.redirectUrl = moMoPaymentDTO.RedirectUrl;
-            request.amount = (long)order.Total;
+            request.amount = (long)order.Order.Total;
             request.orderId = myuuidAsString;
             request.requestId = myuuidAsString;
             request.requestType = "payWithMethod";

@@ -17,13 +17,15 @@ namespace backend.Services
         private readonly IMapper _mapper;
         private readonly Generate _generate;
         private readonly AccountService _accountService;
+        private readonly ICouponUsageRepository _couponUsageRepository;
 
-        public CouponService(ICouponRepository couponRepository, IMapper mapper, Generate generate, AccountService accountService)
+        public CouponService(ICouponRepository couponRepository, IMapper mapper, Generate generate, AccountService accountService,ICouponUsageRepository couponUsageRepository)
         {
             _couponRepository = couponRepository;
             _mapper = mapper;
             _generate = generate;
             _accountService = accountService;
+            _couponUsageRepository=couponUsageRepository;
         }
 
         public async Task<List<CouponGetDTO>> GetAllCouponsAsync()
@@ -75,7 +77,7 @@ namespace backend.Services
             {
                 throw new BadRequestException("Mã giảm giá đã hết hạn.");
             }
-            if(coupon.UsageLimit>=coupon.CouponUsages.Count)
+            if(coupon.UsageLimit<=coupon.CouponUsages.Count)
             {
                 throw new BadRequestException("Mã giảm giá đã hết số lượt sử dụng.");
             }

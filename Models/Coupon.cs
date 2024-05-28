@@ -63,7 +63,7 @@ namespace backend.Models
 
         public string? UpdatedById { get; set; }
         public virtual AppUser? UpdatedBy { get; set; }
-
+        [JsonIgnore]
         public List<CouponUsage> CouponUsages {get;set;} 
     }
 }
