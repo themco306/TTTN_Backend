@@ -18,8 +18,9 @@ namespace backend.Services
         private readonly AccountService _accountService;
         private readonly OrderService _orderService;
         private readonly IRateLikeRepository _rateLikeRepository;
+        private readonly IProductRepository _productRepository;
 
-        public RateService(IRateRepository rateRepository, IMapper mapper, Generate generate, AccountService accountService, OrderService orderService, IRateLikeRepository rateLikeRepository)
+        public RateService(IRateRepository rateRepository, IMapper mapper, Generate generate, AccountService accountService, OrderService orderService, IRateLikeRepository rateLikeRepository,IProductRepository productRepository)
         {
             _rateRepository = rateRepository;
             _mapper = mapper;
@@ -27,6 +28,7 @@ namespace backend.Services
             _accountService = accountService;
             _orderService = orderService;
             _rateLikeRepository = rateLikeRepository;
+            _productRepository=productRepository;
         }
         public async Task<List<RateGetDTO>> GetAllRatesAsync()
         {
@@ -59,7 +61,10 @@ namespace backend.Services
             var rate = await _rateLikeRepository.GetByIdAsync(rateId,userId);
             if (rate == null)
             {
-                throw new NotFoundException("Danh mục không tồn tại.");
+                 return new RateLikeGetDTO{
+                Id = 0,
+                IsLike= true
+            };
             }
             return new RateLikeGetDTO{
                 Id = rate.Id,
@@ -192,53 +197,67 @@ namespace backend.Services
 
 
 
-        public async Task<RateGetDTO> CreateRateAsync(RateInputDTO rateInputDTO, string token)
+public async Task<RateGetDTO> CreateRateAsync(RateInputDTO rateInputDTO, string token)
+{
+    var userId = _accountService.ExtractUserIdFromToken(token);
+    if (userId == null)
+    {
+        throw new NotFoundException("Có lỗi xãy ra vui lòng đăng nhập lại");
+    }
+    var user = await _accountService.GetUserByIdAsync(userId);
+    var orders = await _orderService.GetReceivedOrderByUserIdAsync(userId);
+    var countOrder = 0;
+    if (orders.Count > 0)
+    {
+        foreach (var order in orders)
         {
-            var userId = _accountService.ExtractUserIdFromToken(token);
-            if (userId == null)
+            foreach (var orderDetail in order.OrderDetails)
             {
-                throw new NotFoundException("Có lỗi xãy ra vui lòng đăng nhập lại");
-            }
-            var user = await _accountService.GetUserByIdAsync(userId);
-            var orders = await _orderService.GetReceivedOrderByUserIdAsync(userId);
-            var countOrder = 0;
-            if (orders.Count > 0)
-            {
-                foreach (var order in orders)
+                if (orderDetail.ProductId != rateInputDTO.ProductId)
                 {
-                    foreach (var orderDetail in order.OrderDetails)
-                    {
-                        if (orderDetail.ProductId != rateInputDTO.ProductId)
-                        {
-                            throw new NotFoundException("Mua sản phẩm để đánh giá");
-                        }
-                        countOrder++;
-
-                    }
+                    throw new NotFoundException("Mua sản phẩm để đánh giá");
                 }
+                countOrder++;
             }
-            else
-            {
-                throw new NotFoundException("Mua sản phẩm để đánh giá");
-            }
-            var countRate = await _rateRepository.CountRateAsync(userId, rateInputDTO.ProductId.Value);
-            if (countRate >= countOrder)
-            {
-                throw new BadRequestException($"Bạn đã đánh giá {countRate}/{countOrder} lần rồi.");
-            }
-            var rate = new Rate
-            {
-                Star = rateInputDTO.Star,
-                Content = rateInputDTO.Content,
-                ProductId = rateInputDTO.ProductId,
-                Like = 0,
-                Dislike = 0,
-                Status = 1,
-                UserId = user.Id,
-            };
-            await _rateRepository.AddAsync(rate);
-            return _mapper.Map<RateGetDTO>(rate);
         }
+    }
+    else
+    {
+        throw new NotFoundException("Mua sản phẩm để đánh giá");
+    }
+    var countRateUser = await _rateRepository.CountRateAsync(userId, rateInputDTO.ProductId.Value);
+    if (countRateUser >= countOrder)
+    {
+        throw new BadRequestException($"Bạn đã đánh giá {countRateUser}/{countOrder} lần rồi.");
+    }
+    var rate = new Rate
+    {
+        Star = rateInputDTO.Star,
+        Content = rateInputDTO.Content,
+        ProductId = rateInputDTO.ProductId,
+        Like = 0,
+        Dislike = 0,
+        Status = 1,
+        UserId = user.Id,
+    };
+    await _rateRepository.AddAsync(rate);
+
+    // Tính toán lại giá trị trung bình của đánh giá (Star) cho sản phẩm
+    var allRates = await _rateRepository.GetByProductIdAsync(rateInputDTO.ProductId.Value);
+    var averageStar = allRates.Average(r => r.Star);
+
+    // Cập nhật giá trị trung bình của đánh giá (Star) cho sản phẩm
+    var product = await _productRepository.GetByIdAsync(rateInputDTO.ProductId.Value);
+    if (product == null)
+    {
+        throw new NotFoundException("Không tìm thấy sản phẩm");
+    }
+    product.Star = averageStar.Value;
+    await _productRepository.UpdateAsync(product);
+
+    return _mapper.Map<RateGetDTO>(rate);
+}
+
 
         public async Task DeleteRateAsync(long id)
         {

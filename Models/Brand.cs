@@ -22,9 +22,13 @@ namespace backend.Models
         public int Status {get;set;}=0;
 
         public string? CreatedById {get;set;}
+        [JsonIgnore]
+
         public virtual AppUser? CreatedBy {get;set;}
 
         public string? UpdatedById {get;set;}
+        [JsonIgnore]
+
         public virtual AppUser? UpdatedBy {get;set;}
        [JsonIgnore]
         public virtual List<Product> Products {get;set;}=new List<Product>();

@@ -29,6 +29,8 @@ namespace backend.Models
 
         public decimal SalePrice { get; set; }
 
+        public double Star { get;set;}
+
         public decimal ComparePrice { get; set; }
 
         public decimal BuyingPrice { get; set; }

@@ -2,6 +2,7 @@ using System.Text;
 using backend.Context;
 using backend.DTOs;
 using backend.Helper;
+using backend.Hubs;
 using backend.Models;
 using backend.Payment.Momo;
 using backend.Payment.Momo.Config;
@@ -25,6 +26,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name:Example07JSDomain,
         builder => builder.WithOrigins("http://localhost:3000", "http://localhost:3001")
                           .AllowAnyHeader()
+                          .AllowCredentials()
                           .AllowAnyMethod());
 });
 builder.Services.AddSwaggerGen(option =>
@@ -83,6 +85,22 @@ builder.Services.AddAuthentication(options=>{
         ValidIssuer=builder.Configuration["Jwt:ValidIssuer"],
         IssuerSigningKey= new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]??"baba"))
     };
+    //
+      options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken)
+                        && path.StartsWithSegments("/chatHub"))
+                    {
+                        context.Token = accessToken;
+                    }
+                    return Task.CompletedTask;
+                }
+            };
+            //
 });
 builder.Services.AddAuthorization(APolicyBuilder.Build);
 var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
@@ -92,7 +110,8 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(connecti
 //     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectString") + "Encrypt=True;");
 // });
 // builder.Services.AddHostedService<UpdateDatabaseService>();
-
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<UserTracker>();
 builder.Services.Configure<MomoConfig>(
     builder.Configuration.GetSection("Momo")
 );
@@ -193,6 +212,7 @@ app.UseStaticFiles();
     app.UseAuthorization();
 
  app.MapControllers();
+ app.MapHub<ChatHub>("/chatHub");
     app.AddGlobalErrorHandler();
     //   app.UseWhen(context => !context.Request.Path.StartsWithSegments("/api/account"), builder =>
     // {

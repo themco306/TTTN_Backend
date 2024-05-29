@@ -18,8 +18,9 @@ namespace backend.Services
         private readonly GalleryService _galleryService;
         private readonly TagService _tagService;
         private readonly IProductTagRepository _productTagRepository;
+        private readonly IRateRepository _rateRepository;
 
-        public ProductService(IProductRepository productRepository, IMapper mapper, Generate generate, AccountService accountService, GalleryService galleryService, TagService tagService,IProductTagRepository productTagRepository)
+        public ProductService(IProductRepository productRepository, IMapper mapper, Generate generate, AccountService accountService, GalleryService galleryService, TagService tagService,IProductTagRepository productTagRepository,IRateRepository rateRepository)
         {
             _productRepository = productRepository;
             _mapper = mapper;
@@ -28,6 +29,7 @@ namespace backend.Services
             _galleryService = galleryService;
             _tagService = tagService;
             _productTagRepository=productTagRepository;
+            _rateRepository=rateRepository;
         }
         public async Task UpdateTagProductAsync()
         {
@@ -58,7 +60,18 @@ namespace backend.Services
 
            
         }
-
+            public async Task<List<ProductGetDTO>> MultipleProductsAsync(LongIDsModel longIDsModel)
+        {
+            List<ProductGetDTO> products = new List<ProductGetDTO>();
+            foreach(var id in longIDsModel.ids){
+                var product = await _productRepository.GetByIdAsync(id);
+                if(product!=null){
+                    products.Add(_mapper.Map<ProductGetDTO>(product));
+                }
+            }
+            
+            return products;
+        }
         public async Task<List<ProductGetDTO>> GetAllProductsAsync()
         {
             var products = await _productRepository.GetAllAsync();

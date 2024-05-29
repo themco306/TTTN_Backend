@@ -22,7 +22,19 @@ namespace backend.Controllers
         {
             _productService = productService;
         }
+        [HttpPost("multiple")]
+        public async Task<IActionResult> MultipleCategories(LongIDsModel model)
+        {
+            // if (model.ids == null || model.ids.Count == 0)
+            // {
+            //     return BadRequest(new { error = "Danh sách các ID không được trống." });
+            // }
 
+            var data=await _productService.MultipleProductsAsync(model);
+            return Ok(new { message = "thc.",data=data });
+
+
+        }
         [HttpGet]
         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Show}")] 
 

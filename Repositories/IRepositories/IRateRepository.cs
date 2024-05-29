@@ -8,6 +8,7 @@ namespace backend.Repositories.IRepositories
         Task<Rate> GetByIdAsync(long id);
         Task<List<Rate>> GetAllAsync();
         Task<List<Rate>> GetByProductIdAsync(long productId);
+        Task<int> CountByProductIdAsync(long productId);
         Task<List<Rate>> GetAllActiveAsync();
         Task<int> CountRateAsync(string userId,long productId);
         Task AddAsync(Rate rate);

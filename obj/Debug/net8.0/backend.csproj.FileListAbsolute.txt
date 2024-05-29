@@ -176,3 +176,4 @@ D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\backend.staticwebassets.runtime.jso
 D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\SixLabors.ImageSharp.dll
 D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\Cronos.dll
 D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\UnidecodeSharpFork.dll
+D:\ThucTapTotNghiep\backend\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll

@@ -110,6 +110,7 @@ namespace backend.Services
             {
                 throw new BadRequestException("Mật khẩu không chính sát");
             }
+            await _accountRepository.PasswordSignInAsync(user.Email,signIn.Password);
             var roles = await _accountRepository.GetUserRolesAsync(user.Id);
             var token = await _accountRepository.GenerateJwtToken(user, signIn.RememberMe);
             var claims = await _accountRepository.GetUserClaimsAsync(user.Id);

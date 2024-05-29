@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using backend.Models;
 
 namespace backend.DTOs
@@ -73,7 +74,7 @@ namespace backend.DTOs
         public Brand Brand {get;set;}
         public string Name { get; set; }
         public string Slug { get; set; }
-
+        public double Star {get;set;}
         public List<Gallery> Galleries { get; set; } = new List<Gallery>();
         public string Description { get; set; }
         public string Detail { get; set; }
@@ -84,7 +85,11 @@ namespace backend.DTOs
         public string ProductType { get; set; }
         public string Note { get; set; }
         public int Status { get; set; }
+        [JsonIgnore]
+
         public AppUser CreatedBy { get; set; }
+        [JsonIgnore]
+
         public AppUser UpdatedBy { get; set; }
         public DateTimeOffset? CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }

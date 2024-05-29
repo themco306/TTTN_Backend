@@ -21,6 +21,7 @@ namespace backend.Repositories
                 .Include(c => c.User)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
+        
 
         public async Task<List<Rate>> GetAllAsync()
         {
@@ -35,6 +36,12 @@ namespace backend.Repositories
             .Include(c=>c.User)
             .OrderByDescending(c=>c.CreatedAt)
             .ToListAsync();
+        }
+                        public async Task<int> CountByProductIdAsync(long productId)
+        {
+            return await _context.Rates
+            .Where(c=>c.ProductId==productId)
+            .CountAsync();
         }
 public async Task<int> CountRateAsync(string userId, long productId)
 {
