@@ -14,6 +14,12 @@ namespace backend.Repositories
         {
             _context = context;
         }
+public async Task<List<Order>> GetOrdersBetweenDatesAsync(DateTime startDate, DateTime endDate, List<OrderStatus> statuses)
+{
+    return await _context.Orders
+        .Where(o =>statuses.Contains(o.Status)&& o.CreatedAt >= startDate && o.CreatedAt <= endDate )
+        .ToListAsync();
+}
 
         public async Task<Order> GetByIdAsync(long id)
         {

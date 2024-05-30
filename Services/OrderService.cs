@@ -38,6 +38,100 @@ namespace backend.Services
             _cartItemRepository = cartItemRepository;
             _couponUsageRepository = couponUsageRepository;
         }
+public async Task<OrderSummaryDTO> GetOrderSummaryDashboardAsync(DatetimeQueryDTO datetimeQuery)
+{
+    var orderSummary = new OrderSummaryDTO();
+    
+    // Get the current DateTimeOffset with the correct time zone
+    DateTimeOffset now = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(+7)); // Adjust for Vietnam time zone
+    
+    // Set default values for start date and end date if they are null
+    if (datetimeQuery.StartDate == DateTimeOffset.MinValue)
+    {
+        datetimeQuery.StartDate = new DateTimeOffset(now.Year, now.Month, 1, 0, 0, 0, now.Offset);
+    }
+
+    if (datetimeQuery.EndDate == DateTimeOffset.MinValue)
+    {
+        datetimeQuery.EndDate = now.AddDays(1);
+    }
+
+    var statuses = new List<OrderStatus> { OrderStatus.Received, OrderStatus.Delivered };
+
+    // Call the method from repository to get order data based on datetimeQuery
+    var orders = await _orderRepository.GetOrdersBetweenDatesAsync(datetimeQuery.StartDate.DateTime, datetimeQuery.EndDate.DateTime, statuses);
+
+    // Calculate summary information about orders
+    orderSummary.TotalOrders = orders.Count();
+    orderSummary.TotalRevenue = CalculateTotalRevenue(orders);
+    orderSummary.AverageOrderValue = CalculateAverageOrderValue(orders);
+
+    // Ensure that orderSummary has been filled with complete information
+    return orderSummary;
+}
+
+
+private decimal CalculateTotalRevenue(IEnumerable<Order> orders)
+{
+    // Tính tổng doanh thu từ các đơn hàng
+    decimal totalRevenue = orders.Sum(order => order.Total);
+    return totalRevenue;
+}
+
+private decimal CalculateAverageOrderValue(IEnumerable<Order> orders)
+{
+    // Tính giá trị trung bình của mỗi đơn hàng
+    if (orders.Any())
+    {
+        decimal totalRevenue = CalculateTotalRevenue(orders);
+        int totalOrders = orders.Count();
+        decimal averageOrderValue = totalRevenue / totalOrders;
+        return averageOrderValue;
+    }
+    else
+    {
+        // Trường hợp không có đơn hàng, trả về 0
+        return 0;
+    }
+}
+
+public async Task<Dictionary<OrderStatus, int>> GetStatusOrderDashboardAsync(string timeFrame)
+{
+    var orderStatusCounts = new Dictionary<OrderStatus, int>();
+
+    // Get all orders
+    var orders = await _orderRepository.GetAllAsync();
+
+    // Filter orders based on time frame
+    DateTime now = DateTime.UtcNow;
+    DateTime startDate;
+
+    switch (timeFrame.ToLower())
+    {
+        case "today":
+            startDate = now.Date;
+            break;
+        case "thismonth":
+            startDate = new DateTime(now.Year, now.Month, 1);
+            break;
+        case "all":
+        default:
+            startDate = DateTime.MinValue;
+            break;
+    }
+
+    var filteredOrders = orders.Where(o => o.CreatedAt >= startDate).ToList();
+
+    // Count orders by status
+    foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
+    {
+        orderStatusCounts[status] = filteredOrders.Count(o => o.Status == status);
+    }
+
+    return orderStatusCounts;
+}
+
+
         public async Task<List<OrderGetDTO>> GetAllAsync()
         {
             var orders = await _orderRepository.GetAllAsync();

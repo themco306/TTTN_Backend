@@ -23,6 +23,22 @@ namespace backend.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
+        [HttpGet("summary")]
+[Authorize]
+public async Task<IActionResult> GetOrderSummaryDashboard([FromQuery] DatetimeQueryDTO datetimeQuery)
+{
+    var newUser = await _orderService.GetOrderSummaryDashboardAsync(datetimeQuery);
+    return Ok(new { data = newUser });
+}
+
+[HttpGet("countStatus")]
+[Authorize]
+public async Task<IActionResult> GetStatusOrderDashboard([FromQuery] string timeFrame = "today")
+{
+    var newUser = await _orderService.GetStatusOrderDashboardAsync(timeFrame);
+    return Ok(new { data = newUser });
+}
+
         [HttpGet]
         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.OrderClaim}{ClaimValue.Show}")] 
         public async Task<IActionResult> GetOrderInfos()

@@ -37,6 +37,60 @@ namespace backend.Services
             _mapper = mapper;
             _galleryService = galleryService;
         }
+public async Task<GetNewCustomerDTO> GetNewCustomer()
+{
+    var today = DateTime.Today;
+    var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
+    var firstDayOfYear = new DateTime(today.Year, 1, 1);
+
+    // Lấy danh sách người dùng được tạo trong ngày hôm nay
+    var usersCreatedToday = await _accountRepository.GetUsersCreatedBetweenDates(today, today.AddDays(1));
+
+    // Lấy danh sách người dùng được tạo trong tháng này
+    var usersCreatedThisMonth = await _accountRepository.GetUsersCreatedBetweenDates(firstDayOfMonth, today.AddDays(1));
+
+    // Lấy danh sách người dùng được tạo trong năm nay
+    var usersCreatedThisYear = await _accountRepository.GetUsersCreatedBetweenDates(firstDayOfYear, today.AddDays(1));
+
+    // Tính tổng số lượng mới cho mỗi khoảng thời gian
+    var totalToday = usersCreatedToday.Count();
+    var totalMonth = usersCreatedThisMonth.Count();
+    var totalYear = usersCreatedThisYear.Count();
+
+    // Tính phần trăm tăng so với ngày hôm qua
+    // Lấy tổng số lượng người dùng được tạo ra ngày hôm qua
+    var yesterday = today.AddDays(-1);
+    var usersCreatedYesterday = await _accountRepository.GetUsersCreatedBetweenDates(yesterday, today);
+    var totalYesterday = usersCreatedYesterday.Count();
+
+    // Tính phần trăm tăng
+var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToday * 100.0 : ((double)totalToday / totalYesterday - 1) * 100;
+
+
+    // Tính phần trăm tăng so với tháng trước
+    // Lấy tổng số lượng người dùng được tạo ra tháng trước
+    var firstDayOfLastMonth = firstDayOfMonth.AddMonths(-1);
+    var lastMonth = today.AddMonths(-1).Month;
+    var lastMonthYear = today.AddMonths(-1).Year;
+    var usersCreatedLastMonth = await _accountRepository.GetUsersCreatedBetweenDates(firstDayOfLastMonth, firstDayOfMonth);
+    var totalLastMonth = usersCreatedLastMonth.Count();
+
+    // Tính phần trăm tăng
+    var percentIncreaseMonth = totalLastMonth == 0 ? totalMonth*100.0 : ((double)totalMonth / totalLastMonth - 1) * 100;
+
+    // Khởi tạo DTO và trả về
+    var newCustomerDTO = new GetNewCustomerDTO
+    {
+        Today = totalToday,
+        PercentIncreaseToday = percentIncreaseToday,
+        ThisMonth = totalMonth,
+        PercentIncreaseMonth = percentIncreaseMonth,
+        ThisYear = totalYear
+    };
+
+    return newCustomerDTO;
+}
+
         public async Task<SignInResultDTO> SignInAdminAsync(SignIn signIn)
         {
             var isEmail = signIn.EmailOrUsername.Contains("@");
@@ -368,6 +422,8 @@ namespace backend.Services
         }
         public async Task<bool> ChangeStatusUserAsync(string id)
         {
+             var now = DateTime.UtcNow;
+                now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
             var user = await _accountRepository.GetUserByIdAsync(id);
             if (user == null)
             {
@@ -379,6 +435,7 @@ namespace backend.Services
                 throw new BadRequestException("Bạn không có quyền làm đều này");
              }
             user.EmailConfirmed = user.EmailConfirmed == true ? false : true;
+            user.UpdatedAt=now;
             var updated = await _accountRepository.UpdateUserAsync(id, user);
             if (!updated)
             {
@@ -388,6 +445,8 @@ namespace backend.Services
         }
         public async Task<bool> UpdateUserByAdminAsync(string userId, UserUpdateByAdminDTO userUpdateDto, IFormFile avatar)
         {
+             var now = DateTime.UtcNow;
+                now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
             var user = await _accountRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
@@ -447,7 +506,7 @@ namespace backend.Services
                 user.Avatar = userUpdateDto.Gender == true ? "avatar-nam.jpg" : "avatar-nu.jpg";
 
             }
-
+            user.UpdatedAt=now;
             var updated = await _accountRepository.UpdateUserAsync(userId, user);
             if (!updated)
             {
@@ -482,6 +541,8 @@ namespace backend.Services
         }
         public async Task<UserGetDTO> UpdateMyUserAsync(string userId, MyUserUpdateDTO userUpdateDto, IFormFile avatar)
         {
+             var now = DateTime.UtcNow;
+                now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
             var user = await _accountRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
@@ -548,7 +609,7 @@ namespace backend.Services
                 user.Avatar = userUpdateDto.Gender == true ? "avatar-nam.jpg" : "avatar-nu.jpg";
 
             }
-
+            user.UpdatedAt=now;
             var updated = await _accountRepository.UpdateUserAsync(userId, user);
             if (!updated)
             {

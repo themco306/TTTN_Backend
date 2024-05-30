@@ -104,6 +104,7 @@ namespace backend.Payment.Momo
         
         public async Task<bool> PaymentSuccess(MoMoSuccessDTO response){
             var now = DateTime.UtcNow;
+            now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
              var exittingPaidOrder= await _paidOrderRepository.GetByPaymentMethodCodeAsync(response.orderId);
              if(exittingPaidOrder==null){
                 throw new BadRequestException("Có lỗi xảy ra vui lòng liên hệ với nhân viên để được hoàn tiền");

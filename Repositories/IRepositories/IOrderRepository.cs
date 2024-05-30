@@ -14,5 +14,6 @@ namespace backend.Repositories.IRepositories
         Task AddAsync(Order order);
         Task UpdateAsync(Order order);
         Task DeleteAsync(long id);
+        Task<List<Order>> GetOrdersBetweenDatesAsync(DateTime startDate, DateTime endDate, List<OrderStatus> statuses);
     }
 }

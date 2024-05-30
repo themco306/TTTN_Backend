@@ -92,8 +92,12 @@ namespace backend.Repositories
 
         public async Task<AppUser> SignUpUserAsync(SignUp signUp)
         {
+            var now = DateTime.UtcNow;
+                now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
             var user = new AppUser
             {
+                CreatedAt=now,
+                UpdatedAt=now,
                 FirstName = signUp.FirstName,
                 LastName = signUp.LastName,
                 Email = signUp.Email,
@@ -108,8 +112,12 @@ namespace backend.Repositories
         }
         public async Task<AppUser> CreateUserAsync(UserCreateDTO userCreateDTO)
         {
+             var now = DateTime.UtcNow;
+                now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
             var user = new AppUser
             {
+                CreatedAt=now,
+                UpdatedAt=now,
                 FirstName = userCreateDTO.FirstName,
                 LastName = userCreateDTO.LastName,
                 Email = userCreateDTO.Email,
@@ -323,7 +331,28 @@ namespace backend.Repositories
         {
             return await _roleManager.Roles.Where(c=>c.Name!=AppRole.SuperAdmin).Select(r => r.Name).ToListAsync();
         }
+public async Task<IEnumerable<AppUser>> GetUsersInRoleAsync(string roleName)
+{
+    // Kiểm tra xem vai trò có tồn tại không
+    if (!await _roleManager.RoleExistsAsync(roleName))
+    {
+        // Nếu vai trò không tồn tại, trả về danh sách rỗng
+        return Enumerable.Empty<AppUser>();
+    }
 
+    // Lấy danh sách người dùng trong vai trò
+    var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
+    
+    return usersInRole;
+}
+  public async Task<IEnumerable<AppUser>> GetUsersCreatedBetweenDates(DateTime startDate, DateTime endDate)
+        {
+            // Lấy danh sách người dùng được tạo ra trong khoảng thời gian cụ thể
+            var users = await _userManager.Users
+                .Where(u => u.CreatedAt >= startDate && u.CreatedAt < endDate)
+                .ToListAsync();
 
+            return users;
+        }
     }
 }

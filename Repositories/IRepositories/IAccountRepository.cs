@@ -43,6 +43,8 @@ Task<bool> DeleteClaimsAsync(string userId);
 
     Task<bool> CheckEmailConfirmedAsync(AppUser user);
     Task<bool> AddClaimToUserAsync(string user, string claimType, List<string> claimValues);
+    Task<IEnumerable<AppUser>> GetUsersInRoleAsync(string roleName);
+     Task<IEnumerable<AppUser>> GetUsersCreatedBetweenDates(DateTime startDate, DateTime endDate);
 
   }
 }

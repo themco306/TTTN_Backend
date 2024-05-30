@@ -1,175 +1,175 @@
 {
   "Files": [
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\default_icon.png",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\default_icon.png",
       "PackagePath": "staticwebassets\\images\\logo\\default_icon.png"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\ten-cua-hang_638511057564112171.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\logo\\ten-cua-hang_638511057564112171.jpg",
       "PackagePath": "staticwebassets\\images\\logo\\ten-cua-hang_638511057564112171.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\9-dieu-it-ai-biet-ve-series-boruto_638523325612975230.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\9-dieu-it-ai-biet-ve-series-boruto_638523325612975230.jpg",
       "PackagePath": "staticwebassets\\images\\posts\\9-dieu-it-ai-biet-ve-series-boruto_638523325612975230.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\adasd11_638520790568957620.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\adasd11_638520790568957620.jpg",
       "PackagePath": "staticwebassets\\images\\posts\\adasd11_638520790568957620.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\adasd_638520782313415826.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\adasd_638520782313415826.jpg",
       "PackagePath": "staticwebassets\\images\\posts\\adasd_638520782313415826.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\nguyen_638520782191190196.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\nguyen_638520782191190196.jpg",
       "PackagePath": "staticwebassets\\images\\posts\\nguyen_638520782191190196.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\top-10-dieu-ma-fan-dragon-ball-thuong-hay-ngo-nhan-du-sai-bet-ben-bet_638522386645951304.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\top-10-dieu-ma-fan-dragon-ball-thuong-hay-ngo-nhan-du-sai-bet-ben-bet_638522386645951304.jpg",
       "PackagePath": "staticwebassets\\images\\posts\\top-10-dieu-ma-fan-dragon-ball-thuong-hay-ngo-nhan-du-sai-bet-ben-bet_638522386645951304.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\top-mo-hinh-anime-dat-khung-nhat-the-gioi_638523537376299781.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\posts\\top-mo-hinh-anime-dat-khung-nhat-the-gioi_638523537376299781.jpg",
       "PackagePath": "staticwebassets\\images\\posts\\top-mo-hinh-anime-dat-khung-nhat-the-gioi_638523537376299781.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\adasd_638521825174777784.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\adasd_638521825174777784.jpg",
       "PackagePath": "staticwebassets\\images\\products\\adasd_638521825174777784.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\adasd_638521825180677295.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\adasd_638521825180677295.jpg",
       "PackagePath": "staticwebassets\\images\\products\\adasd_638521825180677295.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\adasd_638521825182092754.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\adasd_638521825182092754.jpg",
       "PackagePath": "staticwebassets\\images\\products\\adasd_638521825182092754.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffffffff_638512853683777949.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\fffffffff_638512853683777949.jpg",
       "PackagePath": "staticwebassets\\images\\products\\fffffffff_638512853683777949.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\kkkkkkkkkk_638512875564114444.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\kkkkkkkkkk_638512875564114444.jpg",
       "PackagePath": "staticwebassets\\images\\products\\kkkkkkkkkk_638512875564114444.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884853537837.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884853537837.jpg",
       "PackagePath": "staticwebassets\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884853537837.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884858759258.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884858759258.jpg",
       "PackagePath": "staticwebassets\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884858759258.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884859746092.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884859746092.jpg",
       "PackagePath": "staticwebassets\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884859746092.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884860774514.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884860774514.jpg",
       "PackagePath": "staticwebassets\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884860774514.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884861761396.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884861761396.jpg",
       "PackagePath": "staticwebassets\\images\\products\\mo-hinh-law-trang-thai-chien-dau-sieu-dep-cao-41cm-nang-1kg1-co-hop_638521884861761396.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\naruto_638517506608090258.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\naruto_638517506608090258.jpg",
       "PackagePath": "staticwebassets\\images\\products\\naruto_638517506608090258.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\naruto_638517506608814980.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\naruto_638517506608814980.jpg",
       "PackagePath": "staticwebassets\\images\\products\\naruto_638517506608814980.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086325495888.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086325495888.jpg",
       "PackagePath": "staticwebassets\\images\\products\\one-piece_638511086325495888.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086327851408.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086327851408.jpg",
       "PackagePath": "staticwebassets\\images\\products\\one-piece_638511086327851408.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086328167235.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\one-piece_638511086328167235.jpg",
       "PackagePath": "staticwebassets\\images\\products\\one-piece_638511086328167235.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638517506152010808.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638517506152010808.jpg",
       "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638517506152010808.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638517506152785244.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638517506152785244.jpg",
       "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638517506152785244.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638517506153088599.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638517506153088599.jpg",
       "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638517506153088599.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638521829608945224.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638521829608945224.jpg",
       "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638521829608945224.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638521829611286459.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638521829611286459.jpg",
       "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638521829611286459.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638521829611631955.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\products\\shank-luffy_638521829611631955.jpg",
       "PackagePath": "staticwebassets\\images\\products\\shank-luffy_638521829611631955.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\anh-1_638522369058400435.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\anh-1_638522369058400435.jpg",
       "PackagePath": "staticwebassets\\images\\sliders\\anh-1_638522369058400435.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\anh-2_638522369190317780.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\anh-2_638522369190317780.jpg",
       "PackagePath": "staticwebassets\\images\\sliders\\anh-2_638522369190317780.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\anh-3_638522369283613715.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\anh-3_638522369283613715.jpg",
       "PackagePath": "staticwebassets\\images\\sliders\\anh-3_638522369283613715.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner1_638511057980338628.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner1_638511057980338628.jpg",
       "PackagePath": "staticwebassets\\images\\sliders\\banner1_638511057980338628.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner2_638511917526404409.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\sliders\\banner2_638511917526404409.jpg",
       "PackagePath": "staticwebassets\\images\\sliders\\banner2_638511917526404409.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\Admin_638524354790971619.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\Admin_638524354790971619.jpg",
       "PackagePath": "staticwebassets\\images\\users\\Admin_638524354790971619.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638516282091786821.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638516282091786821.jpg",
       "PackagePath": "staticwebassets\\images\\users\\User_638516282091786821.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638517505388574978.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\User_638517505388574978.jpg",
       "PackagePath": "staticwebassets\\images\\users\\User_638517505388574978.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nam.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nam.jpg",
       "PackagePath": "staticwebassets\\images\\users\\avatar-nam.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nu.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\avatar-nu.jpg",
       "PackagePath": "staticwebassets\\images\\users\\avatar-nu.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne1_638513252674556994.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne1_638513252674556994.jpg",
       "PackagePath": "staticwebassets\\images\\users\\ne1_638513252674556994.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne_638517633740954837.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne_638517633740954837.jpg",
       "PackagePath": "staticwebassets\\images\\users\\ne_638517633740954837.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne_638525354191246938.jpg",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\images\\users\\ne_638525354191246938.jpg",
       "PackagePath": "staticwebassets\\images\\users\\ne_638525354191246938.jpg"
     },
     {
-      "Id": "D:\\ThucTapTotNghiep\\backend\\wwwroot\\pages\\EmailConfirmed.html",
+      "Id": "d:\\ThucTapTotNghiep\\backend\\wwwroot\\pages\\EmailConfirmed.html",
       "PackagePath": "staticwebassets\\pages\\EmailConfirmed.html"
     },
     {

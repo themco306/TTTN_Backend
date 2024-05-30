@@ -14,5 +14,8 @@ namespace backend.Models
         public string? Avatar {get;set;}
 
         public bool? Gender {get;set;}//true-nam;false-nữ
+
+        public DateTime? CreatedAt {get;set;}
+        public DateTime? UpdatedAt {get;set;}
     }
 }

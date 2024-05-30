@@ -204,32 +204,33 @@ public async Task<RateGetDTO> CreateRateAsync(RateInputDTO rateInputDTO, string 
     {
         throw new NotFoundException("Có lỗi xãy ra vui lòng đăng nhập lại");
     }
-    var user = await _accountService.GetUserByIdAsync(userId);
+
     var orders = await _orderService.GetReceivedOrderByUserIdAsync(userId);
-    var countOrder = 0;
-    if (orders.Count > 0)
-    {
-        foreach (var order in orders)
-        {
-            foreach (var orderDetail in order.OrderDetails)
-            {
-                if (orderDetail.ProductId != rateInputDTO.ProductId)
-                {
-                    throw new NotFoundException("Mua sản phẩm để đánh giá");
-                }
-                countOrder++;
-            }
-        }
-    }
-    else
+
+    // Kiểm tra xem trong danh sách đơn hàng có đơn hàng nào chứa sản phẩm cần đánh giá không
+    var isProductInOrders = orders.Any(order => order.OrderDetails.Any(orderDetail => orderDetail.ProductId == rateInputDTO.ProductId));
+
+    // Nếu không có sản phẩm trong đơn hàng, ném ra một ngoại lệ
+    if (!isProductInOrders)
     {
         throw new NotFoundException("Mua sản phẩm để đánh giá");
     }
+
+    // Lấy thông tin người dùng
+    var user = await _accountService.GetUserByIdAsync(userId);
+
+    // Đếm số lượng đánh giá của người dùng cho sản phẩm này
     var countRateUser = await _rateRepository.CountRateAsync(userId, rateInputDTO.ProductId.Value);
+
+    // Đếm số lượng sản phẩm đã mua để đánh giá
+    var countOrder = orders.Sum(order => order.OrderDetails.Count(orderDetail => orderDetail.ProductId == rateInputDTO.ProductId));
+
     if (countRateUser >= countOrder)
     {
         throw new BadRequestException($"Bạn đã đánh giá {countRateUser}/{countOrder} lần rồi.");
     }
+
+    // Tạo mới đánh giá
     var rate = new Rate
     {
         Star = rateInputDTO.Star,
@@ -257,6 +258,7 @@ public async Task<RateGetDTO> CreateRateAsync(RateInputDTO rateInputDTO, string 
 
     return _mapper.Map<RateGetDTO>(rate);
 }
+
 
 
         public async Task DeleteRateAsync(long id)

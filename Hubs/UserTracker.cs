@@ -1,14 +1,22 @@
+using backend.Helper;
+using backend.Repositories.IRepositories;
+
 namespace backend.Hubs
 {
     public class UserTracker
     {
         private readonly Dictionary<string, string> _onlineUsers = new Dictionary<string, string>();
+        private readonly IServiceProvider _serviceProvider;
+
+        public UserTracker(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
 
         public Task AddUser(string connectionId, string userId)
         {
             lock (_onlineUsers)
             {
-                // Chỉ thêm userId vào Dictionary nếu nó chưa tồn tại
                 if (!_onlineUsers.ContainsKey(userId))
                 {
                     _onlineUsers[userId] = connectionId;
@@ -21,7 +29,6 @@ namespace backend.Hubs
         {
             lock (_onlineUsers)
             {
-                // Xóa userId từ Dictionary nếu connectionId tương ứng tồn tại
                 var userIdToRemove = _onlineUsers.FirstOrDefault(x => x.Value == connectionId).Key;
                 if (userIdToRemove != null)
                 {
@@ -31,12 +38,34 @@ namespace backend.Hubs
             return Task.CompletedTask;
         }
 
-        public Task<int> GetOnlineUserCount()
+        public async Task<UserOnlineDTO> GetOnlineUserCount()
         {
-            lock (_onlineUsers)
+            int adminOnline = 0;
+            int customerOnline = 0;
+
+            using (var scope = _serviceProvider.CreateScope())
             {
-                return Task.FromResult(_onlineUsers.Count);
+                var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
+
+                foreach (var userId in _onlineUsers.Keys)
+                {
+                    var roles = await accountRepository.GetUserRolesAsync(userId);
+                    if (roles.Contains(AppRole.SuperAdmin)||roles.Contains(AppRole.Admin))
+                    {
+                        adminOnline++;
+                    }
+                    if (roles.Contains(AppRole.Customer))
+                    {
+                        customerOnline++;
+                    }
+                }
             }
+
+            return new UserOnlineDTO
+            {
+                AdminOnline = adminOnline,
+                CustomerOnline = customerOnline
+            };
         }
 
         public Task<List<string>> GetOnlineUsers()

@@ -23,7 +23,12 @@ namespace backend.Controllers
             _httpContextAccessor = httpContextAccessor;
 
         }
-
+        [HttpGet("newUser")]
+        [Authorize]
+        public async Task<IActionResult> GetNewUserDashboard(){
+            var newUser=await _accountService.GetNewCustomer();
+            return Ok(new {data=newUser});
+        }
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp(SignUp signUp)
         {

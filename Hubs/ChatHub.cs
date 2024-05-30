@@ -34,7 +34,7 @@ public override async Task OnDisconnectedAsync(Exception exception)
 }
 
 
-        public Task<int> GetOnlineUserCount()
+        public Task<UserOnlineDTO> GetOnlineUserCount()
         {
             return _userTracker.GetOnlineUserCount();
         }
