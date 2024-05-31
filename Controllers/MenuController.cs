@@ -20,7 +20,12 @@ namespace backend.Controllers
             _menuService = menuService;
             _httpContextAccessor=httpContextAccessor;
         }
-
+        [HttpGet("byLink/{link}")]
+        public async Task<IActionResult> GetMenubyLink(string link)
+        {
+           var slider = await _menuService.GetMenuByLinkAsync(link);
+                return Ok(slider);
+        }
         [HttpGet]
         [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.MenuClaim}{ClaimValue.Show}")] 
         public async Task<IActionResult> GetMenus()

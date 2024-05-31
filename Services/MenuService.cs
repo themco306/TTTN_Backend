@@ -53,11 +53,16 @@ namespace backend.Services
             var menus = await _menuRepository.GetSubMenusAsync(id);
             return _mapper.Map<List<MenuGetShortDTO>>(menus);
         }
-        // public async Task<List<MenuGetDTO>> GetMenusActiveAsync()
-        // {
-        //     var menus = await _menuRepository.GetAllAsync(true);
-        //     return _mapper.Map<List<MenuGetDTO>>(menus);
-        // }
+                public async Task<MenuGetDTO> GetMenuByLinkAsync(string link)
+        {
+            var menu = await _menuRepository.GetByLinkAsync(link);
+            if (menu == null)
+            {
+                throw new NotFoundException("Menu không tồn tại");
+            }
+
+            return _mapper.Map<MenuGetDTO>(menu);
+        }
         public async Task<MenuGetDTO> GetMenuByIdAsync(long menuId)
         {
             var menu = await _menuRepository.GetByIdAsync(menuId);
@@ -68,16 +73,6 @@ namespace backend.Services
 
             return _mapper.Map<MenuGetDTO>(menu);
         }
-        //         public async Task<Menu> GetMenuShowByIdAsync(long menuId)
-        // {
-        //     var menu = await _menuRepository.GetByIdAsync(menuId);
-        //     if (menu == null)
-        //     {
-        //         throw new NotFoundException("Hình ảnh không tồn tại");
-        //     }
-
-        //     return menu;
-        // }
         public async Task<List<MenuGetDTO>> GetParentsAsync(long id)
         {
             var currentCategory = await _menuRepository.GetByIdAsync(id);

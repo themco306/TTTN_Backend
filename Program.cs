@@ -187,6 +187,10 @@ builder.Services.AddScoped<IRateLikeRepository,RateLikeRepository>();
 
 builder.Services.AddScoped<IRateRepository,RateRepository>();
 builder.Services.AddScoped<RateService>();
+
+builder.Services.AddScoped<IMessageRepository,MessageRepository>();
+builder.Services.AddScoped<IMessageReadStatusRepository,MessageReadStatusRepository>();
+
 var app = builder.Build();
 app.UseCors(Example07JSDomain);
 // Khởi tạo dữ liệu mẫu

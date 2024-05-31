@@ -24,6 +24,15 @@ namespace backend.Repositories
             .Include(c=>c.UpdatedBy)
             .FirstOrDefaultAsync(p => p.Id == id);
         }
+                public async Task<Menu> GetByLinkAsync(string link)
+        {
+            return await _context.Menus.
+            Where(c=>c.Status == 1).
+            Include(c=>c.Parent)
+            .Include(c=>c.CreatedBy)
+            .Include(c=>c.UpdatedBy)
+            .FirstOrDefaultAsync(p => p.Link == link);
+        }
                 public async Task<List<Menu>> GetMenuHeaderAsync()
         {
             return await _context.Menus

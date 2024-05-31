@@ -35,7 +35,8 @@ namespace backend.Context
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Rate> Rates { get; set; }
         public DbSet<RateLike> RateLikes { get; set; }
-
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<MessageReadStatus> MessageReadStatuses { get; set; }
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
@@ -110,17 +111,17 @@ namespace backend.Context
             modelBuilder.Entity<Product>(e =>
             {
                 e.Property(p => p.Name)
-                   .HasColumnType("varchar(255)")      
+                   .HasColumnType("varchar(255)")
                    .UseCollation("utf8mb4_general_ci");
 
-                    e.HasOne(c => c.Category)
-                   .WithMany(c=>c.Products)
-                   .HasForeignKey(c => c.CategoryId)
-                   .OnDelete(DeleteBehavior.Restrict);
-                    e.HasOne(c => c.Brand)
-                   .WithMany(c=>c.Products)
-                   .HasForeignKey(c => c.BrandId)
-                   .OnDelete(DeleteBehavior.SetNull);
+                e.HasOne(c => c.Category)
+               .WithMany(c => c.Products)
+               .HasForeignKey(c => c.CategoryId)
+               .OnDelete(DeleteBehavior.Restrict);
+                e.HasOne(c => c.Brand)
+               .WithMany(c => c.Products)
+               .HasForeignKey(c => c.BrandId)
+               .OnDelete(DeleteBehavior.SetNull);
 
                 e.HasOne(fk => fk.CreatedBy)
                   .WithMany()
@@ -203,63 +204,63 @@ namespace backend.Context
             modelBuilder.Entity<CartItem>(e =>
             {
                 e.HasOne(c => c.Cart)
-               .WithMany(c=>c.CartItems)
+               .WithMany(c => c.CartItems)
                .HasForeignKey(c => c.CartId)
                .OnDelete(DeleteBehavior.Cascade);
 
-               e.HasOne(c => c.Product)
-               .WithMany()
-               .HasForeignKey(c => c.ProductId)
-               .OnDelete(DeleteBehavior.Cascade);
-            });
-
-                        modelBuilder.Entity<Coupon>(e =>
-            {
-                 e.HasIndex(c => c.Code)
-                .IsUnique();
-
-
-                e.HasOne(fk => fk.CreatedBy)
+                e.HasOne(c => c.Product)
                 .WithMany()
-                .HasForeignKey(fk => fk.CreatedById)
-                .OnDelete(DeleteBehavior.Cascade);
-
-                e.HasOne(fk => fk.UpdatedBy)
-                .WithMany()
-                .HasForeignKey(fk => fk.UpdatedById)
-                .OnDelete(DeleteBehavior.Cascade);
-            });
-                         modelBuilder.Entity<CouponUsage>(e =>
-            {
-                e.HasOne(fk=>fk.User)
-                .WithMany()
-                .HasForeignKey(fk=>fk.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-                e.HasOne(fk=>fk.Coupon)
-                .WithMany(c=>c.CouponUsages)
-                .HasForeignKey(fk=>fk.CouponId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-                e.HasOne(fk=>fk.Order)
-                .WithMany()
-                .HasForeignKey(fk=>fk.OrderId)
+                .HasForeignKey(c => c.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
             });
 
-              modelBuilder.Entity<PaidOrder>(e =>
-            {
+            modelBuilder.Entity<Coupon>(e =>
+{
+    e.HasIndex(c => c.Code)
+               .IsUnique();
 
-                // e.HasOne(fk => fk.Order)
-                // .WithMany()
-                // .HasForeignKey(fk => fk.OrderId)
-                // .OnDelete(DeleteBehavior.Cascade);
-            });
+
+    e.HasOne(fk => fk.CreatedBy)
+    .WithMany()
+    .HasForeignKey(fk => fk.CreatedById)
+    .OnDelete(DeleteBehavior.Cascade);
+
+    e.HasOne(fk => fk.UpdatedBy)
+    .WithMany()
+    .HasForeignKey(fk => fk.UpdatedById)
+    .OnDelete(DeleteBehavior.Cascade);
+});
+            modelBuilder.Entity<CouponUsage>(e =>
+{
+   e.HasOne(fk => fk.User)
+   .WithMany()
+   .HasForeignKey(fk => fk.UserId)
+   .OnDelete(DeleteBehavior.Cascade);
+
+   e.HasOne(fk => fk.Coupon)
+   .WithMany(c => c.CouponUsages)
+   .HasForeignKey(fk => fk.CouponId)
+   .OnDelete(DeleteBehavior.Cascade);
+
+   e.HasOne(fk => fk.Order)
+   .WithMany()
+   .HasForeignKey(fk => fk.OrderId)
+   .OnDelete(DeleteBehavior.Cascade);
+});
+
+            modelBuilder.Entity<PaidOrder>(e =>
+          {
+
+              // e.HasOne(fk => fk.Order)
+              // .WithMany()
+              // .HasForeignKey(fk => fk.OrderId)
+              // .OnDelete(DeleteBehavior.Cascade);
+          });
             modelBuilder.Entity<Menu>(e =>
             {
-                e.HasOne(fk=>fk.Parent)
+                e.HasOne(fk => fk.Parent)
                 .WithMany()
-                .HasForeignKey(fk=>fk.ParentId)
+                .HasForeignKey(fk => fk.ParentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
                 e.HasOne(fk => fk.CreatedBy)
@@ -274,9 +275,9 @@ namespace backend.Context
             });
             modelBuilder.Entity<Topic>(e =>
             {
-                e.HasOne(fk=>fk.Parent)
+                e.HasOne(fk => fk.Parent)
                 .WithMany()
-                .HasForeignKey(fk=>fk.ParentId)
+                .HasForeignKey(fk => fk.ParentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
                 e.HasOne(fk => fk.CreatedBy)
@@ -289,48 +290,65 @@ namespace backend.Context
                 .HasForeignKey(fk => fk.UpdatedById)
                 .OnDelete(DeleteBehavior.SetNull);
             });
-                        modelBuilder.Entity<Post>(e =>
-            {
-                e.HasOne(fk=>fk.Topic)
-                .WithMany()
-                .HasForeignKey(fk=>fk.TopicId)
-                .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Post>(e =>
+{
+    e.HasOne(fk => fk.Topic)
+    .WithMany()
+    .HasForeignKey(fk => fk.TopicId)
+    .OnDelete(DeleteBehavior.SetNull);
 
-                e.HasOne(fk => fk.CreatedBy)
-                .WithMany()
-                .HasForeignKey(fk => fk.CreatedById)
-                .OnDelete(DeleteBehavior.SetNull);
+    e.HasOne(fk => fk.CreatedBy)
+    .WithMany()
+    .HasForeignKey(fk => fk.CreatedById)
+    .OnDelete(DeleteBehavior.SetNull);
 
-                e.HasOne(fk => fk.UpdatedBy)
-                .WithMany()
-                .HasForeignKey(fk => fk.UpdatedById)
-                .OnDelete(DeleteBehavior.SetNull);
-            });
-                        modelBuilder.Entity<Rate>(e =>
-            {
-                e.HasOne(c => c.Product)
-                .WithMany()
-                .HasForeignKey(c => c.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
+    e.HasOne(fk => fk.UpdatedBy)
+    .WithMany()
+    .HasForeignKey(fk => fk.UpdatedById)
+    .OnDelete(DeleteBehavior.SetNull);
+});
+            modelBuilder.Entity<Rate>(e =>
+{
+    e.HasOne(c => c.Product)
+    .WithMany()
+    .HasForeignKey(c => c.ProductId)
+    .OnDelete(DeleteBehavior.Cascade);
 
-                e.HasOne(fk => fk.User)
-                .WithMany()
-                .HasForeignKey(fk => fk.UserId)
-                .OnDelete(DeleteBehavior.SetNull);
-            });
-                                    modelBuilder.Entity<RateLike>(e =>
-            {
-                e.HasOne(c => c.Rate)
-                .WithMany()
-                .HasForeignKey(c => c.RateId)
-                .OnDelete(DeleteBehavior.Cascade);
+    e.HasOne(fk => fk.User)
+    .WithMany()
+    .HasForeignKey(fk => fk.UserId)
+    .OnDelete(DeleteBehavior.SetNull);
+});
+            modelBuilder.Entity<RateLike>(e =>
+{
+e.HasOne(c => c.Rate)
+.WithMany()
+.HasForeignKey(c => c.RateId)
+.OnDelete(DeleteBehavior.Cascade);
 
-                e.HasOne(fk => fk.User)
-                .WithMany()
-                .HasForeignKey(fk => fk.UserId)
-                .OnDelete(DeleteBehavior.SetNull);
-            });
-
+e.HasOne(fk => fk.User)
+.WithMany()
+.HasForeignKey(fk => fk.UserId)
+.OnDelete(DeleteBehavior.SetNull);
+});
+            modelBuilder.Entity<Message>(e =>
+{
+e.HasOne(fk => fk.User)
+.WithMany()
+.HasForeignKey(fk => fk.UserId)
+.OnDelete(DeleteBehavior.Cascade);
+});
+            modelBuilder.Entity<MessageReadStatus>(e =>
+{
+e.HasOne(fk => fk.Message)
+.WithMany()
+.HasForeignKey(fk => fk.MessageId)
+.OnDelete(DeleteBehavior.Cascade);
+e.HasOne(fk => fk.User)
+.WithMany()
+.HasForeignKey(fk => fk.UserId)
+.OnDelete(DeleteBehavior.Cascade);
+});
             base.OnModelCreating(modelBuilder);
 
         }
