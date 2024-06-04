@@ -31,6 +31,8 @@ namespace backend.DTOs
         public DateTime UpdatedAt { get; set; }
         public virtual UserGetShortDTO? User {get;set;}
         public long? ProductId {get;set;}
+        public virtual ICollection<RateFile> RateFiles { get; set; } = new List<RateFile>();
+
 
     }
 

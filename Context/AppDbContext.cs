@@ -37,6 +37,7 @@ namespace backend.Context
         public DbSet<RateLike> RateLikes { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageReadStatus> MessageReadStatuses { get; set; }
+        public DbSet<RateFile> RateFiles { get; set; }
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
@@ -309,6 +310,11 @@ namespace backend.Context
 });
             modelBuilder.Entity<Rate>(e =>
 {
+    // e.HasMany(r => r.RateFiles)
+    //         .WithOne(rf => rf.Rate)
+    //         .HasForeignKey(rf => rf.RateId)
+    //         .OnDelete(DeleteBehavior.Cascade); 
+
     e.HasOne(c => c.Product)
     .WithMany()
     .HasForeignKey(c => c.ProductId)
@@ -347,6 +353,14 @@ e.HasOne(fk => fk.Message)
 e.HasOne(fk => fk.User)
 .WithMany()
 .HasForeignKey(fk => fk.UserId)
+.OnDelete(DeleteBehavior.Cascade);
+});
+
+            modelBuilder.Entity<RateFile>(e =>
+{
+e.HasOne(fk => fk.Rate)
+.WithMany(f=>f.RateFiles)
+.HasForeignKey(fk => fk.RateId)
 .OnDelete(DeleteBehavior.Cascade);
 });
             base.OnModelCreating(modelBuilder);

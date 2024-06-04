@@ -15,7 +15,11 @@ namespace backend.Models
         public string? Content {get;set;}
         public int? Like {get;set;}=0;
         public int? Dislike {get;set;}=0;
+
+        public int? Report { get;set;}=0;
         public int Status {get;set;}=0;
+
+        public bool IsUpdate {get;set;}=false;
         public string? UserId {get;set;}
         [JsonIgnore]
 
@@ -23,6 +27,8 @@ namespace backend.Models
         public long? ProductId {get;set;}
         [JsonIgnore]
         public virtual Product? Product {get;set;}
+        [JsonIgnore]
+         public virtual ICollection<RateFile> RateFiles { get; set; } = new List<RateFile>();
 
     }
 }

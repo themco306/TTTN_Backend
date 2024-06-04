@@ -958,11 +958,17 @@ namespace backend.Migrations
                     b.Property<int?>("Dislike")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsUpdate")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<int?>("Like")
                         .HasColumnType("int");
 
                     b.Property<long?>("ProductId")
                         .HasColumnType("bigint");
+
+                    b.Property<int?>("Report")
+                        .HasColumnType("int");
 
                     b.Property<int?>("Star")
                         .HasColumnType("int");
@@ -983,6 +989,28 @@ namespace backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Rates");
+                });
+
+            modelBuilder.Entity("backend.Models.RateFile", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FileType")
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("RateId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RateId");
+
+                    b.ToTable("RateFiles");
                 });
 
             modelBuilder.Entity("backend.Models.RateLike", b =>
@@ -1563,6 +1591,17 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("backend.Models.RateFile", b =>
+                {
+                    b.HasOne("backend.Models.Rate", "Rate")
+                        .WithMany("RateFiles")
+                        .HasForeignKey("RateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rate");
+                });
+
             modelBuilder.Entity("backend.Models.RateLike", b =>
                 {
                     b.HasOne("backend.Models.Rate", "Rate")
@@ -1654,6 +1693,11 @@ namespace backend.Migrations
                     b.Navigation("Galleries");
 
                     b.Navigation("ProductTags");
+                });
+
+            modelBuilder.Entity("backend.Models.Rate", b =>
+                {
+                    b.Navigation("RateFiles");
                 });
 
             modelBuilder.Entity("backend.Models.Tag", b =>

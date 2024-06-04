@@ -34,6 +34,7 @@ namespace backend.Repositories
             return await _context.Rates
             .Where(c=>c.ProductId==productId)
             .Include(c=>c.User)
+            .Include(c=>c.RateFiles.OrderByDescending(c=>c.FileType))
             .OrderByDescending(c=>c.CreatedAt)
             .ToListAsync();
         }

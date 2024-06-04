@@ -111,6 +111,19 @@ public class NotificationsController : ControllerBase
 
         return Ok(new { isRead });
     }
+    [HttpDelete("messages/{id}")]
+public async Task<IActionResult> DeleteMessage(int id)
+{
+    var message = await _messageRepository.GetByIdAsync(id);
+    if (message == null)
+    {
+        return NotFound();
+    }
+    await _messageRepository.DeleteAsync(id);
+     await _hubContext.Clients.All.SendAsync("MessageDeleted", id);
+    return NoContent();
+}
+
     private async Task<UserGetShortDTO> GetShortUserInfo(string userId)
     {
         var user = await _accountRepository.GetUserByIdAsync(userId);
