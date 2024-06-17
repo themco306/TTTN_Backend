@@ -11,6 +11,7 @@ using backend.Exceptions;
 using backend.Helper;
 using backend.Models;
 using backend.Repositories.IRepositories;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -27,8 +28,10 @@ namespace backend.Services
         private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IActionContextAccessor _actionContextAccessor;
         private readonly IMapper _mapper;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly Generate _generate;
 
-        public AccountService(IAccountRepository accountRepository, EmailService emailService, IUrlHelperFactory urlHelperFactory, IActionContextAccessor actionContextAccessor, IMapper mapper, GalleryService galleryService)
+        public AccountService(IAccountRepository accountRepository, EmailService emailService, IUrlHelperFactory urlHelperFactory, IActionContextAccessor actionContextAccessor, IMapper mapper, GalleryService galleryService, UserManager<AppUser> userManager,Generate generate)
         {
             _accountRepository = accountRepository;
             _emailService = emailService;
@@ -36,60 +39,132 @@ namespace backend.Services
             _actionContextAccessor = actionContextAccessor;
             _mapper = mapper;
             _galleryService = galleryService;
+            _userManager = userManager;
+            _generate=generate;
         }
-public async Task<GetNewCustomerDTO> GetNewCustomer()
-{
-    var today = DateTime.Today;
-    var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
-    var firstDayOfYear = new DateTime(today.Year, 1, 1);
+        public async Task<AppUser> FindOrCreateUser(GoogleJsonWebSignature.Payload payload)
+        {
+            var user = await _accountRepository.GetUserByEmailAsync(payload.Email);
+            if (user == null)
+            {
+                var now = DateTime.UtcNow;
+                now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+                var newUser = new AppUser
+                {
+                    CreatedAt = now,
+                    UpdatedAt = now,
+                    FirstName = payload.GivenName,
+                    LastName = payload.FamilyName,
+                    Email = payload.Email,
+                    EmailConfirmed=true,
+                    UserName =  payload.Email.Split('@')[0],
+                    Gender = true,
+                    Avatar = payload.Picture
+                };
+                var result = await _userManager.CreateAsync(newUser);
+                if (!result.Succeeded)
+                {
+                    throw new BadRequestException("Thất bại vui lòng thử lại");
+                }
+                var resultRoles = await _accountRepository.AddRoleToUserAsync(newUser, AppRole.Customer);
+                if (!resultRoles)
+                {
+                    throw new Exception("Quyền này không tồn tại");
+                }
+                var loginInfo = new UserLoginInfo("Google", payload.Subject, "Google");
+                result = await _userManager.AddLoginAsync(newUser, loginInfo);
+                if (!result.Succeeded)
+                {
+                    throw new BadRequestException("Thất bại vui lòng thử lại");
 
-    // Lấy danh sách người dùng được tạo trong ngày hôm nay
-    var usersCreatedToday = await _accountRepository.GetUsersCreatedBetweenDates(today, today.AddDays(1));
+                }
+                return newUser;
+            }
+            else
+            {
+                var logins = await _userManager.GetLoginsAsync(user);
+                if (!logins.Any(l => l.LoginProvider == "Google" && l.ProviderKey == payload.Subject))
+                {
+                    var loginInfo = new UserLoginInfo("Google", payload.Subject, "Google");
+                    var result = await _userManager.AddLoginAsync(user, loginInfo);
+                    if (!result.Succeeded)
+                    {
+                        throw new BadRequestException("Thất bại vui lòng thử lại");
 
-    // Lấy danh sách người dùng được tạo trong tháng này
-    var usersCreatedThisMonth = await _accountRepository.GetUsersCreatedBetweenDates(firstDayOfMonth, today.AddDays(1));
+                    }
+                }
+                return user;
+            }
 
-    // Lấy danh sách người dùng được tạo trong năm nay
-    var usersCreatedThisYear = await _accountRepository.GetUsersCreatedBetweenDates(firstDayOfYear, today.AddDays(1));
+        }
+        public async Task<SignInResultDTO> GenerateJwtTokenForGoogle(GoogleJsonWebSignature.Payload payload){
+            var user =await FindOrCreateUser(payload);
+            var roles = await _accountRepository.GetUserRolesAsync(user.Id);
+            var token = await _accountRepository.GenerateJwtToken(user, true);
+            var claims = await _accountRepository.GetUserClaimsAsync(user.Id);
 
-    // Tính tổng số lượng mới cho mỗi khoảng thời gian
-    var totalToday = usersCreatedToday.Count();
-    var totalMonth = usersCreatedThisMonth.Count();
-    var totalYear = usersCreatedThisYear.Count();
+            var signInResult = new SignInResultDTO
+            {
+                User = _mapper.Map<UserGetDTO>(user),
+                Token = token
+            };
+            signInResult.User.Roles = roles;
+            signInResult.User.Claims = claims;
+            return signInResult;
+        }
+        public async Task<GetNewCustomerDTO> GetNewCustomer()
+        {
+            var today = DateTime.Today;
+            var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
+            var firstDayOfYear = new DateTime(today.Year, 1, 1);
 
-    // Tính phần trăm tăng so với ngày hôm qua
-    // Lấy tổng số lượng người dùng được tạo ra ngày hôm qua
-    var yesterday = today.AddDays(-1);
-    var usersCreatedYesterday = await _accountRepository.GetUsersCreatedBetweenDates(yesterday, today);
-    var totalYesterday = usersCreatedYesterday.Count();
+            // Lấy danh sách người dùng được tạo trong ngày hôm nay
+            var usersCreatedToday = await _accountRepository.GetUsersCreatedBetweenDates(today, today.AddDays(1));
 
-    // Tính phần trăm tăng
-var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToday * 100.0 : ((double)totalToday / totalYesterday - 1) * 100;
+            // Lấy danh sách người dùng được tạo trong tháng này
+            var usersCreatedThisMonth = await _accountRepository.GetUsersCreatedBetweenDates(firstDayOfMonth, today.AddDays(1));
+
+            // Lấy danh sách người dùng được tạo trong năm nay
+            var usersCreatedThisYear = await _accountRepository.GetUsersCreatedBetweenDates(firstDayOfYear, today.AddDays(1));
+
+            // Tính tổng số lượng mới cho mỗi khoảng thời gian
+            var totalToday = usersCreatedToday.Count();
+            var totalMonth = usersCreatedThisMonth.Count();
+            var totalYear = usersCreatedThisYear.Count();
+
+            // Tính phần trăm tăng so với ngày hôm qua
+            // Lấy tổng số lượng người dùng được tạo ra ngày hôm qua
+            var yesterday = today.AddDays(-1);
+            var usersCreatedYesterday = await _accountRepository.GetUsersCreatedBetweenDates(yesterday, today);
+            var totalYesterday = usersCreatedYesterday.Count();
+
+            // Tính phần trăm tăng
+            var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToday * 100.0 : ((double)totalToday / totalYesterday - 1) * 100;
 
 
-    // Tính phần trăm tăng so với tháng trước
-    // Lấy tổng số lượng người dùng được tạo ra tháng trước
-    var firstDayOfLastMonth = firstDayOfMonth.AddMonths(-1);
-    var lastMonth = today.AddMonths(-1).Month;
-    var lastMonthYear = today.AddMonths(-1).Year;
-    var usersCreatedLastMonth = await _accountRepository.GetUsersCreatedBetweenDates(firstDayOfLastMonth, firstDayOfMonth);
-    var totalLastMonth = usersCreatedLastMonth.Count();
+            // Tính phần trăm tăng so với tháng trước
+            // Lấy tổng số lượng người dùng được tạo ra tháng trước
+            var firstDayOfLastMonth = firstDayOfMonth.AddMonths(-1);
+            var lastMonth = today.AddMonths(-1).Month;
+            var lastMonthYear = today.AddMonths(-1).Year;
+            var usersCreatedLastMonth = await _accountRepository.GetUsersCreatedBetweenDates(firstDayOfLastMonth, firstDayOfMonth);
+            var totalLastMonth = usersCreatedLastMonth.Count();
 
-    // Tính phần trăm tăng
-    var percentIncreaseMonth = totalLastMonth == 0 ? totalMonth*100.0 : ((double)totalMonth / totalLastMonth - 1) * 100;
+            // Tính phần trăm tăng
+            var percentIncreaseMonth = totalLastMonth == 0 ? totalMonth * 100.0 : ((double)totalMonth / totalLastMonth - 1) * 100;
 
-    // Khởi tạo DTO và trả về
-    var newCustomerDTO = new GetNewCustomerDTO
-    {
-        Today = totalToday,
-        PercentIncreaseToday = percentIncreaseToday,
-        ThisMonth = totalMonth,
-        PercentIncreaseMonth = percentIncreaseMonth,
-        ThisYear = totalYear
-    };
+            // Khởi tạo DTO và trả về
+            var newCustomerDTO = new GetNewCustomerDTO
+            {
+                Today = totalToday,
+                PercentIncreaseToday = percentIncreaseToday,
+                ThisMonth = totalMonth,
+                PercentIncreaseMonth = percentIncreaseMonth,
+                ThisYear = totalYear
+            };
 
-    return newCustomerDTO;
-}
+            return newCustomerDTO;
+        }
 
         public async Task<SignInResultDTO> SignInAdminAsync(SignIn signIn)
         {
@@ -159,12 +234,17 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
             {
                 throw new BadRequestException("Tên đăng nhập không tồn tại");
             }
-            var checkPassword = await _accountRepository.CheckPasswordAsync(user, signIn.Password);
+            if(user.PasswordHash!=null){
+                  var checkPassword = await _accountRepository.CheckPasswordAsync(user, signIn.Password);
             if (!checkPassword)
             {
                 throw new BadRequestException("Mật khẩu không chính sát");
             }
-            await _accountRepository.PasswordSignInAsync(user.Email,signIn.Password);
+            }else{
+                throw new BadRequestException("Vui lòng chọn Google để đăng nhập");
+            }
+          
+            await _accountRepository.PasswordSignInAsync(user.Email, signIn.Password);
             var roles = await _accountRepository.GetUserRolesAsync(user.Id);
             var token = await _accountRepository.GenerateJwtToken(user, signIn.RememberMe);
             var claims = await _accountRepository.GetUserClaimsAsync(user.Id);
@@ -196,17 +276,6 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
             {
                 throw new Exception("Quyền này không tồn tại");
             }
-            // var confirmEmailToken = await _accountRepository.GenerateEmailConfirmationTokenAsync(userCreated);
-            // if (confirmEmailToken == null)
-            // {
-            //     throw new Exception("Có lỗi xảy ra");
-            // }
-            // else
-            // {
-            //     var confirmationLink = GenerateConfirmationLink(userCreated, confirmEmailToken);
-            //     await _emailService.SendEmailAsync(userCreated.Email, "Xác nhận email của bạn", $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href=\"{confirmationLink}\">liên kết này</a>");
-
-            // }
             return IdentityResult.Success;
         }
         public async Task SendEmailConfirm(string id, string url)
@@ -307,17 +376,17 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
             return confirmationLink;
         }
 
-        public async Task<IEnumerable<UserGetDTO>> GetUsersAsync(int pageIndex, int pageSize, string email)
+        public async Task<PagedResult<UserGetDTO>> GetUsersAsync(ProductAdminFilterDTO filterDTO, string email)
         {
-            var users = await _accountRepository.GetUsersAsync(pageIndex, pageSize, email);
+            var users = await _accountRepository.GetUsersAsync(AppRole.Admin,filterDTO, email);
             var usersDTO = new List<UserGetDTO>();
 
-            foreach (var user in users)
+            foreach (var user in users.Items)
             {
                 var roles = await _accountRepository.GetUserRolesAsync(user.Id);
                 if (!roles.Contains(AppRole.Admin) && !roles.Contains(AppRole.SuperAdmin))
                 {
-                   continue;
+                    continue;
                 }
                 var claims = await _accountRepository.GetUserClaimsAsync(user.Id);
 
@@ -334,20 +403,28 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
                     Roles = roles,
                     Claims = claims
                 });
+                // users.TotalCount--;
+
             }
-            return usersDTO;
+                return new PagedResult<UserGetDTO>
+    {
+        Items = usersDTO,
+        TotalCount = users.TotalCount,
+        PageSize = users.PageSize,
+        CurrentPage = users.CurrentPage
+    };
         }
-        public async Task<IEnumerable<UserGetDTO>> GetCusomerAsync(int pageIndex, int pageSize,string email)
+        public async Task<PagedResult<UserGetDTO>> GetCusomerAsync([FromQuery] ProductAdminFilterDTO filterDTO, string email)
         {
-            var users = await _accountRepository.GetUsersAsync(pageIndex, pageSize,email);
+            var users = await _accountRepository.GetUsersAsync(AppRole.Customer,filterDTO, email);
             var usersDTO = new List<UserGetDTO>();
 
-            foreach (var user in users)
+            foreach (var user in users.Items)
             {
                 var roles = await _accountRepository.GetUserRolesAsync(user.Id);
                 if (roles.Contains(AppRole.Admin) || roles.Contains(AppRole.SuperAdmin))
                 {
-                   continue;
+                    continue;
                 }
                 var claims = await _accountRepository.GetUserClaimsAsync(user.Id);
 
@@ -364,8 +441,15 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
                     Roles = roles,
                     Claims = claims
                 });
+                // users.TotalCount--;
             }
-            return usersDTO;
+                            return new PagedResult<UserGetDTO>
+    {
+        Items = usersDTO,
+        TotalCount = users.TotalCount,
+        PageSize = users.PageSize,
+        CurrentPage = users.CurrentPage
+    };
         }
         public async Task CUExistingUser(string idCreate, string idUpdate)
         {
@@ -422,20 +506,21 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
         }
         public async Task<bool> ChangeStatusUserAsync(string id)
         {
-             var now = DateTime.UtcNow;
-                now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+            var now = DateTime.UtcNow;
+            now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
             var user = await _accountRepository.GetUserByIdAsync(id);
             if (user == null)
             {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
-             IEnumerable<string> roles ;
-             roles = await _accountRepository.GetUserRolesAsync(user.Id);
-             if(roles.Contains(AppRole.SuperAdmin)){
+            IEnumerable<string> roles;
+            roles = await _accountRepository.GetUserRolesAsync(user.Id);
+            if (roles.Contains(AppRole.SuperAdmin))
+            {
                 throw new BadRequestException("Bạn không có quyền làm đều này");
-             }
+            }
             user.EmailConfirmed = user.EmailConfirmed == true ? false : true;
-            user.UpdatedAt=now;
+            user.UpdatedAt = now;
             var updated = await _accountRepository.UpdateUserAsync(id, user);
             if (!updated)
             {
@@ -445,18 +530,19 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
         }
         public async Task<bool> UpdateUserByAdminAsync(string userId, UserUpdateByAdminDTO userUpdateDto, IFormFile avatar)
         {
-             var now = DateTime.UtcNow;
-                now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+            var now = DateTime.UtcNow;
+            now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
             var user = await _accountRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
                 throw new NotFoundException("Người dùng không tồn tại");
             }
-             IEnumerable<string> roles ;
-             roles = await _accountRepository.GetUserRolesAsync(user.Id);
-             if(roles.Contains(AppRole.SuperAdmin)){
+            IEnumerable<string> roles;
+            roles = await _accountRepository.GetUserRolesAsync(user.Id);
+            if (roles.Contains(AppRole.SuperAdmin))
+            {
                 throw new BadRequestException("Bạn không có quyền làm đều này");
-             }
+            }
             if (user.UserName != userUpdateDto.UserName)
             {
                 var existingUsername = await _accountRepository.GetUserByUserNameAsync(userUpdateDto.UserName);
@@ -506,7 +592,7 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
                 user.Avatar = userUpdateDto.Gender == true ? "avatar-nam.jpg" : "avatar-nu.jpg";
 
             }
-            user.UpdatedAt=now;
+            user.UpdatedAt = now;
             var updated = await _accountRepository.UpdateUserAsync(userId, user);
             if (!updated)
             {
@@ -533,7 +619,10 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
             {
                 foreach (var claim in userUpdateDto.Claims)
                 {
-                    await _accountRepository.AddClaimToUserAsync(userId, claim.ClaimType, claim.ClaimValues);
+                    if(claim.ClaimValues !=null){
+                         await _accountRepository.AddClaimToUserAsync(userId, claim.ClaimType, claim.ClaimValues);
+                    }
+                   
                 }
             }
 
@@ -541,8 +630,8 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
         }
         public async Task<UserGetDTO> UpdateMyUserAsync(string userId, MyUserUpdateDTO userUpdateDto, IFormFile avatar)
         {
-             var now = DateTime.UtcNow;
-                now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+            var now = DateTime.UtcNow;
+            now = TimeZoneInfo.ConvertTimeFromUtc(now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
             var user = await _accountRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
@@ -609,7 +698,7 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
                 user.Avatar = userUpdateDto.Gender == true ? "avatar-nam.jpg" : "avatar-nu.jpg";
 
             }
-            user.UpdatedAt=now;
+            user.UpdatedAt = now;
             var updated = await _accountRepository.UpdateUserAsync(userId, user);
             if (!updated)
             {
@@ -654,11 +743,12 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
 
             if (user != null)
             {
-                 IEnumerable<string> roles ;
-             roles = await _accountRepository.GetUserRolesAsync(user.Id);
-             if(roles.Contains(AppRole.SuperAdmin)){
-                throw new BadRequestException("Bạn không có quyền làm đều này");
-             }
+                IEnumerable<string> roles;
+                roles = await _accountRepository.GetUserRolesAsync(user.Id);
+                if (roles.Contains(AppRole.SuperAdmin))
+                {
+                    throw new BadRequestException("Bạn không có quyền làm đều này");
+                }
                 if (user.Avatar != "avatar-nam.jpg" && user.Avatar != "avatar-nu.jpg")
                 {
                     await _galleryService.DeleteImageAsync(user.Avatar, "users");
@@ -697,9 +787,10 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
             {
                 throw new Exception("Email này đã được đăng ký");
             }
-            if(userCreateDto.Roles.Contains(AppRole.SuperAdmin)){
+            if (userCreateDto.Roles.Contains(AppRole.SuperAdmin))
+            {
                 throw new BadRequestException("Bạn không có quyền làm đều này");
-             }
+            }
             var userCreated = await _accountRepository.CreateUserAsync(userCreateDto);
             if (userCreated == null)
             {
@@ -723,7 +814,11 @@ var percentIncreaseToday = Math.Abs(totalYesterday) < double.Epsilon ? totalToda
             }
             foreach (var claim in userCreateDto.Claims)
             {
-                await _accountRepository.AddClaimToUserAsync(userCreated.Id, claim.ClaimType, claim.ClaimValues);
+                                    if(claim.ClaimValues !=null){
+await _accountRepository.AddClaimToUserAsync(userCreated.Id, claim.ClaimType, claim.ClaimValues);
+                                    }
+
+                
             }
 
 

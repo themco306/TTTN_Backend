@@ -56,7 +56,13 @@ namespace backend.Controllers
                         var rate = await _rateService.CreateRateAsync(rateInputDTO,tokenWithBearer);
                         return Ok(new {message="Đánh giá thành công",data=rate});
                 }
-
+                [HttpPost("report/{id}")]
+                 [Authorize] 
+                public async Task<IActionResult> ReportRate(long id)
+                {       
+                        await _rateService.ReportRateAsync(id);
+                        return Ok(new {message="Báo cáo thành công"});
+                }
                 // [HttpPut("{id}")]
                 // [Authorize] 
                 // public async Task<IActionResult> PutRate(long id, RateInputDTO rateInputDTO)
@@ -89,12 +95,12 @@ namespace backend.Controllers
 
                 }
                   [HttpPut("{id}/status")]
-                  [Authorize] 
+                  [Authorize(Roles =$"{AppRole.Admin},{AppRole.SuperAdmin}")] 
         public async Task<IActionResult> UpdateRateStatus(long id)
         {
            
                 await _rateService.UpdateRateStatusAsync(id);
-                return Ok(new {message="Thay đổi trạng thái thành công"});
+                return Ok(new {message=""});
         }
 
 

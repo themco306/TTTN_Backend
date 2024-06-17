@@ -15,6 +15,15 @@ namespace backend.DTOs
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;
 }
+    public class ProductAdminFilterDTO
+{
+    public string? Key {get;set;}
+    public int? Status {get; set;}
+
+    public string? SortOrder { get; set; }  
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 5;
+}
     public class ProductFilterDTO
 {
     public string? CategoryId { get; set; }
@@ -74,6 +83,7 @@ namespace backend.DTOs
         public Brand Brand {get;set;}
         public string Name { get; set; }
         public string Slug { get; set; }
+        public long TotalItemsSold {get;set;}
         public double Star {get;set;}
         public List<Gallery> Galleries { get; set; } = new List<Gallery>();
         public string Description { get; set; }

@@ -12,7 +12,10 @@ namespace backend.Helper
             {
                 policy.RequireRole(AppRole.SuperAdmin);
             });
-
+ options.AddPolicy(AppRole.Admin, policy =>
+            {
+                policy.RequireRole(AppRole.Admin);
+            });
             var claimValues = new[] { ClaimValue.Add, ClaimValue.Edit, ClaimValue.Show, ClaimValue.Delete };
 
              var claimTypes = typeof(backend.Helper.ClaimType)

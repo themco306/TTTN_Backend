@@ -12,6 +12,7 @@ namespace backend.Repositories.IRepositories
         Task<PagedResult<Product>> GetFilteredProductsAsync(ProductFilterDTO filter);
         Task<PagedResult<Product>> GetSearchProductsAsync(ProductSearchDTO searchDTO);
         Task<List<Product>> GetAllAsync();
+        Task<PagedResult<Product>> GetAllPageAsync(ProductAdminFilterDTO filterDTO);
         Task<List<Product>> GetSameProductsAsync(long productId,long categoryId,long brandId);
         
         Task<List<Product>> GetTopProductsByTotalItemsSoldAsync(int count);

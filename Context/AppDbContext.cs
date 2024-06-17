@@ -113,7 +113,7 @@ namespace backend.Context
             {
                 e.Property(p => p.Name)
                    .HasColumnType("varchar(255)")
-                   .UseCollation("utf8mb4_general_ci");
+                   .UseCollation("utf8mb4_unicode_ci");
 
                 e.HasOne(c => c.Category)
                .WithMany(c => c.Products)

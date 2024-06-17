@@ -5,7 +5,7 @@ using backend.Helper;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Google.Apis.Auth;
 
 namespace backend.Controllers
 {
@@ -23,6 +23,35 @@ namespace backend.Controllers
             _httpContextAccessor = httpContextAccessor;
 
         }
+         [HttpPost("google-login")]
+    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
+    {
+        var payload = await VerifyGoogleToken(request.Credential,request.ClientId);
+        if (payload == null)
+        {
+            return BadRequest(new { message = "Invalid Google token." });
+        }
+        var user = await _accountService.GenerateJwtTokenForGoogle(payload);
+
+        return Ok(new { User = user.User, Token = user.Token });
+    }
+ private async Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string token,string clientId)
+    {
+        try
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string>() { clientId }
+            };
+
+            var payload = await GoogleJsonWebSignature.ValidateAsync(token, settings);
+            return payload;
+        }
+        catch (InvalidJwtException)
+        {
+            return null;
+        }
+    }
         [HttpGet("newUser")]
         [Authorize]
         public async Task<IActionResult> GetNewUserDashboard(){
@@ -88,7 +117,7 @@ namespace backend.Controllers
         }
         [HttpGet]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Show}")]
-        public async Task<IActionResult> GetUsers(int pageIndex = 1, int pageSize = 5)
+        public async Task<IActionResult> GetUsers([FromQuery] ProductAdminFilterDTO filterDTO)
         {
             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
@@ -96,12 +125,12 @@ namespace backend.Controllers
             {
                 return Unauthorized(new { error = "Có lỗi xãy ra vui lòng đăng nhập lại" });
             }
-            var users = await _accountService.GetUsersAsync(pageIndex, pageSize, userEmail);
+            var users = await _accountService.GetUsersAsync(filterDTO, userEmail);
             return Ok(users);
         }
         [HttpGet("customer")]
         [Authorize(Policy = $"{AppRole.SuperAdmin}{ClaimType.UserClaim}{ClaimValue.Show}")]
-        public async Task<IActionResult> GetCustomes(int pageIndex = 1, int pageSize = 5)
+        public async Task<IActionResult> GetCustomes([FromQuery] ProductAdminFilterDTO filterDTO)
         {
             string tokenWithBearer = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
             var userEmail = _accountService.ExtractEmailFromToken(tokenWithBearer);
@@ -109,7 +138,7 @@ namespace backend.Controllers
             {
                 return Unauthorized(new { error = "Có lỗi xãy ra vui lòng đăng nhập lại" });
             }
-            var users = await _accountService.GetCusomerAsync(pageIndex, pageSize, userEmail);
+            var users = await _accountService.GetCusomerAsync(filterDTO, userEmail);
             return Ok(users);
         }
         [HttpGet("roles")]

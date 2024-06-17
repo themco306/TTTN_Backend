@@ -259,7 +259,14 @@ public async Task<RateGetDTO> CreateRateAsync(RateInputDTO rateInputDTO, string 
     return _mapper.Map<RateGetDTO>(rate);
 }
 
-
+public async Task ReportRateAsync(long id){
+    var rate = await _rateRepository.GetByIdAsync(id);
+    if(rate==null){
+        throw new NotFoundException("Bài đánh giá không tồn tại");
+    }
+    rate.Report++;
+    await _rateRepository.UpdateAsync(rate);
+}
 
         public async Task DeleteRateAsync(long id)
         {

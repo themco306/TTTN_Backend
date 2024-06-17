@@ -3,6 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace backend.DTOs
 {
+    public class GoogleLoginRequest
+{
+    public string ClientId { get; set; }
+
+    public string Credential { get; set; }
+}
     public class SignUp
     {
         [Required(ErrorMessage = "Vui lòng nhập tên.")]

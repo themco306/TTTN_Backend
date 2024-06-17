@@ -36,11 +36,19 @@ namespace backend.Controllers
 
         }
         [HttpGet]
-        [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Show}")] 
+        // [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Show}")] 
 
         public async Task<IActionResult> GetProducts()
         {
             var products = await _productService.GetAllProductsAsync();
+            return Ok(products);
+        }
+                [HttpGet("page")]
+        [Authorize(Policy =$"{AppRole.SuperAdmin}{ClaimType.ProductClaim}{ClaimValue.Show}")] 
+
+        public async Task<IActionResult> GetProductsPage([FromQuery] ProductAdminFilterDTO filterDTO)
+        {
+            var products = await _productService.GetAllPageProductsAsync(filterDTO);
             return Ok(products);
         }
         [HttpGet("search")]

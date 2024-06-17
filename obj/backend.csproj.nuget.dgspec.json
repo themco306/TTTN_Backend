@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\ThucTapTotNghiep\\backend\\backend.csproj": {}
+    "d:\\ThucTapTotNghiep\\backend\\backend.csproj": {}
   },
   "projects": {
-    "D:\\ThucTapTotNghiep\\backend\\backend.csproj": {
+    "d:\\ThucTapTotNghiep\\backend\\backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\ThucTapTotNghiep\\backend\\backend.csproj",
+        "projectUniqueName": "d:\\ThucTapTotNghiep\\backend\\backend.csproj",
         "projectName": "backend",
-        "projectPath": "D:\\ThucTapTotNghiep\\backend\\backend.csproj",
+        "projectPath": "d:\\ThucTapTotNghiep\\backend\\backend.csproj",
         "packagesPath": "C:\\Users\\Nguyen Tuan Khanh\\.nuget\\packages\\",
-        "outputPath": "D:\\ThucTapTotNghiep\\backend\\obj\\",
+        "outputPath": "d:\\ThucTapTotNghiep\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Nguyen Tuan Khanh\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -54,6 +54,10 @@
             "FluentValidation.AspNetCore": {
               "target": "Package",
               "version": "[11.3.0, )"
+            },
+            "Google.Apis.Auth": {
+              "target": "Package",
+              "version": "[1.68.0, )"
             },
             "MailKit": {
               "target": "Package",

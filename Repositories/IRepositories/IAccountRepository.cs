@@ -25,7 +25,7 @@ Task<bool> DeleteClaimsAsync(string userId);
     Task<string> GenerateEmailConfirmationTokenAsync(AppUser user);
 
 
-    Task<IEnumerable<AppUser>> GetUsersAsync(int pageIndex, int pageSize,string email);
+    Task<PagedResult<AppUser>> GetUsersAsync(string roleName,ProductAdminFilterDTO filterDTO,string email);
 
 
     Task<AppUser> GetUserByIdAsync(string id);

@@ -881,7 +881,7 @@ namespace backend.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(255)")
-                        .UseCollation("utf8mb4_general_ci");
+                        .UseCollation("utf8mb4_unicode_ci");
 
                     b.Property<string>("Note")
                         .HasColumnType("longtext");

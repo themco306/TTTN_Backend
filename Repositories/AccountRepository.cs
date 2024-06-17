@@ -18,15 +18,17 @@ namespace backend.Repositories
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly Generate _generate;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IConfiguration _configuration;
 
-        public AccountRepository(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
+        public AccountRepository(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager,Generate generate)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _roleManager = roleManager;
+            _generate=generate;
         }
 
         public async Task<AppUser> GetUserByEmailAsync(string email)
@@ -267,13 +269,95 @@ namespace backend.Repositories
 
             return claimDTOs;
         }
-        public async Task<IEnumerable<AppUser>> GetUsersAsync(int pageIndex, int pageSize,string email)
+        public async Task<PagedResult<AppUser>> GetUsersAsync(string roleName,ProductAdminFilterDTO filterDTO,string email)
         {
-            return await _userManager.Users
-                .Where(u =>u.Email != email)
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+                  var role = await _roleManager.FindByNameAsync(roleName);
+
+         if (role == null)
+    {
+        return new PagedResult<AppUser>
+        {
+            TotalCount = 0,
+            PageSize = filterDTO.PageSize,
+            CurrentPage = filterDTO.PageNumber,
+            Items = Enumerable.Empty<AppUser>().ToList()
+        };
+    }
+    var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
+
+    // Create an IQueryable from the usersInRole
+    IQueryable<AppUser> query = usersInRole.AsQueryable();
+
+    // Apply initial filtering
+    query = query.Where(u => u.Email != email)
+        .OrderByDescending(p => p.UpdatedAt)
+     ;
+
+            if (filterDTO.Status != null)
+            {
+                var Status = filterDTO.Status== 1?true:false;
+                query = query.Where(c => c.EmailConfirmed == Status);
+            }
+
+
+if (!string.IsNullOrEmpty(filterDTO.Key))
+{
+    string filter = filterDTO.Key.Trim();
+
+    if (filter.Contains("+"))
+    {
+        var parts = filter.Split('+', StringSplitOptions.RemoveEmptyEntries);
+
+        if (parts.Length == 2)
+        {
+            string lastNamePart = parts[0].Trim(); // Phần trước dấu +
+            string firstNamePart = parts[1].Trim(); // Phần sau dấu +
+
+            query = query.Where(p => 
+                p.LastName.Contains(firstNamePart, StringComparison.CurrentCultureIgnoreCase) &&
+                p.FirstName.Contains(lastNamePart, StringComparison.CurrentCultureIgnoreCase));
+        }
+    }
+    else
+    {
+       query = query.Where(p =>
+    (p.LastName != null && p.LastName.Contains(filter, StringComparison.CurrentCultureIgnoreCase)) ||
+    (p.FirstName != null && p.FirstName.Contains(filter, StringComparison.CurrentCultureIgnoreCase)) ||
+    (p.NormalizedEmail != null && p.NormalizedEmail.Contains(filter, StringComparison.CurrentCultureIgnoreCase)) ||
+    (p.PhoneNumber != null && p.PhoneNumber.Contains(filter, StringComparison.CurrentCultureIgnoreCase)));
+
+    }
+}
+
+
+            if (!string.IsNullOrEmpty(filterDTO.SortOrder))
+            {
+                switch (filterDTO.SortOrder)
+                {
+                    case "create-asc":
+                        query =  query.OrderByDescending(p => p.CreatedAt);
+                        break;
+                        case "create-desc":
+                        query =  query.OrderBy(p => p.CreatedAt);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            var totalItems =  query.Count();
+
+            var items =  query
+                .Skip((filterDTO.PageNumber - 1) * filterDTO.PageSize)
+                .Take(filterDTO.PageSize)
+                .ToList();
+
+            return new PagedResult<AppUser>
+            {
+                Items = items,
+                TotalCount = totalItems,
+                PageSize = filterDTO.PageSize,
+                CurrentPage = filterDTO.PageNumber
+            };
         }
         public async Task<AppUser> GetUserByIdAsync(string id)
         {
