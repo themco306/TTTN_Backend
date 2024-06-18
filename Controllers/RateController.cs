@@ -21,9 +21,9 @@ namespace backend.Controllers
                         _httpContextAccessor=httpContextAccessor;
                 }
                 [HttpGet("{id}")]
-                public async Task<IActionResult> GetRates(long id)
+                public async Task<IActionResult> GetRates([FromQuery] RateQueryDTO queryDTO,long id)
                 {
-                        var rates = await _rateService.GetRatesByProductIddsync(id);
+                        var rates = await _rateService.GetRatesByProductIddsync(id,queryDTO);
                         return Ok(rates);
                 }
                 [HttpGet("active")]

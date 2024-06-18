@@ -5,6 +5,14 @@ using backend.Models;
 
 namespace backend.DTOs
 {
+public class RateQueryDTO
+{
+    public string? SortOrder { get; set; }
+    public int? Star { get; set; }
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 5;
+}
+
     public class RateInputDTO
     {
 

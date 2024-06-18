@@ -71,11 +71,20 @@ namespace backend.Services
                 IsLike=rate.IsLike
             };
         }
-        public async Task<List<RateGetDTO>> GetRatesByProductIddsync(long id)
-        {
-            var rate = await _rateRepository.GetByProductIdAsync(id);
-            return _mapper.Map<List<RateGetDTO>>(rate);
-        }
+public async Task<PagedResult<RateGetDTO>> GetRatesByProductIddsync(long id, RateQueryDTO queryDTO)
+{
+    var ratePagedResult = await _rateRepository.GetByProductIdAsync(id, queryDTO);
+    var rateGetDTOs = _mapper.Map<List<RateGetDTO>>(ratePagedResult.Items);
+    
+    return new PagedResult<RateGetDTO>
+    {
+        Items = rateGetDTOs,
+        TotalCount = ratePagedResult.TotalCount,
+        PageSize = ratePagedResult.PageSize,
+        CurrentPage = ratePagedResult.CurrentPage
+    };
+}
+
 
         public async Task<(int likeCount, int dislikeCount)> ActionAsync(long rateId, bool isLike, string token)
         {

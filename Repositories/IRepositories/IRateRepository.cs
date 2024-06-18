@@ -1,4 +1,5 @@
 
+using backend.DTOs;
 using backend.Models;
 
 namespace backend.Repositories.IRepositories
@@ -7,6 +8,8 @@ namespace backend.Repositories.IRepositories
     {
         Task<Rate> GetByIdAsync(long id);
         Task<List<Rate>> GetAllAsync();
+        Task<PagedResult<Rate>> GetByProductIdAsync(long productId,RateQueryDTO queryDTO);
+
         Task<List<Rate>> GetByProductIdAsync(long productId);
         Task<int> CountByProductIdAsync(long productId);
         Task<List<Rate>> GetAllActiveAsync();

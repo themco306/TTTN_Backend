@@ -1,5 +1,6 @@
 
 using backend.Context;
+using backend.DTOs;
 using backend.Models;
 using backend.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,58 @@ namespace backend.Repositories
             .OrderByDescending(c=>c.CreatedAt)
             .ToListAsync();
         }
+        public async Task<PagedResult<Rate>> GetByProductIdAsync(long productId, RateQueryDTO queryDTO)
+{
+    var query = _context.Rates
+        .Where(c => c.ProductId == productId)
+        .Include(c => c.User)
+        .Include(c => c.RateFiles.OrderByDescending(c => c.FileType))
+        .AsQueryable();
+
+    // Apply filtering
+    if (queryDTO.Star.HasValue)
+    {
+        query = query.Where(c => c.Star == queryDTO.Star.Value);
+    }
+
+    // Apply sorting
+    if (!string.IsNullOrEmpty(queryDTO.SortOrder))
+    {
+        switch (queryDTO.SortOrder.ToLower())
+        {
+            case "date-asc":
+                query = query.OrderBy(c => c.CreatedAt);
+                break;
+            case "date-desc":
+                query = query.OrderByDescending(c => c.CreatedAt);
+                break;
+                
+            default:
+                query = query.OrderByDescending(c => c.CreatedAt); // Default sort order
+                break;
+        }
+    }
+    else
+    {
+        query = query.OrderByDescending(c => c.CreatedAt); // Default sort order
+    }
+
+    // Apply pagination
+    var totalItems = await query.CountAsync();
+    var items = await query
+        .Skip((queryDTO.PageNumber - 1) * queryDTO.PageSize)
+        .Take(queryDTO.PageSize)
+        .ToListAsync();
+
+    return new PagedResult<Rate>
+    {
+        Items = items,
+        TotalCount = totalItems,
+        PageSize = queryDTO.PageSize,
+        CurrentPage = queryDTO.PageNumber
+    };
+}
+
                         public async Task<int> CountByProductIdAsync(long productId)
         {
             return await _context.Rates
